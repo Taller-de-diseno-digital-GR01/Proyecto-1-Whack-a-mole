@@ -1,0 +1,28 @@
+
+
+
+
+```mermaid
+%%{init: { 'flowchart': {'defaultRender': 'elk' : 'curve': 'step'}}}%%
+
+graph LR
+    subgraph Entradas
+        input1[Botón]
+        input2[Reset]
+        input3[Clock]
+    end
+    subgraph Salidas
+        Salida1[Resultados del Juego]
+        Salida2[Posición de Topo]
+    end
+    
+
+
+
+    input1[Botón] --> main_system[<br>&emsp;&emsp;Sistema Principal&emsp;] --> Salida1[Resultados del Juego]
+    input2[Reset] --> main_system[Sistema Principal] --> Salida2[Posición de Topo]
+
+    input3[Clock] --> main_system[Sistema Principal]
+```
+
+```mermaid

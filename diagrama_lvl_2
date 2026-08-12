@@ -1,0 +1,40 @@
+
+
+
+
+```mermaid
+%%{init: { 'flowchart': {'defaultRender': 'elk' : 'curve': 'step'}}}%%
+
+graph LR
+    
+        subgraph FPGA
+            system4[Lógica de Juego]
+            system5[Displays 7 Segmento]
+        end
+
+        system3[TX Serial]
+
+        subgraph Circuito Discreto
+            system1[Números Aleatorios]
+            system2[LEDS]
+        end
+
+        
+    
+
+system1 --> system2
+system2 --> salida[Posición Topos]
+
+system3 <--> system1
+system4 --> system5 --> output2[Resultados]
+
+system3<-->system4
+
+
+
+
+
+    
+```
+
+```mermaid
