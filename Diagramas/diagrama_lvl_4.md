@@ -309,7 +309,6 @@ $$TX = QH \lor \overline{solicitud\_topo}$$
 
 ### Uso de módulos integrados
 
-| Función | Integrado | Elementos usados |
 - Inversor 74LS04
 - Compuerta OR 74LS32
 
