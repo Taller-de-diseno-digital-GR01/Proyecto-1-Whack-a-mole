@@ -1,0 +1,47 @@
+flowchart TD
+
+    subgraph UART["UART"]
+        REG["Registro"]
+    end
+
+    subgraph FPGA["FPGA"]
+
+        TOPO["Mostrar Topo"]
+        PRESS["Presión Botón"]
+        TIME["Tiempos"]
+        DECO["Deco UART"]
+        FSM["FSM<br/>Máquina de Estados"]
+        STATE["Estado de juego"]
+        CA["Contador Acierto"]
+        C_F["Contador Fallo"]
+  
+
+        CLK--> FSM
+        rst--> FSM
+        FSM -->|"pos_topo [7:0]"| TOPO
+        PRESS -->|"btn [7:0]"| FSM
+        FSM -->|"tiempo [7:0]"| TIME
+        FSM -->|"estado [1:0]"| STATE
+        FSM -->|"acierto [6:0]"| CA
+        FSM -->|"fallo [1:0]"| C_F
+        DECO -->|"pos_topo [7:0]"| FSM
+        FSM -->|"soli[1:0]"| SOL    
+        TIME -->|"tiempo [7:0]"| DECO
+        TIME -->|"tiempo [7:0]"| PRESS   
+    end
+    REG -->|"pos[2:0]"| DECO
+    BTN["Botones"]
+
+    
+    LED8["LED's Topos"]
+    LED["LED estado"]
+    MARK["Marcador"]
+    
+    TOPO -->|"pos_topo [7:0]"| LED8
+    STATE -->|"estado"| LED
+    CA -->|"acierto [6:0]"| MARK
+    C_F -->|"fallo [1:0]"| MARK
+    BTN -->|"btn [7:0]"| PRESS
+
+
+    
