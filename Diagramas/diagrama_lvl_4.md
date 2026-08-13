@@ -1,6 +1,5 @@
 # Diagrama de cuarto nivel: subsistema discreto
 
-
 ## Módulos
 
 - M1: Generador de reloj de baudios
@@ -48,9 +47,31 @@ El factor 1,44 corresponde a $1/\ln(2)$ y proviene del carácter exponencial de 
 
 ## i) Diagrama esquemático detallado
 
+```mermaid
+flowchart LR
+    VCC["VCC"] --> R1["R1"]
+    R1 --> ND["Nodo de descarga"]
+    ND --> R2["R2"]
+    R2 --> NU["Nodo de umbral y disparo"]
+    NU --> C1["C1"]
+    C1 --> GNDA["GND"]
+    NU --> CMP1["Comparador de umbral<br/>2 tercios de VCC"]
+    NU --> CMP2["Comparador de disparo<br/>1 tercio de VCC"]
+    CMP1 --> BIE["Biestable interno"]
+    CMP2 --> BIE
+    BIE --> TRD["Transistor de descarga"]
+    TRD --> ND
+    BIE --> SAL["Etapa de salida"]
+    SAL -->|"CLK_TX, 9600 Hz"| DEST["Hacia M2 y M5"]
+    NC["Terminal de control"] --> C2["C2"]
+    C2 --> GNDB["GND"]
+```
+
+## j) Diagrama completo de conexiones eléctricas
+
 ![Oscilador astable del reloj de baudios](img/m1.png)
 
-Oscilador astable construido alrededor del temporizador, con la red de temporización formada por las dos resistencias y el capacitor conectado al nodo de umbral y disparo. El capacitor del terminal de control desacopla el divisor interno de referencia. La salida entrega `CLK_TX` hacia M2 y M5.
+Temporizador con la red de temporización formada por las dos resistencias y el capacitor conectado al nodo de umbral y disparo. El capacitor del terminal de control desacopla el divisor interno de referencia. La salida entrega `CLK_TX` hacia M2 y M5.
 
 
 # M2: Control de avance y modo
@@ -105,6 +126,10 @@ flowchart LR
     CLK["CLK_TX desde M1"] -->|"reloj"| FFM
     FFM -->|"modo, 0 carga y 1 desplaza"| DEST["Hacia M5 y M6"]
 ```
+
+## j) Diagrama completo de conexiones eléctricas
+
+Pendiente de incorporar al esquemático del quinto nivel.
 
 
 # M3: Generador pseudoaleatorio de posición
@@ -185,6 +210,35 @@ El 74LS74 contiene dos flip-flops tipo D disparados por flanco de subida con pre
 
 ## i) Diagrama esquemático detallado
 
+```mermaid
+flowchart LR
+    XOR["XOR de realimentacion"]
+    FF1["Flip-flop D<br/>etapa 1"]
+    FF2["Flip-flop D<br/>etapa 2"]
+    FF3["Flip-flop D<br/>etapa 3"]
+    FF4["Flip-flop D<br/>etapa 4"]
+    AV["avance desde M2"]
+    POR["Red de inicializacion"]
+    SAL["pos 2:0<br/>hacia M4 y M5"]
+
+    XOR -->|"D1"| FF1
+    FF1 -->|"Q1"| FF2
+    FF2 -->|"Q2"| FF3
+    FF3 -->|"Q3"| FF4
+    FF3 -->|"Q3"| XOR
+    FF4 -->|"Q4"| XOR
+    AV --> FF1
+    AV --> FF2
+    AV --> FF3
+    AV --> FF4
+    POR -->|"preset"| FF1
+    FF2 -->|"Q2 = pos0"| SAL
+    FF3 -->|"Q3 = pos1"| SAL
+    FF4 -->|"Q4 = pos2"| SAL
+```
+
+## j) Diagrama completo de conexiones eléctricas
+
 ![Registro de desplazamiento con realimentación lineal](img/m3.png)
 
 Cadena de cuatro flip-flops tipo D con la compuerta XOR de realimentación cerrando el lazo desde las etapas tres y cuatro hacia la entrada de dato de la primera. Las cuatro etapas comparten la misma línea de reloj. Las salidas de las etapas dos, tres y cuatro forman `pos[2:0]` hacia M4 y M5.
@@ -241,6 +295,10 @@ flowchart LR
     DEC -->|"Y7 activo en bajo"| L7["R limitadora y LED 7<br/>anodo hacia VCC"]
 ```
 
+## j) Diagrama completo de conexiones eléctricas
+
+Pendiente de incorporar al esquemático del quinto nivel.
+
 
 # M5: Registro de transmisión paralelo a serie
 
@@ -293,6 +351,23 @@ La trama ocupa ocho tiempos de bit y contiene un bit de inicio, seis de datos y 
 
 ## i) Diagrama esquemático detallado
 
+```mermaid
+flowchart LR
+    SER["SER = 0"] --> EA["Etapa A<br/>carga 1, bit de parada"]
+    EA --> EB["Etapa B<br/>carga Q4, pos2"]
+    EB --> EC["Etapa C<br/>carga Q3, pos1"]
+    EC --> ED["Etapa D<br/>carga Q2, pos0"]
+    ED --> EE["Etapa E<br/>carga 0"]
+    EE --> EF["Etapa F<br/>carga 0"]
+    EF --> EG["Etapa G<br/>carga 0"]
+    EG --> EH["Etapa H<br/>carga 0, bit de inicio"]
+    EH -->|"QH, salida serie"| M6D["Hacia M6"]
+    CLK["CLK_TX desde M1"] -->|"reloj comun a las 8 etapas"| EA
+    MOD["modo desde M2"] -->|"0 carga y 1 desplaza"| EA
+```
+
+## j) Diagrama completo de conexiones eléctricas
+
 ![Registro de transmisión paralelo a serie](img/m5.png)
 
 Registro de ocho etapas con carga paralela síncrona. Las entradas B, C y D reciben los tres bits de posición, la entrada A queda en nivel alto para el bit de parada y las entradas E a H quedan en nivel bajo, con la H aportando el bit de inicio. La salida serie alimenta a M6.
@@ -331,6 +406,20 @@ $$TX = QH \lor \overline{modo}$$
 - Compuerta OR 74LS32, un elemento de cuatro
 
 ## i) Diagrama esquemático detallado
+
+```mermaid
+flowchart LR
+    MOD["modo desde M2"] --> INV["Inversor"]
+    INV -->|"complemento del modo"| OR["OR de 2 entradas"]
+    QH["QH, salida serie<br/>desde M5"] --> OR
+    OR -->|"TX en dominio de 5 V"| RS["Resistencia serie"]
+    RS --> NTX["Nodo TX adaptado"]
+    NTX --> RP["Resistencia a tierra"]
+    RP --> GND["GND"]
+    NTX -->|"TX en dominio de 3,3 V"| CONE["Conector hacia la FPGA"]
+```
+
+## j) Diagrama completo de conexiones eléctricas
 
 ![Acondicionamiento de la línea de transmisión](img/m6.png)
 
