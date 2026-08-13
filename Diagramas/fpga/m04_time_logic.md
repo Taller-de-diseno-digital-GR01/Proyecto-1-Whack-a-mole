@@ -2,7 +2,8 @@
 
 ## f) Relación con otros módulos
 
-La FSM abre la ventana con el pulso inicio una vez que el módulo Deco UART entregó pos_topo[2:0] del turno, de modo que el tiempo de la trama serial no se le descuenta al jugador. Durante la ventana la FSM es la que evalúa btn_golpe[7:0] contra pos_topo[2:0], por lo que M4 nunca observa las pulsaciones y se limita a medir el tiempo disponible. La FSM devuelve el pulso hit cuando el golpe es correcto, con lo cual M4 cierra el turno y reduce la duración del siguiente, y M4 responde con UP cuando la ventana se agota sin acierto, señal que la FSM interpreta como fallo y propaga al Contador Fallo. La señal nueva_partida, emitida por la FSM al salir del estado de fin de partida, devuelve la dificultad a su valor inicial.
+La FSM abre la ventana con el pulso inicio una vez que el módulo Deco UART entregó `pos_topo[2:0]` del turno,
+de modo que el tiempo de la trama serial no se le descuenta al jugador. Durante la ventana la FSM es la que evalúa `btn_golpe[7:0]` contra `pos_topo[2:0]`, por lo que M4 nunca observa las pulsaciones y se limita a medir el tiempo disponible. La FSM devuelve el pulso hit cuando el golpe es correcto, con lo cual M4 cierra el turno y reduce la duración del siguiente, y M4 responde con UP cuando la ventana se agota sin acierto, señal que la FSM interpreta como fallo y propaga al Contador Fallo. La señal nueva_partida, emitida por la FSM al salir del estado de fin de partida, devuelve la dificultad a su valor inicial.
 
 ## g) Explicación de funcionamiento
 
