@@ -57,3 +57,9 @@ Tabla de verdad de la lógica de control, con prioridad de arriba hacia abajo:
 | 0 | 0 | 0 | 1 | 0 | sin cambio | sin cambio | 1 |
 | 0 | 0 | 0 | 1 | ≠ 0 | cuenta − 1 | sin cambio | 0 |
 | 0 | 0 | 0 | 0 | X | sin cambio | sin cambio | 0 |
+
+Si hay reset o nueva partida, todo se pone en su estado inicial y la dificultad vuelve a quince, como menciona el enunciado. Si llega la
+señal de inicio, el contador se carga con el valor guardado de dificultad. Si llega un acierto, el conteo se
+detiene y la dificultad baja un paso, siempre que no esté ya en su valor mínimo. Si nada de eso pasa y llega la
+habilitación de cada cien milisegundos, el contador baja uno, y si ya estaba en cero se activa la señal UP para
+avisar que se acabó el tiempo. En cualquier otro caso todo se queda igual.

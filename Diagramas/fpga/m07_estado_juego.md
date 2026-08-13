@@ -49,3 +49,5 @@ Tabla de verdad de la lógica de control, con prioridad de arriba hacia abajo:
 | 0 | 1 | 0 | X | sin cambio | 0 | sin cambio |
 | 0 | 1 | 1 | < 20 | cuenta + 1 | 0 | conmuta cada 2 habilitaciones |
 | 0 | 1 | 1 | 20 | sin cambio | 1 | conmuta cada 2 habilitaciones |
+
+Si hay reset, el contador de espera y el parpadeo vuelven a cero. Si el estado no es de fin de partida, el contador se mantiene en cero y no pasa nada más. Si sí es fin de partida pero todavía no llega la habilitación de cada cien milisegundos, todo se queda igual. Cuando llega esa habilitación, el contador sube uno mientras no llegue a veinte, y el parpadeo sigue cambiando cada dos veces que llega la habilitación. Al llegar a veinte se activa la señal de fin de espera, que le avisa a la FSM que ya pasaron los dos segundos.

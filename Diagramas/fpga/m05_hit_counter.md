@@ -47,3 +47,8 @@ Tabla de verdad de la lógica de control, con prioridad de arriba hacia abajo:
 | 0 | 1 | 0 a 9 | 0 a 8 | sin cambio | `acierto[3:0]` + 1 |
 | 0 | 1 | 0 a 8 | 9 | `acierto[7:4]` + 1 | 0 |
 | 0 | 1 | 9 | 9 | 9 | 9 |
+
+Si hay reset o nueva partida, ambos dígitos vuelven a cero. Si no llega ningún acierto, el contador se queda igual.
+Si llega un acierto y el número todavía no llegó a noventa y nueve, el dígito de las unidades sube uno, y si ese
+dígito ya estaba en nueve, pasa a cero y el dígito de las decenas sube uno. Si el contador ya llegó a noventa y
+nueve, se queda ahí aunque sigan llegando aciertos, para no pasarse del valor que puede mostrar el marcador.
