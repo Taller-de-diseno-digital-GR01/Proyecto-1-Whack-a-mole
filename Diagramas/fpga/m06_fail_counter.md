@@ -33,7 +33,7 @@ Contador de fallos consecutivos y generación de `fin_partida`:
 
 ## i) Diagrama detallado del diseño
 
-``mermaid
+```mermaid
 flowchart LR
     miss[miss] --> E
     S["Comparador de saturación<br/>decenas = 9 y unidades = 9"] --> E
@@ -58,4 +58,4 @@ flowchart LR
     np --> D
     np --> K
     np --> FP
-``
+```

@@ -23,7 +23,7 @@ Decodificación de `estado[1:0]`:
 
 ## i) Diagrama detallado del diseño
 
-``mermaid
+```mermaid
 flowchart LR
     est["estado[1:0]"] --> DEC["Decodificador<br/>de estado"]
     rst[rst] --> P
@@ -38,4 +38,4 @@ flowchart LR
     MUX --> led[led_estado]
     rst --> T
     rst --> B
-``
+```
