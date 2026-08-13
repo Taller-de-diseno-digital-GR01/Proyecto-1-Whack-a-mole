@@ -12,19 +12,27 @@ Objetivo: controlar el flujo de datos del sistema digital, entregando señales d
 
 ## Salidas:
 Estado 000
+
 - rst_dificultad: Reinicia el nivel de dificultad del juego.
 - rst_aciertos: Reinicia el contador de aciertos acumulados a cero.
 - rst_fallos: Reinicia el contador de fallos a cero.
 - rst_window: Reinicia la ventana de tiempo del juego. 
 Estado 001
+
 - en_numAleatorios: Permite activar el sistema de generación de posiciones aleatorios.
+- 
 Estado 010
+
 - en_save_pos: Habilita registrar/guardar la posición del topo que se recibe vía UART.
+- 
 Estado 100
+
 - add_acierto: Incrementa en +1 el contador de aciertos.
 - rst_fallo: Reinicia el contador de fallos.
 - inc_dificultad: Incrementa el nivel de dificultad, reduciendo la ventana de tiempo.
-Estado 101:
+- 
+Estado 101
+
 - add fallo: Incrementa en +1 el contador de fallos.
 
 
