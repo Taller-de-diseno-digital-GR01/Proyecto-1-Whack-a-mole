@@ -8,13 +8,42 @@ flowchart TD
 
         TOPO["Show_mole"]
         PRESS["Press_btn"]
-        TIME["Time_Logic"]
-        DECO["Deco UART"]
         FSM["FSM<br/>Máquina de Estados"]
         STATE["Estado de juego"]
-        CA["Contador Acierto"<br/>Hit_Counter]
-        C_F["Contador Fallo"<br/>Fail_Counter]
-  
+        
+
+            subgraph TIME["Time_Logic"]
+
+            end
+        
+            subgraph CA["Contador Acierto"<br/>Hit_Counter]
+                DECO_BSD["Deco BSD"]
+                SUM["Sumador"]
+
+
+            end
+        
+            subgraph C_F["Contador Fallo"<br/>Fail_Counter]
+                DE_BSD["Deco BSD"]
+                SUM_F["Sumador"]
+                CONT["Contador"]
+            end
+
+            subgraph UART_R["Receptor UART"]
+                CON_U
+                REG_U["REG UART"]
+                CLK_U
+
+                CLK_U -->|"9600 Hz"| REG_U
+                CLK_U --> CON_U
+                REG_U -->|"dato [7:0]"| CON_U
+                CON_U -->|"en"| REG_U
+
+            end
+        
+            
+
+
 
         CLK--> FSM
         rst--> FSM
@@ -24,11 +53,12 @@ flowchart TD
         FSM -->|"estado [1:0]"| STATE
         FSM -->|"acierto [6:0]"| CA
         FSM -->|"fallo [1:0]"| C_F
-        DECO -->|"pos_topo [2:0]"| FSM  
+        REG_U -->|"pos_topo [2:0]"| FSM  
         TIME -->|"UP"| FSM
+        FSM -->|"sol"| REG
 
     end
-    REG -->|"pos[9:0]"| DECO
+    REG -->|"pos(8)"| REG_U
     BTN["Botones"]
 
     
