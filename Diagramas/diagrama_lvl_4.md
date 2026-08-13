@@ -6,8 +6,7 @@
 - M2: Control de avance y modo
 - M3: Generador pseudoaleatorio de posición
 - M4: Decodificador de posición e indicadores
-- M5: Registro de transmisión paralelo a serie
-- M6: Acondicionamiento de la línea de transmisión
+- M5: Acondicionamiento de la línea de transmisión
 
 ## Señales
 
@@ -27,7 +26,7 @@ Corresponde al bloque de reloj interno del subsistema de transmisión del tercer
 
 ## f) Explicación de la relación con otros módulos
 
-Este módulo no recibe señal de ningún otro y entrega su salida al registro de transmisión M5 y al control de avance y modo M2. La relación es unidireccional y de tipo control, ya que M1 impone el ritmo al que M5 desplaza sus bits y ninguno de los dos receptores puede modificarlo ni detenerlo. No tiene relación con M3, M4 ni M6, y tampoco comparte ninguna señal con la FPGA, tal como exige el enunciado cuando pide que ambos subsistemas operen con referencias de tiempo separadas.
+Este módulo no recibe señal de ningún otro y entrega su salida al registro de transmisión M5 y al control de avance y modo M2. La relación es unidireccional y de tipo control, ya que M1 impone el ritmo al que M5 desplaza sus bits y ninguno de los dos receptores puede modificarlo ni detenerlo. No tiene relación con M3, M4 ni M5, y tampoco comparte ninguna señal con la FPGA, tal como exige el enunciado cuando pide que ambos subsistemas operen con referencias de tiempo separadas.
 
 ## g) Explicación de funcionamiento
 
@@ -80,7 +79,7 @@ Corresponde al bloque de control del tercer nivel, ubicado en la entrada del sub
 
 ## f) Explicación de la relación con otros módulos
 
-Este módulo es el único punto de entrada del subsistema discreto y traduce una petición externa en dos eventos internos ordenados en el tiempo. Recibe la línea de solicitud desde la FPGA y el reloj de baudios desde M1, entrega el pulso de avance al generador pseudoaleatorio M3 y entrega la señal de modo al registro de transmisión M5 y al acondicionamiento de línea M6. Al separar el avance del cambio de modo, este módulo garantiza que la posición ya esté actualizada cuando el registro la captura, lo que resuelve el orden entre generación y transmisión dentro de un mismo turno.
+Este módulo es el único punto de entrada del subsistema discreto y traduce una petición externa en dos eventos internos ordenados en el tiempo. Recibe la línea de solicitud desde la FPGA y el reloj de baudios desde M1, entrega el pulso de avance al generador pseudoaleatorio M3 y entrega la señal de modo al registro de transmisión M5 y al acondicionamiento de línea M5. Al separar el avance del cambio de modo, este módulo garantiza que la posición ya esté actualizada cuando el registro la captura, lo que resuelve el orden entre generación y transmisión dentro de un mismo turno.
 
 ## g) Explicación de funcionamiento
 
@@ -124,7 +123,7 @@ flowchart LR
     BUF -->|"avance, flanco de subida"| M3D["Hacia relojes de M3"]
     BUF -->|"entrada de dato"| FFM["Flip-flop D<br/>de modo"]
     CLK["CLK_TX desde M1"] -->|"reloj"| FFM
-    FFM -->|"modo, 0 carga y 1 desplaza"| DEST["Hacia M5 y M6"]
+    FFM -->|"modo, 0 carga y 1 desplaza"| DEST["Hacia M5 y M5"]
 ```
 
 ## j) Diagrama completo de conexiones eléctricas
@@ -250,7 +249,7 @@ Corresponde al bloque de indicación visual del tercer nivel, que allí recibe l
 
 ## f) Explicación de la relación con otros módulos
 
-Este módulo recibe la palabra de posición de M3 y no entrega ninguna señal a otro módulo, ya que sus salidas terminan en los indicadores del tablero. Cuelga de las mismas tres líneas que alimentan al registro de transmisión M5, en paralelo con él y sin ninguna dependencia mutua, lo que hace que la indicación visual siga siendo correcta aunque el enlace serial falle. No tiene relación con M1, M2 ni M6.
+Este módulo recibe la palabra de posición de M3 y no entrega ninguna señal a otro módulo, ya que sus salidas terminan en los indicadores del tablero. Cuelga de las mismas tres líneas que alimentan al registro de transmisión M5, en paralelo con él y sin ninguna dependencia mutua, lo que hace que la indicación visual siga siendo correcta aunque el enlace serial falle. No tiene relación con M1, M2 ni M5.
 
 ## g) Explicación de funcionamiento
 
@@ -300,80 +299,7 @@ flowchart LR
 Pendiente de incorporar al esquemático del quinto nivel.
 
 
-# M5: Registro de transmisión paralelo a serie
-
-Corresponde al bloque de registro del subsistema de transmisión en el tercer nivel, donde recibe la palabra de posición y el reloj de baudios y entrega la trama serial.
-
-## f) Explicación de la relación con otros módulos
-
-Este módulo es el punto de confluencia de los tres dominios del subsistema. Recibe de M3 los tres bits de posición que constituyen el dato a transmitir, de M1 el reloj de baudios que gobierna tanto la captura como el desplazamiento, y de M2 la señal de modo que decide entre una y otra operación. Entrega a M6 el flujo serial resultante, y comparte con ese módulo la señal de modo, de manera que M5 la usa para elegir entre carga y desplazamiento mientras que M6 la usa complementada para forzar el reposo de la línea física.
-
-## g) Explicación de funcionamiento
-
-El registro contiene ocho etapas encadenadas y opera en dos modos seleccionados por la entrada de modo. Con esa entrada en nivel bajo, cada flanco de subida carga simultáneamente en las ocho etapas los valores presentes en las entradas paralelas. Con la entrada en nivel alto, cada flanco desplaza el contenido una posición hacia la salida mientras por el extremo inicial ingresa el valor de la entrada serie. La salida corresponde siempre al contenido de la última etapa, que se carga desde la entrada paralela H, por lo que los desplazamientos sucesivos entregan G, F, E, D, C, B y finalmente A. El orden de emisión es entonces inverso al orden alfabético de las entradas paralelas, y ese detalle determina cómo debe cablearse cada bit de la trama.
-
-## h) Diseño
-
-La conversión de paralelo a serie con lógica discreta admite un registro de desplazamiento con carga paralela o un multiplexor de ocho a uno gobernado por un contador. Se elige el registro porque requiere un encapsulado frente a los dos que exige la segunda opción, más la lógica de sincronización entre ambos. Dentro de esa familia se prefiere el 74LS166 sobre el 74LS165 porque el primero realiza la carga paralela de forma síncrona, en el flanco de reloj, mientras que el segundo la realiza de forma asíncrona en cuanto la entrada de modo baja. La carga síncrona deja el instante de captura determinado por el mismo reloj que después gobierna el desplazamiento, y es lo que permite que el retardo introducido por M2 haga efecto.
-
-### Tabla de función del integrado
-
-| nCLR | nSH/LD | INH | CLK | Operación |
-|---|---|---|---|---|
-| 0 | X | X | X | Borrado asíncrono, todas las etapas a cero |
-| 1 | 0 | 0 | Flanco de subida | Carga paralela de A a H |
-| 1 | 1 | 0 | Flanco de subida | Desplazamiento de una posición, ingresa SER |
-| 1 | X | 1 | Flanco de subida | Sin cambio, registro congelado |
-| 1 | X | X | Sin flanco | Sin cambio |
-
-### Asignación de entradas y trama resultante
-
-| Entrada | Señal conectada | Tiempo de bit | Función en la trama |
-|---|---|---|---|
-| H | Nivel bajo | 1 | Bit de inicio |
-| G | Nivel bajo | 2 | Dato |
-| F | Nivel bajo | 3 | Dato |
-| E | Nivel bajo | 4 | Dato |
-| D | Q2, pos0 | 5 | Dato, bit menos significativo de la posición |
-| C | Q3, pos1 | 6 | Dato, bit intermedio de la posición |
-| B | Q4, pos2 | 7 | Dato, bit más significativo de la posición |
-| A | Nivel alto | 8 | Bit de parada |
-| SER | Nivel bajo | Posterior | Relleno tras agotarse la trama |
-| INH | Nivel bajo | No aplica | Desplazamiento siempre habilitado |
-| nCLR | Nivel alto | No aplica | Borrado nunca activo |
-| nSH/LD | modo, desde M2 | No aplica | Selección entre carga y desplazamiento |
-
-La trama ocupa ocho tiempos de bit y contiene un bit de inicio, seis de datos y un bit de parada. Este formato difiere del 8N1 del enunciado por una razón dimensional, ya que un registro de ocho etapas ofrece ocho tiempos de bit y la corrección requiere cascadear un segundo encapsulado idéntico, con lo cual se dispondría de dieciséis tiempos de bit para los diez de la trama y seis de reposo.
-
-### Uso de módulos integrados
-
-- Registro paralelo a serie 74LS166 de ocho etapas
-
-## i) Diagrama esquemático detallado
-
-```mermaid
-flowchart LR
-    SER["SER = 0"] --> EA["Etapa A<br/>carga 1, bit de parada"]
-    EA --> EB["Etapa B<br/>carga Q4, pos2"]
-    EB --> EC["Etapa C<br/>carga Q3, pos1"]
-    EC --> ED["Etapa D<br/>carga Q2, pos0"]
-    ED --> EE["Etapa E<br/>carga 0"]
-    EE --> EF["Etapa F<br/>carga 0"]
-    EF --> EG["Etapa G<br/>carga 0"]
-    EG --> EH["Etapa H<br/>carga 0, bit de inicio"]
-    EH -->|"QH, salida serie"| M6D["Hacia M6"]
-    CLK["CLK_TX desde M1"] -->|"reloj comun a las 8 etapas"| EA
-    MOD["modo desde M2"] -->|"0 carga y 1 desplaza"| EA
-```
-
-## j) Diagrama completo de conexiones eléctricas
-
-![Registro de transmisión paralelo a serie](img/m5.png)
-
-Registro de ocho etapas con carga paralela síncrona. Las entradas B, C y D reciben los tres bits de posición, la entrada A queda en nivel alto para el bit de parada y las entradas E a H quedan en nivel bajo, con la H aportando el bit de inicio. La salida serie alimenta a M6.
-
-
-# M6: Acondicionamiento de la línea de transmisión
+# M5: Acondicionamiento de la línea de transmisión
 
 Corresponde a la salida del subsistema de transmisión en el tercer nivel, en el punto donde la trama serial abandona el protoboard hacia la FPGA.
 
