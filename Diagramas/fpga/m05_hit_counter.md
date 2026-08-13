@@ -37,3 +37,13 @@ flowchart LR
     U --> S
     D --> S
 ```
+
+Tabla de verdad de la lógica de control, con prioridad de arriba hacia abajo:
+
+| `rst` o `nueva_partida` | `hit` | `acierto[7:4]` | `acierto[3:0]` | Siguiente `acierto[7:4]` | Siguiente `acierto[3:0]` |
+|---|---|---|---|---|---|
+| 1 | X | X | X | 0 | 0 |
+| 0 | 0 | X | X | sin cambio | sin cambio |
+| 0 | 1 | 0 a 9 | 0 a 8 | sin cambio | `acierto[3:0]` + 1 |
+| 0 | 1 | 0 a 8 | 9 | `acierto[7:4]` + 1 | 0 |
+| 0 | 1 | 9 | 9 | 9 | 9 |

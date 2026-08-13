@@ -46,3 +46,14 @@ flowchart LR
     C["Contador descendente<br/>4 bits"] --> Z["Comparador<br/>cuenta = 0"]
     Z --> up[UP]
 ```
+
+Tabla de verdad de la lógica de control, con prioridad de arriba hacia abajo:
+
+| `rst` o `nueva_partida` | `ini` | `hit` | habilitación 100 ms | cuenta actual | Contador siguiente | Registro de dificultad siguiente | `UP` |
+|---|---|---|---|---|---|---|---|
+| 1 | X | X | X | X | 0 | 15 | 0 |
+| 0 | 1 | X | X | X | dificultad | sin cambio | 0 |
+| 0 | 0 | 1 | X | X | sin cambio (se detiene) | dificultad − 1 si dificultad > 5, si no sin cambio | 0 |
+| 0 | 0 | 0 | 1 | 0 | sin cambio | sin cambio | 1 |
+| 0 | 0 | 0 | 1 | ≠ 0 | cuenta − 1 | sin cambio | 0 |
+| 0 | 0 | 0 | 0 | X | sin cambio | sin cambio | 0 |

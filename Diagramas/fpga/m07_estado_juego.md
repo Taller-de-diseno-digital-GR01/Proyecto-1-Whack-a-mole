@@ -39,3 +39,13 @@ flowchart LR
     rst --> T
     rst --> B
 ```
+
+Tabla de verdad de la lógica de control, con prioridad de arriba hacia abajo:
+
+| `rst` | `estado[1:0]` = fin de partida | habilitación 100 ms | Contador de espera | Contador siguiente | `fin_espera` | Biestable de parpadeo |
+|---|---|---|---|---|---|---|
+| 1 | X | X | X | 0 | 0 | 0 |
+| 0 | 0 | X | X | 0 | 0 | 0 |
+| 0 | 1 | 0 | X | sin cambio | 0 | sin cambio |
+| 0 | 1 | 1 | < 20 | cuenta + 1 | 0 | conmuta cada 2 habilitaciones |
+| 0 | 1 | 1 | 20 | sin cambio | 1 | conmuta cada 2 habilitaciones |
