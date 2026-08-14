@@ -68,13 +68,15 @@ flowchart TD
         FSM -->|"en_hit"| cnt
         comp --> |"acierto"| FSM
         comp2 --> |"fallo"| FSM
-        REG_U -->|"pos_topo [2:0]"| FSM  
+        REG_U -->|"pos_topo [2:0]"| FSM 
+        REG_U -->|"valid_pos"| FSM 
         REG_U -->|"pos_topo [2:0]"| TOPO
+        FSM -->|"en_save_pos"| REG_U
         TIME -->|"UP"| FSM
 
     end
 
-    REG -->|"pos[9:0]"| REG_U
+    REG -->|"pos(8)"| REG_U
 
     BTN["Botones"]
     BTN -->|"btn [7:0]"| PRESS

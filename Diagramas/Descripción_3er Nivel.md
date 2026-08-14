@@ -44,11 +44,13 @@ Recibir la señal recibida por medio de la UART para entregarla en el formato ad
 
 - Pos(8): Señal que proviene del subsistema discreto con la posición generada aleatoriamente por la LSFR, esta señal llega emapaquetada por medio del protocolo UART que debe recibirse de manera serial y ser dado en formato paralelo para enviarselo al resto de modulos.
 - rst: Señal de reinicio síncrono del sistema.
+- `en_save_pos`: señal habilitadora proveniente de la FSM (estado `010`, `en_save_pos` en M8) que indica que la posición decodificada debe quedar disponible/retenida para el turno en curso.
 
 #### c) Salidas
 
-- pos_topo[2:0]: posición del topo de 3 bits que va al modulo Show_Mole y 
-
+- `pos_topo[2:0]`: posición decodificada del topo, 3 bits menos significativos del byte de datos recibido.
+- `valid_pos`: pulso hacia la FSM que indica que se completó la recepción y decodificación de una trama nueva.
+  
 #### d) Explicación General
 
 La señal Pos(8) se recibe por medio de un registro, el cual a su vez es controlado por un contador que se asegura que solo se recibam los 8 bits de la UART. Y este registro es manejado por un reloj de aproximadamente 9600 Hz, que generan un baud rate de 9600 b/s. 
