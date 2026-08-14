@@ -93,7 +93,7 @@ flowchart LR
 
 ## j) Diagrama completo de conexiones eléctricas
 
-![Oscilador astable del reloj de baudios](../img/m1.png)
+![Oscilador astable del reloj de baudios](img/m1.png)
 
 Temporizador con la red de temporización formada por las dos resistencias y el capacitor conectado al nodo de umbral y disparo. El capacitor del terminal de control desacopla el divisor interno de referencia. La salida entrega `CLK_TX` hacia M2 y M5.
 
@@ -263,7 +263,7 @@ flowchart LR
 
 ## j) Diagrama completo de conexiones eléctricas
 
-![Registro de desplazamiento con realimentación lineal](../img/m3.png)
+![Registro de desplazamiento con realimentación lineal](img/m3.png)
 
 Cadena de cuatro flip-flops tipo D con la compuerta XOR de realimentación cerrando el lazo desde las etapas tres y cuatro hacia la entrada de dato de la primera. Las cuatro etapas comparten la misma línea de reloj. Las salidas de las etapas dos, tres y cuatro forman `pos[2:0]` hacia M4 y M5.
 
@@ -372,6 +372,6 @@ flowchart LR
 
 ## j) Diagrama completo de conexiones eléctricas
 
-![Acondicionamiento de la línea de transmisión](../img/m6.png)
+![Acondicionamiento de la línea de transmisión](img/m6.png)
 
 Inversor y compuerta OR en cascada. El inversor complementa la señal de modo y la compuerta fuerza el nivel alto de reposo mientras el registro carga, dejando pasar el flujo serial durante el desplazamiento. La salida entrega `TX` hacia la FPGA.
