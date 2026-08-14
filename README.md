@@ -10,6 +10,8 @@
 
 - Carlos Castro Villegas
 - Jefferson Chinchilla Quesada 2023152266
+- Carlos Castro Villegas 2023149025
+- Jefferson Chinchilla Quesada
 - Mattio Coghi Quirós 2023056023
 - Nicolás Mena Valerio
 
