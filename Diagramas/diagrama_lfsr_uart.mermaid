@@ -1,0 +1,28 @@
+flowchart TD
+    VCC(["VCC"])
+
+    subgraph GEN[" "]
+        CLK1["CLK<br/>555"]
+        LFSR["LFSR"]
+
+        CLK1 -->|CLK| LFSR
+    end
+
+    subgraph UART["UART"]
+        CLK2["CLK<br/>555"]
+        REG["Registro"]
+
+        CLK2 -->|"en"| REG
+    end
+
+    VCC --> GEN
+    LFSR -->|"pos [2:0]"| REG
+    REG --> FPGA["FPGA"]
+
+    classDef verde fill:#000,stroke:#0c0,stroke-width:2px,color:#fff
+    classDef rojo fill:#000,stroke:#c00,stroke-width:2px,color:#fff
+    classDef libre fill:#000,stroke:#000,color:#fff
+
+    class CLK1,CLK2,LFSR verde
+    class REG rojo
+    class VCC,FPGA libre
