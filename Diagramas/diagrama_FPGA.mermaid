@@ -6,41 +6,90 @@ flowchart TD
 
     subgraph FPGA["FPGA"]
 
-        TOPO["Show_mole"]
-        PRESS["Press_btn"]
+        TOPO["Show_mole <br/>Deco 3:8"]
+        PRESS["Press_btn<br/>Debouncer"]
         TIME["Time_Logic"]
-        DECO["Deco UART"]
-        FSM["FSM<br/>Máquina de Estados"]
-        STATE["Estado de juego"]
-        CA["Contador Acierto"<br/>Hit_Counter]
-        C_F["Contador Fallo"<br/>Fail_Counter]
-  
+        FSM("FSM<br/><br/><br/>Máquina de Estados")
+        STATE["Estado de juego<br/>State"]
+        
+
+            subgraph TIME["Time_Logic"]
+
+            end
+        
+            subgraph CA["Contador Acierto"<br/>Hit_Counter]
+                DECO_BSD["Deco BCD"]
+                comp["Comparador"]
+                cnt["Contador"]
+
+
+                clk1["clk"] --> cnt
+                RST["rst"] --> cnt
+                cnt --> |"acierto [6:0]"| comp
+                99 --> |"acierto [6:0]"| comp
+                cnt --> |"acierto [7:0]"| DECO_BSD
+                
+            end
+        
+            subgraph C_F["Contador Fallo"<br/>Fail_Counter]
+                DE_BSD["Deco BCD"]
+                comp2["Comparador"]
+                CONT["Contador"]
+
+                clk2["clk"] --> CONT
+                rst2["rst"] --> CONT
+                CONT --> |"fallo [1:0]"| comp2
+                3 --> |"fallo [1:0]"| comp2
+                CONT --> |"fallo [7:0]"| DE_BSD
+
+            end
+
+            subgraph UART_R["Receptor UART"]
+                CON_U["Contador"]
+                REG_U["REG UART"]
+                CLK_U["CLK UART"]
+
+                CLK_U -->|"9600 Hz"| REG_U
+                CLK_U --> CON_U
+                REG_U -->|"dato [7:0]"| CON_U
+                CON_U -->|"en"| REG_U
+
+            end
+        
 
         CLK--> FSM
         rst--> FSM
-        FSM -->|"pos_topo [7:0]"| TOPO
-        PRESS -->|"btn [7:0]"| FSM
+        FSM -->|"en_topo"| TOPO
+        FSM -->|"sol"| REG
+        PRESS -->|"btn"| FSM
         FSM -->|"hit"| TIME
-        FSM -->|"estado [1:0]"| STATE
-        FSM -->|"acierto [6:0]"| CA
-        FSM -->|"fallo [1:0]"| C_F
-        DECO -->|"pos_topo [2:0]"| FSM  
+        FSM -->|"estado"| STATE
+        FSM -->|"en_fail"| CONT
+        FSM -->|"en_hit"| cnt
+        comp --> |"acierto"| FSM
+        comp2 --> |"fallo"| FSM
+        REG_U -->|"pos_topo [2:0]"| FSM  
+        REG_U -->|"pos_topo [2:0]"| TOPO
         TIME -->|"UP"| FSM
 
     end
-    REG -->|"pos[9:0]"| DECO
-    BTN["Botones"]
 
-    
+    REG -->|"pos[9:0]"| REG_U
+
+    BTN["Botones"]
+    BTN -->|"btn [7:0]"| PRESS
+
     LED8["LED's Topos"]
     LED["LED estado"]
     MARK["Marcador"]
     
     TOPO -->|"pos_topo [7:0]"| LED8
     STATE -->|"estado"| LED
-    CA -->|"acierto [6:0]"| MARK
-    C_F -->|"fallo [1:0]"| MARK
-    BTN -->|"btn [7:0]"| PRESS
+
+    DECO_BSD -->|"acierto [6:0]"| MARK
+    DE_BSD -->|"fallo [1:0]"| MARK
+
+    
 
 
     
