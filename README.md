@@ -1,12 +1,16 @@
 # Proyecto 1: Whack-a-mole
 
  EL3313 Taller de Diseño Digital
+
  II Semestre 2026
+
  Dr.-Ing. Jeferson González-Gómez, Ing. Rolen Coto Calderón
+
 **Integrantes:**
+
 - Carlos Castro Villegas
 - Jefferson Chinchilla Quesada
-- Mattio Coghi Quirós
+- Mattio Coghi Quirós 2023056023
 - Nicolás Mena Valerio
 
 ## Descripción del sistema
@@ -27,7 +31,7 @@ dificultad progresiva, conteo de aciertos y fallos, y despliegue del marcador en
 
 ### Nivel 3 - Diagrama de tercer nivel
 - [Subsistema FPGA: objetivo, entradas, salidas y módulos](<docs/diseño/Descripción_3er Nivel.md>)
-  - [Diagrama de módulos FPGA (fuente Mermaid)](docs/diseño/diagrama_FPGA.mermaid) · [imagen](docs/diseño/diagrama_FPGA.png)
+  - [Diagrama de módulos FPGA (fuente Mermaid)](docs/diseño/diagrama_FPGA.mermaid)  [imagen](docs/diseño/diagrama_FPGA.png)
   - [Vista alterna del mismo diagrama](docs/diseño/uart_fpga_system.png)
 - [Subsistema discreto (diagrama preliminar)](docs/diseño/diagrama_lvl_3.md)
   - [Diagrama LFSR + registro UART (fuente Mermaid)](docs/diseño/diagrama_lfsr_uart.mermaid)
@@ -43,7 +47,7 @@ dificultad progresiva, conteo de aciertos y fallos, y despliegue del marcador en
   - [M6. Fail_Counter](docs/diseño/fpga/m06_fail_counter.md)
   - [M7. Estado de juego](docs/diseño/fpga/m07_estado_juego.md)
   - [M8. FSM (máquina de estados central)](docs/diseño/fpga/m08_FSM.md)
-    · diagrama de estados: [fuente draw.io](docs/diseño/fpga/FSM_proyecto1.drawio) · [imagen](docs/diseño/fpga/FSM_proyecto1.drawio.png)
+    * diagrama de estados: [fuente draw.io](docs/diseño/fpga/FSM_proyecto1.drawio)  [imagen](docs/diseño/fpga/FSM_proyecto1.drawio.png)
 
 ### Nivel 5 - Esquemático total
 Pendiente. Aún no hay un documento de nivel 5 que integre el esquemático eléctrico completo de ambos
@@ -52,7 +56,7 @@ subsistemas. El esquemático Multisim del subsistema discreto ya existe, ver
 
 ## Investigación previa
 
-Pendiente. Aún no se ha agregado documentación de investigación previa a este repositorio.
+Pendiente.
 
 ## Informe técnico
 
@@ -60,11 +64,11 @@ Pendiente. Ver [docs/informe/](docs/informe/README.md).
 
 ## Código SystemVerilog
 
-Pendiente. Aún no se ha subido código SystemVerilog (fuentes ni testbenches) a este repositorio.
+Pendiente.
 
 ## Simulaciones
 
-Pendiente. Aún no hay simulaciones ni waveforms de la FPGA en este repositorio.
+Pendiente.
 
 ## Subsistema discreto (protoboard)
 
@@ -76,27 +80,25 @@ Pendiente. Aún no hay simulaciones ni waveforms de la FPGA en este repositorio.
 ```
 .
 ├── README.md
-├── Proyectos_EL3313_proyecto1_2S2026.pdf   # enunciado del proyecto
+├── Proyectos_EL3313_proyecto1_2S2026.pdf # enunciado del proyecto
 ├── docs/
 │   ├── diseño/
-│   │   ├── objetivos_descripciones.md      # Nivel 1 + Nivel 2
+│   │   ├── objetivos_descripciones.md # Nivel 1 + Nivel 2
 │   │   ├── Diagrama_de_flujo_proyecto1(.drawio.png)
-│   │   ├── Descripción_3er Nivel.md        # Nivel 3, lado FPGA
-│   │   ├── diagrama_FPGA.mermaid / .png    # Nivel 3, lado FPGA
-│   │   ├── uart_fpga_system.png            # Nivel 3, lado FPGA (vista alterna)
-│   │   ├── diagrama_lvl_3.md               # Nivel 3, lado discreto
-│   │   ├── diagrama_lfsr_uart.mermaid      # Nivel 3, lado discreto
-│   │   ├── diagrama_lvl_4.md               # Nivel 4, lado discreto
-│   │   ├── fpga/                           # Nivel 4, lado FPGA (M1-M8)
-│   │   └── img/                            # imágenes de esquemáticos del Nivel 4 discreto
-│   └── informe/                            # informe técnico (pendiente)
+│   │   ├── Descripción_3er Nivel.md # Nivel 3, lado FPGA
+│   │   ├── diagrama_FPGA.mermaid/.png # Nivel 3, lado FPGA
+│   │   ├── uart_fpga_system.png # Nivel 3, lado FPGA (vista alterna)
+│   │   ├── diagrama_lvl_3.md # Nivel 3, lado discreto
+│   │   ├── diagrama_lfsr_uart.mermaid # Nivel 3, lado discreto
+│   │   ├── diagrama_lvl_4.md   # Nivel 4, lado discreto
+│   │   ├── fpga/            # Nivel 4, lado FPGA (M1-M8)
+│   │   └── img/       # imágenes de esquemáticos del Nivel 4 discreto
+│   └── informe/ # informe técnico
 ├── discreto/
-│   └── Simulacion_bloque_discreto.ms14     # esquemático Multisim del subsistema discreto
+│   └── Simulacion_bloque_discreto.ms14 # esquemático Multisim del subsistema discreto
 ```
 
 ## Compilación y simulación
 
 Este repositorio todavía no contiene código SystemVerilog, por lo que no hay un flujo de síntesis o
-simulación que documentar. Cuando se agreguen fuentes y testbenches, deberían ubicarse en `rtl/src/` y
-`rtl/tb/` respectivamente, con las simulaciones en `sim/` y las restricciones de la tarjeta en `constraints/`,
-siguiendo la estructura de este README.
+simulación que documentar.
