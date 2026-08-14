@@ -4,9 +4,10 @@
 **Semestre:** II Semestre 2026
 **Profesores:** Dr.-Ing. Jeferson González-Gómez, Ing. Rolen Coto Calderón
 **Integrantes:**
-- TODO
-- TODO
-- TODO
+- Carlos Castro Villegas
+- Jefferson Chinchilla Quesada
+- Mattio Coghi Quirós
+- Nicolás Mena Valerio
 
 ## Descripción del sistema
 
