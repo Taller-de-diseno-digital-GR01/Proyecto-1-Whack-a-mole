@@ -47,7 +47,7 @@ Decodificar la señal recibida por medio de la UART para entregarla a la FSM cua
 
 #### c) Salidas
 
-- pos_topo[2:0]: 
+- pos_topo[2:0]: posición del topo de 3 bits que va al modulo Show_Mole y 
 
 #### d) Explicación General
 
@@ -57,15 +57,20 @@ La señal Pos[9:0] se decodifica por medio del módulo Deco_UART en una señal P
 
 #### a) Objetivo
 
-- 
+- Mostrar en la matriz LED 4x2 al topo generado en una posición aleatoria generada por la LFSR.
 
 #### b) Entradas
 
+- pos_topo[2:0]: posición del topo de 3 bits que proviene del registro del Receptor UART
+- en_topo: señal enabler para encender el LED correspondiente
+
 #### c) Salidas
 
-- 
+- pos_topo[7:0]: es la señal que viaja a los LED´s para enceder el LED correspondiente
 
 #### d) Explicación General
+Este módulo recibe tanto la posición del topo pos_topo[2:0] del registro del Recptor UART, como una señal de control de la FSM. Este módulo se encarga de decodificar con un deco 3:8 para enceder el LED correspondiente al topo generado.
+Este LED se activa cuando la FSM solicita al módulo la posición y lo autoriza a mostrarlo
 
 ### M3: Press_btn
 
