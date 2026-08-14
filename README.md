@@ -9,7 +9,7 @@
 **Integrantes:**
 
 - Carlos Castro Villegas
-- Jefferson Chinchilla Quesada
+- Jefferson Chinchilla Quesada 2023152266
 - Mattio Coghi Quirós 2023056023
 - Nicolás Mena Valerio
 
