@@ -4,12 +4,8 @@ flowchart TD
     subgraph GEN[" "]
         CLK1["CLK<br/>555"]
         LFSR["LFSR"]
-        DECO["Deco"]
-        LEDS["LEDs"]
 
         CLK1 -->|CLK| LFSR
-        LFSR -->|"pos [2:0]"| DECO
-        DECO -->|"pos_topo [7:0]"| LEDS
     end
 
     subgraph UART["UART"]
@@ -27,6 +23,6 @@ flowchart TD
     classDef rojo fill:#000,stroke:#c00,stroke-width:2px,color:#fff
     classDef libre fill:#000,stroke:#000,color:#fff
 
-    class CLK1,CLK2,LFSR,DECO verde
-    class LEDS,REG rojo
+    class CLK1,CLK2,LFSR verde
+    class REG rojo
     class VCC,FPGA libre
