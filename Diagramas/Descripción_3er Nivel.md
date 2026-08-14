@@ -20,13 +20,13 @@
 
 ## Explicación General
 
-La señal Pos[9:0] se decodifica por medio del módulo Deco_UART en una señal Pos_Topo[2:0] que es solicitada por la FSM en cada turno, la FSM verifica la posición y la muestra con LED´s mediante el módulo Show_Mole. La FSM en cada turno toma la señal de los botones mediante el módulo Press_btn y compara si se presionó el botón correcto dentro de la ventada de tiempo estipulada por el módulo Time_Logic.
+La señal Pos[7:0] se decodifica por medio del módulo Deco_UART en una señal Pos_Topo[2:0] que es solicitada por la FSM en cada turno, la FSM verifica la posición y la muestra con LED´s mediante el módulo Show_Mole. La FSM en cada turno toma la señal de los botones mediante el módulo Press_btn y compara si se presionó el botón correcto dentro de la ventada de tiempo estipulada por el módulo Time_Logic.
 En caso de que ambos valores sean iguales, el módulo Time_Logic decrece la ventana de tiempo en 100ms hasta llegar a los 500ms de tiempo para acertar y el módulo Hit_Counter aunmenta el valor del contador que se muestra en el Marcador con la señal acierto[6:0]. En caso de fallar, el módulo Fail_Counter aumenta el valor con un límite de 3 equivocaciones y lo muestra en Marcador con fallo[1:0], si ocurre un acierto este contador se reinicia.
 Durante toda la partida, se muestra el estado de la misma con el módulo Estado de juego (State), que muestra mediante un LED si se está en medio juego o si finalizó, con una ventada de 2 segundos entre una partida y otra que inicia automáticamente.
 
 ## Módulos
 
-- M1. Módulo Deco_UART
+- M1. Módulo Receptor_UART
 - M2. Módulo Show_Mole
 - M3. Módulo Press_btn
 - M4. Módulo Time_Logic
@@ -34,15 +34,15 @@ Durante toda la partida, se muestra el estado de la misma con el módulo Estado 
 - M6. Módulo Fail_Counter
 - M7. Módulo State
 
-### M1: Deco_UART
+### M1: Receptor_UART
 
 #### a) Objetivo
 
-Decodificar la señal recibida por medio de la UART para entregarla a la FSM cuando esta la solicita.
+Recibir la señal recibida por medio de la UART para entregarla en el formato adecuado a la FSM cuando esta la solicita.
 
 #### b) Entradas
 
-- Pos[9:0]: Señal que proviene del subsistema discreto con la posición generada aleatoriamente por la LSFR, esta señal llega emapaquetada por medio del protoco UART que debe decodificarse para obtener la posición del topo
+- Pos[7:0]: Señal que proviene del subsistema discreto con la posición generada aleatoriamente por la LSFR, esta señal llega emapaquetada por medio del protocolo UART que debe recibirse de manera serial y ser dado en formato paralelo para enviarselo al resto de modulos.
 - rst: Señal de reinicio síncrono del sistema.
 
 #### c) Salidas
@@ -51,7 +51,7 @@ Decodificar la señal recibida por medio de la UART para entregarla a la FSM cua
 
 #### d) Explicación General
 
-La señal Pos[9:0] se decodifica por medio del módulo Deco_UART en una señal Pos_Topo[2:0] que es solicitada por la FSM en cada turno
+La señal Pos[7:0] se recibe por medio de un decodificador, el cual a su vez es controlado por un contador que se asegura que solo se recibam los 8 bits de la UART. Y este registro es manejado por un reloj de aproximadamente 9600 Hz, que generan un baud rate de 9600 b/s. 
 
 ### M2: módulo Show_Mole
 
