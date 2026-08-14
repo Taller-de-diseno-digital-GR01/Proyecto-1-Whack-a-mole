@@ -1,8 +1,8 @@
-# Proyecto 1: Whack-a-mole híbrido FPGA / lógica discreta
+# Proyecto 1: Whack-a-mole
 
-**Curso:** EL3313 Taller de Diseño Digital
-**Semestre:** II Semestre 2026
-**Profesores:** Dr.-Ing. Jeferson González-Gómez, Ing. Rolen Coto Calderón
+ EL3313 Taller de Diseño Digital
+ II Semestre 2026
+ Dr.-Ing. Jeferson González-Gómez, Ing. Rolen Coto Calderón
 **Integrantes:**
 - Carlos Castro Villegas
 - Jefferson Chinchilla Quesada
@@ -10,7 +10,6 @@
 - Nicolás Mena Valerio
 
 ## Descripción del sistema
-
 El juego se implementa con dos subsistemas de reloj independiente. Un circuito en protoboard, construido
 con lógica discreta 74xx y un oscilador 555, decide de forma pseudoaleatoria (LFSR) cuál de 8 posiciones
 corresponde al topo y la indica con un LED. Esa posición se envía a la FPGA mediante un enlace serial UART
