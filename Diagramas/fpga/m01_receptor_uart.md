@@ -23,6 +23,61 @@ Tabla de estados del contador de recepción (`CON_U`), simplificada:
 | `STOP` | bit de parada = 1 | `pos_topo` = dato[2:0], pulso `valid_pos` | `IDLE` |
 | `STOP` | bit de parada = 0 | descartar trama, sin pulso `valid_pos` | `IDLE` |
  
+
+ Para llevar el control de recepción a una implementación directa en HDL se codifican sus 4 estados con 2 bits (`Q1 Q0`) y se derivan las tablas de verdad de siguiente estado y de salidas a partir de las señales de datapath: `pos(8)` (línea ya sincronizada), `tick` (pulso del generador de baudios, uno por período de bit) y `cntr` (bandera del contador de bits de datos, en 1 cuando ya se muestrearon los 8 bits).
+
+
+**Codificación de estados**
+ 
+| Estado | `Q1` | `Q0` |
+|---|---|---|
+| `IDLE` | 0 | 0 |
+| `START` | 0 | 1 |
+| `DATO` | 1 | 0 |
+| `STOP` | 1 | 1 |
+ 
+**Tabla de verdad de siguiente estado**
+ 
+| `Q1` | `Q0` | `pos(8)` | `tick` | `cntr` | `Q1'` | `Q0'` | Comentario |
+|---|---|---|---|---|---|---|---|
+| 0 | 0 | 1 | X | X | 0 | 0 | sin flanco de inicio, permanece en `IDLE` |
+| 0 | 0 | 0 | X | X | 0 | 1 | flanco de bajada detectado, pasa a `START` |
+| 0 | 1 | X | 0 | X | 0 | 1 | espera a completar medio período de bit |
+| 0 | 1 | 0 | 1 | X | 1 | 0 | bit de inicio confirmado en el centro del bit, pasa a `DATO` |
+| 0 | 1 | 1 | 1 | X | 0 | 0 | glitch: la línea subió antes del muestreo, se descarta y regresa a `IDLE` |
+| 1 | 0 | X | 0 | X | 1 | 0 | espera al siguiente `tick` para muestrear el bit de datos |
+| 1 | 0 | X | 1 | 0 | 1 | 0 | se desplaza un bit de datos, aún no completa los 8 |
+| 1 | 0 | X | 1 | 1 | 1 | 1 | octavo bit de datos muestreado, pasa a `STOP` |
+| 1 | 1 | X | 0 | X | 1 | 1 | espera al `tick` del bit de parada |
+| 1 | 1 | X | 1 | X | 0 | 0 | se evalúa el bit de parada (válido o no) y regresa a `IDLE` |
+ 
+**Tabla de verdad de salidas** (`shift_en` y `bit_cnt_en` son de Moore, dependen solo del estado; `valid_pos` es de Mealy, depende también de `pos(8)` y `tick` en el estado `STOP`, ya que indica si la trama fue válida)
+ 
+| `Q1` | `Q0` | `pos(8)` | `tick` | `shift_en` | `bit_cnt_en` | `valid_pos` |
+|---|---|---|---|---|---|---|
+| 0 | 0 | X | X | 0 | 0 | 0 |
+| 0 | 1 | X | X | 0 | 0 | 0 |
+| 1 | 0 | X | 1 | 1 | 1 | 0 |
+| 1 | 0 | X | 0 | 0 | 0 | 0 |
+| 1 | 1 | 1 | 1 | 0 | 0 | 1 |
+| 1 | 1 | 0 | 1 | 0 | 0 | 0 |
+| 1 | 1 | X | 0 | 0 | 0 | 0 |
+ 
+**Sincronizador de dos etapas** (cada etapa es un flip-flop tipo D, su tabla de verdad es la del flip-flop D estándar y no requiere lógica combinacional adicional):
+ 
+| `D` | `Q` (estado actual) | `Q+` (siguiente flanco de `clk`) |
+|---|---|---|
+| 0 | X | 0 |
+| 1 | X | 1 |
+ 
+**Generador de baudios (`CLK_U`)**, contador módulo `N = f_clk / baudrate` (con `baudrate` = 9600 y `f_clk` = 100MHz, `N` = 10417):
+ 
+| Condición | `count'` | `tick` |
+|---|---|---|
+| `count` < `N` − 1 | `count` + 1 | 0 |
+| `count` = `N` − 1 | 0 | 1 |
+| `rst` = 1 | 0 | 0 |
+
 ## i) Diagrama esquemático detallado del diseño
  
 ```mermaid
