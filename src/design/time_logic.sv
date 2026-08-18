@@ -31,9 +31,7 @@ module time_logic #(
   // O sea, hay un tick cada 100ms
 
   always_ff @(posedge clk) begin
-    if(rst | nueva_partida) contador_presc <= 0;
-    else if (inicio | (contador_presc == N_PRESC-1)) contador_presc <= 0; // TODO: Revisar este warning
-    else contador_presc <= contador_presc + 1;
+    contador_presc <= (rst | nueva_partida | inicio | (contador_presc == N_PRESC-1)) ? 0 : contador_presc + 1; // TODO: Revisar este warning + situación ternária
   end
 
 
@@ -44,7 +42,7 @@ module time_logic #(
 
   logic [VENTANA_TICKS_WIDTH-1:0] ventana_ticks; // 4 bits, da espacio para 15  niveles de dificultad
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clk) begin // TODO: Pasar esto a un operador ternário
     if(rst | nueva_partida) ventana_ticks <= VENTANA_TICKS_INICIAL;
     else if(hit & (ventana_ticks > VENTANA_TICKS_MINIMA)) ventana_ticks <= ventana_ticks - 1;
     else ventana_ticks <= ventana_ticks;
@@ -52,5 +50,16 @@ module time_logic #(
 
 
   // 3. Contador de ventana
+  logic [VENTANA_TICKS_WIDTH-1:0] contador_ventana;
+
+  always_ff @(posedge clk) begin
+    if(rst | nueva_partida) contador_ventana <= 0;
+    else if(inicio) contador_ventana <= ventana_ticks;
+    else if(hit) contador_ventana <= contador_ventana;
+    else if(tick & (contador_ventana != 0)) contador_ventana <= contador_ventana - 1;
+    else contador_ventana <= contador_ventana;
+  end
+
+  assign UP = tick & (contador_ventana == 0) & !hit & !inicio & !(rst | nueva_partida); // TODO: Revisar que esto esté bien
 
 endmodule
