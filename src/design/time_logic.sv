@@ -1,4 +1,4 @@
-module time_logic #(parameter WIDTH=32, parameter CLK_FREQ = 100_000_000, parameter TICK = 100, parameter UNI_TIEMPO=1000) ( // <-- TODO: Revisar que CLK_FREQ esté bien
+module time_logic #(parameter CLK_FREQ = 100_000_000, parameter TICK = 100, parameter UNI_TIEMPO=1000) ( // <-- TODO: Revisar que CLK_FREQ esté bien
   input logic clk,
   input logic rst,
   input logic inicio,
@@ -8,24 +8,26 @@ module time_logic #(parameter WIDTH=32, parameter CLK_FREQ = 100_000_000, parame
   output logic UP
   );
 
-  localparam [WIDTH-1:0] N_PRESC = (CLK_FREQ / UNI_TIEMPO) * TICK; // <-- Completamente dinámico
+  localparam int N_PRESC = (CLK_FREQ / UNI_TIEMPO) * TICK; // <-- Completamente dinámico, tiempo para llegar a 100ms
 
   localparam PRESC_WIDTH = $clog2(N_PRESC); // <-- Cantidad de bits para esto
 
   logic [PRESC_WIDTH-1:0] contador_presc;
 
   logic tick;
-  assign tick = contador_presc == (N_PRESC - 1);
+  assign tick = (contador_presc == (N_PRESC - 1)); // TODO: Revisar este warning
+  // La idea de tick es que es 1 cuando contador_presc (que se actualiza por el ff) sea igual al máximo que se puede llegar (100ms)
+  // O sea, hay un tick cada 100ms
 
   // Cosas pendientes
-  // 1. Prescalador: Genera el tick de 100ms []
+  // 1. Prescalador: Genera el tick de 100ms [x]
   // 2. Registro para dificultad             []
   // 3. Contador de ventana                  []
 
   //1. Prescalador
   always_ff @(posedge clk) begin
-    if(rst || nueva_partida) contador_presc <= 0;
-    else if (inicio || (contador_presc == N_PRESC-1)) contador_presc <= 0;
+    if(rst | nueva_partida) contador_presc <= 0;
+    else if (inicio | (contador_presc == N_PRESC-1)) contador_presc <= 0; // TODO: Revisar este warning
     else contador_presc <= contador_presc + 1;
   end
 
