@@ -38,16 +38,16 @@ module time_logic #(
 
 
   // 2. Registro para dificultad
-  localparam DIFICULTAD_INICIAL = VENTANA_INICIAL / TICK; // <-- Son los 1.5s que el enunciado menciona
-  localparam DIFICULTAD_MINIMA = VENTANA_MINIMA / TICK; // <-- Dificultad máxima de solo 500ms
-  localparam NIVS_DIFICULTAD = $clog2(DIFICULTAD_INICIAL+1);
+  localparam VENTANA_TICKS_INICIAL = VENTANA_INICIAL / TICK; // <-- Son los 1.5s que el enunciado menciona
+  localparam VENTANA_TICKS_MINIMA = VENTANA_MINIMA / TICK; // <-- Dificultad máxima de solo 500ms
+  localparam VENTANA_TICKS_WIDTH = $clog2(VENTANA_TICKS_INICIAL+1);
 
-  logic [NIVS_DIFICULTAD-1:0] dificultad; // 4 bits, da espacio para 15  niveles de dificultad
+  logic [VENTANA_TICKS_WIDTH-1:0] ventana_ticks; // 4 bits, da espacio para 15  niveles de dificultad
 
   always_ff @(posedge clk) begin
-    if(rst | nueva_partida) dificultad <= DIFICULTAD_INICIAL;
-    else if(hit & (dificultad > DIFICULTAD_MINIMA)) dificultad <= dificultad - 1;
-    else dificultad <= dificultad;
+    if(rst | nueva_partida) ventana_ticks <= VENTANA_TICKS_INICIAL;
+    else if(hit & (ventana_ticks > VENTANA_TICKS_MINIMA)) ventana_ticks <= ventana_ticks - 1;
+    else ventana_ticks <= ventana_ticks;
   end
 
 
