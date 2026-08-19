@@ -56,7 +56,7 @@ module tb_fsm;
     always_comb begin
         case (current_state_out)
             3'b000: state_name = "START";
-            3 me001: state_name = "REQ_POS";
+            3'b001: state_name = "REQ_POS";
             3'b010: state_name = "WAIT_UART";
             3'b011: state_name = "PLAY";
             3'b100: state_name = "FAILURE";
