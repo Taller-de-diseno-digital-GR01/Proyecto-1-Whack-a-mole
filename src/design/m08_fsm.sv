@@ -1,7 +1,7 @@
 module fsm (
 
 //Entradas:
-    input logic clk
+    input logic clk,
     input logic req_sent,
     input logic valid_pos,
     input logic btn_pos,
