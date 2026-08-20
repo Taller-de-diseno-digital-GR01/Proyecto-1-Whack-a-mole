@@ -122,12 +122,11 @@ Para llevar el control de recepción a una implementación directa en HDL se cod
 
 ```mermaid
 flowchart LR
-    pos["pos(8)"] --> S1["FF"]
+subgraph UART["UART"]
+
     S1["FF"] --> S2["FF"]
     S2["FF"] --> SYNC["pos(8)_sync"]
-    CLK["clk 100MHz"] --> S1
-    CLK --> S2
-    CLK --> FEDGE["FF pos_sync_prev"]
+    
     SYNC --> FEDGE
     SYNC --> EDGE["Detector de flanco<br/>(AND)"]
     FEDGE --> EDGE
@@ -139,17 +138,28 @@ flowchart LR
     CMP0 -->|"flag_cont"| CTRL
     CTRL -->|"shift_en"| SH["Registro de<br/>desplazamiento 8 bits"]
     SYNC --> SH
-    SH --> BCNT["Contador de bits<br/>ascendente 0-8"]
+    SH --> BCNT["Contador de bits<br/>ascendente 0-7"]
     CTRL -->|"shift_en"| BCNT
     BCNT --> CMP8["Comparador = 8"]
     CMP8 -->|"cont_8"| CTRL
     SYNC --> CTRL
     CTRL -->|"valid_pos"| VAL["valid_pos"]
     VAL --> AND1["AND captura"]
-    en_save_pos["en_save_pos"] --> AND1
+    
     SH -->|"dato[2:0]"| REGOUT["Registro de salida<br/>pos_topo[2:0]"]
     AND1 -->|captura| REGOUT
+
+
+end
+    pos["pos(8)"] --> S1["FF"]
+
+    CLK["clk 100MHz"] --> S1
+    CLK --> S2
+    CLK --> FEDGE["FF pos_sync_prev"]
+    
+    en_save_pos["en_save_pos"] --> AND1
     REGOUT --> pos_topo["pos_topo[2:0]"]
+
     rst["rst"] --> S1
     rst --> S2
     rst --> FEDGE
