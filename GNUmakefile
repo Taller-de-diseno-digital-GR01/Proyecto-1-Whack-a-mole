@@ -18,6 +18,9 @@ VVP_OUT := $(BUILD_DIR)/tb_$(TB).vvp
 VCD_OUT := $(BUILD_DIR)/tb_$(TB).vcd
 SVG_OUT := $(BUILD_DIR)/tb_$(TB).svg
 
+# Identifica el toolchain (ruta + versión de iverilog) para invalidar el build si src/build/ quedó con binarios de otra máquina
+TOOLCHAIN_STAMP := $(BUILD_DIR)/.toolchain
+
 .PHONY: all help list sim wave dump test clean check-tb
 
 all: help
@@ -45,7 +48,11 @@ endif
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
-$(VVP_OUT): $(DESIGN_SRCS) $(SIM_DIR)/tb_$(TB).sv | $(BUILD_DIR) check-tb
+$(TOOLCHAIN_STAMP): | $(BUILD_DIR)
+	@echo "$$($(IVERILOG) -V | head -1)|$$(command -v $(IVERILOG))" > $@.tmp
+	@cmp -s $@.tmp $@ 2>/dev/null && rm -f $@.tmp || mv $@.tmp $@
+
+$(VVP_OUT): $(DESIGN_SRCS) $(SIM_DIR)/tb_$(TB).sv $(TOOLCHAIN_STAMP) | $(BUILD_DIR) check-tb
 	$(IVERILOG) $(IVERILOG_FLAGS) -o $@ $(DESIGN_SRCS) $(SIM_DIR)/tb_$(TB).sv
 
 sim: check-tb $(VVP_OUT)
