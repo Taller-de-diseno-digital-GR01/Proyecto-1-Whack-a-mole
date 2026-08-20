@@ -114,7 +114,7 @@ module r_uart #(
         if (rst)
             shift_reg <= 8'b0;
         else if (shift_en)
-            shift_reg <= {shift_reg[6:0], pos_sync};
+            shift_reg <= {pos_sync, shift_reg[7:1]};
     end
 
     // -----------------------------------------------------------
