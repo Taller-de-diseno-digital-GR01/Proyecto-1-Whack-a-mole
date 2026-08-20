@@ -6,7 +6,6 @@ GMAKE ?= gmake
 .DEFAULT:
 	@command -v ${GMAKE} >/dev/null 2>&1 || { \
 		echo "Error: este Makefile necesita GNU make en FreeBSD." >&2; \
-		echo "Instalalo con: pkg install gmake" >&2; \
 		exit 1; \
 	}
 	@${GMAKE} --no-print-directory -f GNUmakefile $@
