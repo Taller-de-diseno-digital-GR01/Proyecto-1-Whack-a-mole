@@ -6,14 +6,14 @@ module tb_fsm;
 
     logic clk;
     logic rst;
-    
+
     // Entradas hacia el DUT
     logic req_sent;
     logic valid_pos;
     logic btn_pos;
     logic window_exp;
     logic cont_failure;
-    
+
     // Salidas desde el DUT
     logic rst_dificulty;
     logic rst_hits;
@@ -37,7 +37,7 @@ module tb_fsm;
         .btn_pos         (btn_pos),
         .window_exp      (window_exp),
         .cont_failure    (cont_failure),
-        
+
         .rst_dificulty   (rst_dificulty),
         .rst_hits        (rst_hits),
         .rst_failures    (rst_failures),
@@ -50,7 +50,7 @@ module tb_fsm;
         .current_state_out(current_state_out)
     );
 
-    
+
     always #5 clk = ~clk;
 
     always_comb begin
@@ -66,9 +66,9 @@ module tb_fsm;
         endcase
     end
 
-    
+
     initial begin
-        // Generación de archivo VCD para ver las ondas en GTKWave 
+        // Generación de archivo VCD para ver las ondas en GTKWave
         $dumpfile("tb_fsm.vcd");
         $dumpvars(0, tb_fsm);
 
@@ -123,7 +123,7 @@ module tb_fsm;
         #1;
         btn_pos = 1'b0;
         $display("[TB] Estado tras pulsar botón: %s | add_hit = %b", state_name, add_hit);
-        
+
         // Siguiente ciclo evaluación en HIT
         @(posedge clk);
         #1;
@@ -144,7 +144,7 @@ module tb_fsm;
         cont_failure = 1'b1;
         @(posedge clk);
         #1;
-        $display("[TB] Estado con 3 fallos: %s | rst_hits = %b, rst_failures = %b", 
+        $display("[TB] Estado con 3 fallos: %s | rst_hits = %b, rst_failures = %b",
                  state_name, rst_hits, rst_failures);
 
         // Final de la simulación
