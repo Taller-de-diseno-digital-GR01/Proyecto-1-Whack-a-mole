@@ -62,7 +62,7 @@ module tb_hit_counter;
     hit_pulso(); // este hit llega exacto al techo
     $display("%0d hits (máx): acierto=%0d (decenas=%0d unidades=%0d) t=%0t", hits_T, acierto_tb, dut_hit_counter.decenas, dut_hit_counter.unidades, $time);
 
-    hit_pulso(); // un hit de más, ya saturado, no debe subir
+    hit_pulso(); // un hit de más, ya en el máx, no debe subir
     $display("%0d hits (máx): acierto=%0d (decenas=%0d unidades=%0d) t=%0t", hits_T, acierto_tb, dut_hit_counter.decenas, dut_hit_counter.unidades, $time);
 
     // nueva_partida y hit a la vez: el reset debe ganar
@@ -95,4 +95,4 @@ endmodule
 
 // Los resultados tienen sentido. El acarreo pasa justo en el hit 10, cuando unidades ya
 // había llegado a 9. En el hit 99 el contador llega exacto al techo con decenas=9 y
-// unidades=9, y en el hit 100 se queda igual porque ya está saturado.
+// unidades=9, y en el hit 100 se queda igual porque ya está en el máx.
