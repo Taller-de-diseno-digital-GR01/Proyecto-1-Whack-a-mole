@@ -20,12 +20,12 @@ module debounce(
 
 
     always_comb begin
-        case ({q_reset, q_add})
-            2'b00: q_next = q_reg + 1; // q_reset = 0 - No hay cambios, q_add = 0 - no ha llegado al máximo
-            2'b01: q_next = 0;// q_reset = 0 - No hay cambios, q_add = 1 - ha llegado al máximo
-            default: q_next = {N{1'b0}}; //si ocurre un cambio en el estado del boton, se reinicia el contador a 0
-        endcase 
-    end
+    case ({q_reset, q_add})
+        2'b01: q_next = q_reg + 1; // no ha llegado al máximo -> incrementa
+        2'b00: q_next = q_reg;     // ya llegó al máximo -> se mantiene
+        default: q_next = {N{1'b0}};
+    endcase 
+end
 
     //FFs de Entrada - Sincronizador de dos etapas
     always_ff @(posedge clk) begin

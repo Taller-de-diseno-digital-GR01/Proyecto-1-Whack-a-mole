@@ -1,7 +1,3 @@
-`include "encoder_8_to_1.sv"
-`include "check_btn.sv" 
-`include "debounce.sv"
-
 
 module press_btn ( //módulo principal
     input logic       clk,
@@ -18,6 +14,8 @@ module press_btn ( //módulo principal
 
     output logic      valid
 );
+
+
     logic db_btn_0;
     logic db_btn_1;
     logic db_btn_2;
@@ -27,6 +25,9 @@ module press_btn ( //módulo principal
     logic db_btn_6;
     logic db_btn_7;
     
+    logic [2:0] enc_btn_in;
+    logic       valid_enc;    
+
     debounce db0 (
         .clk(clk),
         .rst(rst),
@@ -85,13 +86,13 @@ module press_btn ( //módulo principal
         .btn_5(db_btn_5),
         .btn_6(db_btn_6),
         .btn_7(db_btn_7),
-        .btn_out(enc_btn),
+        .btn_out(enc_btn_in),
         .valid_out(valid_enc)
     );
 
 
     check_btn cb (
-        .enc_btn_in(enc_btn),
+        .enc_btn_in(enc_btn_in),
         .pos_topo(pos_topo),
         .valid_in(valid_enc),
         .valid(valid)

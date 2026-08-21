@@ -31,15 +31,22 @@ module press_btn_tb;
         {btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7} = 8'b0;
     endtask
 
-    task press_button(input integer idx);
+    // Presiona el botón idx y lo MANTIENE presionado (no lo suelta),
+    // esperando suficientes ciclos para que el debounce se estabilice.
+    task press_and_hold(input integer idx);
         clear_btns();
         case (idx)
             0: btn_0 = 1'b1;  1: btn_1 = 1'b1;  2: btn_2 = 1'b1;  3: btn_3 = 1'b1;
             4: btn_4 = 1'b1;  5: btn_5 = 1'b1;  6: btn_6 = 1'b1;  7: btn_7 = 1'b1;
         endcase
-        repeat (2*(2**N_SIM)) @(posedge clk);
+        repeat (3*(2**N_SIM)) @(posedge clk); // margen amplio para que db_out se actualice
+    endtask
+
+    // Suelta todos los botones y espera a que el debounce también se
+    // estabilice en el estado "soltado" antes de la siguiente prueba.
+    task release_and_wait();
         clear_btns();
-        repeat (2*(2**N_SIM)) @(posedge clk);
+        repeat (3*(2**N_SIM)) @(posedge clk);
     endtask
 
     task check(input [8*20:1] name, input expected);
@@ -58,14 +65,29 @@ module press_btn_tb;
         rst = 1;
         repeat (5) @(posedge clk);
 
-        pos_topo = 3'b000; press_button(0); check("btn correcto",   1'b1);
-        pos_topo = 3'b011; press_button(1); check("btn incorrecto", 1'b0);
+        // Caso 1: botón correcto -> valid debe ser 1 MIENTRAS está presionado
+        pos_topo = 3'b000;
+        press_and_hold(0);
+        check("btn correcto", 1'b1);
+        release_and_wait();
 
-        pos_topo = 3'b000; clear_btns();
-        repeat (2*(2**N_SIM)) @(posedge clk);
+        // Caso 2: botón incorrecto -> valid debe quedarse en 0
+        pos_topo = 3'b011;
+        press_and_hold(1);
+        check("btn incorrecto", 1'b0);
+        release_and_wait();
+
+        // Caso 3: sin botón presionado -> valid debe ser 0 (sin falso positivo)
+        pos_topo = 3'b000;
+        clear_btns();
+        repeat (3*(2**N_SIM)) @(posedge clk);
         check("sin boton", 1'b0);
 
-        pos_topo = 3'b101; press_button(5); check("btn correcto pos5", 1'b1);
+        // Caso 4: botón correcto en otra posición
+        pos_topo = 3'b101;
+        press_and_hold(5);
+        check("btn correcto pos5", 1'b1);
+        release_and_wait();
 
         $finish;
     end
