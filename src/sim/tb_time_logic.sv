@@ -99,4 +99,4 @@ endmodule
 // Sin HIT UP de fijo tiene que ser 1 y la ventana_tick=3, UP se activó como espera por eso. ventana_tick=3 porque sin acierto la dificultad no cambia
 // HIT 1: ventana_tick=2 contador_ventana=3, después de nueva_partida + inicio, contador_ventana se cargó en 3 (la dificultad vigente). El hit bajó ventana_ticks a 2 y congeló contador_ventana en el valor que tenía en ese instante (3), tal como dice la lógica
 // HIT 2: ventana_ticks=1, Segundo acierto seguido, sin volver a mandar inicio ni nueva_partida. Baja de 2 a 1, que es justo el mínimo
-// HIT 3: ventana_ticks=1, Este es el caso que prueba la saturación, pero ya está en el mínimo entonces hit & (ventana_ticks > VENTANA_TICKS_MINIMA) es falso por lo que un tercer aciuento NO lo baja a menos de 1
+// HIT 3: ventana_ticks=1, Este es el caso que prueba el límite mínimo, pero ya está en el mínimo entonces hit & (ventana_ticks > VENTANA_TICKS_MINIMA) es falso por lo que un tercer aciuento NO lo baja a menos de 1
