@@ -3,8 +3,8 @@ module fsm (
     input  logic       clk,
     input  logic       rst,
     input  logic       req_sent,
-    input  logic       valid_pos,
-    input  logic       btn_pos,
+    input  logic       valid_value,
+    input  logic       valid,
     input  logic       window_exp,
     input  logic       cont_failure, // Flag: se alcanzaron los fallos máximos
     
@@ -65,33 +65,40 @@ module fsm (
                 rst_hits      = 1'b1;
                 rst_failures  = 1'b1;
                 rst_window    = 1'b1;
+                next_state = REQ_POS;
 
-                if (req_sent) begin
-                    next_state = REQ_POS;
-                end
+                //REVISAR
+                //if (req_sent) begin
+                //    next_state = REQ_POS;
+                //end
             end
 
             REQ_POS: begin
                 en_numRandom = 1'b1;
-
-                if (valid_pos) begin
+                if (req_sent) begin
                     next_state = WAIT_UART;
                 end
+                //REVISAR
+                //if (valid_value) begin
+                //   next_state = WAIT_UART;
+                //end
             end
 
             WAIT_UART: begin
                 en_save_pos = 1'b1;
-
-                if (btn_pos) begin
+                //valid pos es el nombre correcto?
+                if (valid_value) begin
                     next_state = PLAY;
                 end
             end
 
+
             PLAY: begin
                 // Prioridad: Acierto > Tiempo expirado
-                if (btn_pos) begin
+                //valid debe ser valid del press_btn
+                if (valid) begin
                     next_state = HIT;
-                end else if (window_exp) begin
+                end else if (window_exp || (~valid)) begin
                     next_state = FAILURE;
                 end
             end
@@ -130,7 +137,6 @@ module fsm (
             end
 
             default: next_state = START;
-
         endcase
     end
 
