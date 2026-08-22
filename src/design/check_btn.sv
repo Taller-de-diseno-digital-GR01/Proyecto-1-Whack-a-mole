@@ -5,14 +5,11 @@ module check_btn (
     output logic valid
 );
     //Usaré dos señales que me permite verificar si funcionan las señales de entrada de los botones.
-    //btn_valid: verifica que la señal calza con la posición asignada al topo
-    //right_btn: proviene del encoder después de verificar si se presionó o no un botón
+    //Asigno hit que solo será 1 si se selecciono un botón y es igual a ala posición
+    //Asigno fail que solo será 1 si se falla la posición pero si existe un botón presionado.
     always_comb begin
-        if ((enc_btn_in == pos_topo) && (valid_in)) begin
-                valid = 1'b1;
-        end else begin
-            valid = 1'b0;
-        end
+        hit = valid_in && (enc_btn_in == pos_topo);
+        miss = valid_in && (enc_btn_in != pos_topo);
     end
 
 
