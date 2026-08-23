@@ -30,6 +30,9 @@ module fsm_tb;
     endtask
 
     initial begin
+        $dumpfile("tb_fsm.vcd");
+        $dumpvars(0, fsm_tb);
+
         rst=1; req_sent=0; valid_pos=0; hit=0; miss=0; window_exp=0; cont_failure=0;
         tick(); tick();
         rst=0; tick();

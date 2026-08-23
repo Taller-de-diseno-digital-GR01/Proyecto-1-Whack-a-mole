@@ -2,7 +2,6 @@ module fsm (
     // Entradas
     input  logic       clk,
     input  logic       rst,
-    input  logic       req_received,
     input  logic       valid_pos,
     input  logic       hit, //separe el antiguo valid con dos señales hit y miss
     input  logic       miss,
@@ -88,7 +87,7 @@ module fsm (
 
             WAIT_UART: begin
                 en_save_pos = 1'b1;
-                if (valid_value) begin
+                if (valid_pos) begin
                     next_state = PLAY;
                 end
             end
