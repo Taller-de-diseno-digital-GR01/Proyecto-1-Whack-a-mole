@@ -4,7 +4,8 @@ module fsm (
     input  logic       rst,
     input  logic       req_sent,
     input  logic       valid_value,
-    input  logic       valid,
+    input  logic       hit, //separe el antiguo valid con dos señales hit y miss
+    input  logic       miss,
     input  logic       window_exp,
     input  logic       cont_failure, // Flag: se alcanzaron los fallos máximos
     
@@ -18,7 +19,11 @@ module fsm (
     output logic       add_failure,
     output logic       rst_window,
     output logic       inc_dificulty,
-    output logic [2:0] current_state_out
+    output logic [2:0] current_state_out,
+
+    //flags
+    output logic       f_state_play,
+    output logic       f_state_gameover
 );
 
     typedef enum logic [2:0] {    
@@ -47,16 +52,19 @@ module fsm (
     // Bloque Combinacional
     always_comb begin
         // Valores por defecto para evitar latches
-        next_state    = state;
-        rst_dificulty = 1'b0;
-        rst_hits      = 1'b0;
-        rst_failures  = 1'b0;
-        rst_window    = 1'b0;
-        en_numRandom  = 1'b0;
-        en_save_pos   = 1'b0;
-        add_hit       = 1'b0;
-        add_failure   = 1'b0;
-        inc_dificulty = 1'b0;
+        next_state          = state;
+        rst_dificulty       = 1'b0;
+        rst_hits            = 1'b0;
+        rst_failures        = 1'b0;
+        rst_window          = 1'b0;
+        en_numRandom        = 1'b0;
+        en_save_pos         = 1'b0;
+        add_hit             = 1'b0;
+        add_failure         = 1'b0;
+        inc_dificulty       = 1'b0;
+        f_state_play        = 1'b0;
+        f_state_gameover    = 1'b0;
+
 
         case (state)
             
@@ -74,7 +82,7 @@ module fsm (
             end
 
             REQ_POS: begin
-                en_numRandom = 1'b1;
+                en_numRandom        = 1'b1;
                 if (req_sent) begin
                     next_state = WAIT_UART;
                 end
@@ -86,7 +94,6 @@ module fsm (
 
             WAIT_UART: begin
                 en_save_pos = 1'b1;
-                //valid pos es el nombre correcto?
                 if (valid_value) begin
                     next_state = PLAY;
                 end
@@ -96,9 +103,10 @@ module fsm (
             PLAY: begin
                 // Prioridad: Acierto > Tiempo expirado
                 //valid debe ser valid del press_btn
-                if (valid) begin
+                f_state_play = 1'b1;
+                if (hit) begin
                     next_state = HIT;
-                end else if (window_exp || (~valid)) begin
+                end else if (miss || window_exp) begin
                     next_state = FAILURE;
                 end
             end
@@ -125,15 +133,12 @@ module fsm (
             end
 
             GAME_OVER: begin
-                rst_dificulty = 1'b1; 
-                rst_hits      = 1'b1; 
-                rst_failures  = 1'b1; 
-                rst_window    = 1'b1;
-
-                // Permite reiniciar el juego si se presiona req_sent o rst
-                if (req_sent) begin
-                    next_state = REQ_POS;
-                end
+                f_state_gameover    = 1'b1;
+                rst_dificulty       = 1'b1; 
+                rst_hits            = 1'b1; 
+                rst_failures        = 1'b1; 
+                rst_window          = 1'b1;
+                next_state = START;
             end
 
             default: next_state = START;

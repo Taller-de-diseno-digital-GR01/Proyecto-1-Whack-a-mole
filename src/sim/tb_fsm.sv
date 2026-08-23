@@ -1,155 +1,101 @@
 `timescale 1ns/1ps
 
-//Todo: Falta realizar la prueba!
+module fsm_tb;
 
-module tb_fsm;
+    localparam logic [2:0] START=0, REQ_POS=1, WAIT_UART=2, PLAY=3,
+                            FAILURE=4, HIT=5, GAME_OVER=6;
 
-    logic clk;
-    logic rst;
-
-    // Entradas hacia el DUT
-    logic req_sent;
-    logic valid_pos;
-    logic btn_pos;
-    logic window_exp;
-    logic cont_failure;
-
-    // Salidas desde el DUT
-    logic rst_dificulty;
-    logic rst_hits;
-    logic rst_failures;
-    logic en_numRandom;
-    logic en_save_pos;
-    logic add_hit;
-    logic add_failure;
-    logic rst_window;
-    logic inc_dificulty;
+    logic clk, rst, req_sent, valid_value, hit, miss, window_exp, cont_failure;
+    logic rst_dificulty, rst_hits, rst_failures, en_numRandom, en_save_pos;
+    logic add_hit, add_failure, rst_window, inc_dificulty;
     logic [2:0] current_state_out;
+    logic f_state_play, f_state_gameover;
 
-    // Variable auxiliar para mostrar el nombre del estado en la consola
-    string state_name;
+    int errors = 0;
 
-    fsm dut (
-        .clk             (clk),
-        .rst             (rst),
-        .req_sent        (req_sent),
-        .valid_pos       (valid_pos),
-        .btn_pos         (btn_pos),
-        .window_exp      (window_exp),
-        .cont_failure    (cont_failure),
-
-        .rst_dificulty   (rst_dificulty),
-        .rst_hits        (rst_hits),
-        .rst_failures    (rst_failures),
-        .en_numRandom    (en_numRandom),
-        .en_save_pos     (en_save_pos),
-        .add_hit         (add_hit),
-        .add_failure     (add_failure),
-        .rst_window      (rst_window),
-        .inc_dificulty   (inc_dificulty),
-        .current_state_out(current_state_out)
-    );
-
+    fsm dut (.*);
 
     always #5 clk = ~clk;
+    initial clk = 0;
 
-    always_comb begin
-        case (current_state_out)
-            3'b000: state_name = "START";
-            3'b001: state_name = "REQ_POS";
-            3'b010: state_name = "WAIT_UART";
-            3'b011: state_name = "PLAY";
-            3'b100: state_name = "FAILURE";
-            3'b101: state_name = "HIT";
-            3'b110: state_name = "GAME_OVER";
-            default: state_name = "UNKNOWN";
-        endcase
-    end
+    task automatic tick();
+        @(posedge clk); #1;
+    endtask
 
+    task automatic check(logic [2:0] exp, string msg);
+        if (current_state_out !== exp) begin
+            errors++;
+            $display("FAIL: %s (esperado %0d, obtenido %0d)", msg, exp, current_state_out);
+        end
+    endtask
 
     initial begin
-        // Generación de archivo VCD para ver las ondas en GTKWave
-        $dumpfile("tb_fsm.vcd");
-        $dumpvars(0, tb_fsm);
+        rst=1; req_sent=0; valid_value=0; hit=0; miss=0; window_exp=0; cont_failure=0;
+        tick(); tick();
+        rst=0; tick();
+        check(REQ_POS, "reset->REQ_POS");
 
-        // Inicialización de señales
-        clk          = 0;
-        rst          = 1'b1; // Se inicia en Reset
-        req_sent     = 1'b0;
-        valid_pos    = 1'b0;
-        btn_pos      = 1'b0;
-        window_exp   = 1'b0;
-        cont_failure = 1'b0;
+        // camino feliz -> HIT
+        req_sent=1; tick(); req_sent=0;
+        check(WAIT_UART, "REQ_POS->WAIT_UART");
 
-        // --- TEST 0: APLICAR Y LIBERAR RESET ---
-        $display("\n[TB] ---> Aplicando Reset al sistema...");
-        repeat (2) @(posedge clk);
-        #1;
-        rst = 1'b0; // Se libera el reset
-        $display("[TB] Reset liberado. Estado actual: %s (%b)", state_name, current_state_out);
+        valid_value=1; tick(); valid_value=0;
+        check(PLAY, "WAIT_UART->PLAY");
 
-        // --- TEST 1: Transición START -> REQ_POS ---
-        $display("\n[TB] --- Test 1: Solicitud de Posición (req_sent) ---");
-        @(posedge clk);
-        req_sent = 1'b1;
-        @(posedge clk);
-        #1;
-        req_sent = 1'b0;
-        $display("[TB] Estado: %s | en_numRandom = %b", state_name, en_numRandom);
+        hit=1; tick(); hit=0;
+        check(HIT, "PLAY(hit)->HIT");
+        tick();
+        check(REQ_POS, "HIT->REQ_POS");
 
-        // --- TEST 2: Transición REQ_POS -> WAIT_UART ---
-        $display("\n[TB] --- Test 2: Validación de Posición (valid_pos) ---");
-        @(posedge clk);
-        valid_pos = 1'b1;
-        @(posedge clk);
-        #1;
-        valid_pos = 1'b0;
-        $display("[TB] Estado: %s | en_save_pos = %b", state_name, en_save_pos);
+        // miss -> FAILURE -> REQ_POS
+        req_sent=1; tick(); req_sent=0;
+        valid_value=1; tick(); valid_value=0;
+        miss=1; tick(); miss=0;
+        check(FAILURE, "PLAY(miss)->FAILURE");
+        tick();
+        check(REQ_POS, "FAILURE->REQ_POS");
 
-        // --- TEST 3: Transición WAIT_UART -> PLAY ---
-        $display("\n[TB] --- Test 3: Entrada a Modo de Juego ---");
-        @(posedge clk);
-        btn_pos = 1'b1;
-        @(posedge clk);
-        #1;
-        btn_pos = 1'b0;
-        $display("[TB] Estado: %s (En espera de acción del jugador)", state_name);
+        // window_exp -> FAILURE
+        req_sent=1; tick(); req_sent=0;
+        valid_value=1; tick(); valid_value=0;
+        window_exp=1; tick(); window_exp=0;
+        check(FAILURE, "PLAY(window_exp)->FAILURE");
 
-        // --- TEST 4: Escenario de Acierto (PLAY -> HIT -> PLAY) ---
-        $display("\n[TB] --- Test 4: Pulsación Correcta (Acierto) ---");
-        @(posedge clk);
-        btn_pos = 1'b1; // El jugador presiona el botón correcto
-        @(posedge clk);
-        #1;
-        btn_pos = 1'b0;
-        $display("[TB] Estado tras pulsar botón: %s | add_hit = %b", state_name, add_hit);
+        // hit y miss simultaneos -> prioridad hit
+        cont_failure=0; tick();
+        req_sent=1; tick(); req_sent=0;
+        valid_value=1; tick(); valid_value=0;
+        hit=1; miss=1; tick(); hit=0; miss=0;
+        check(HIT, "hit+miss->HIT (prioridad)");
+        tick();
 
-        // Siguiente ciclo evaluación en HIT
-        @(posedge clk);
-        #1;
-        $display("[TB] Transición tras HIT: %s | inc_dificulty = %b", state_name, inc_dificulty);
+        // cont_failure -> GAME_OVER -> START -> REQ_POS
+        req_sent=1; tick(); req_sent=0;
+        valid_value=1; tick(); valid_value=0;
+        miss=1; cont_failure=1; tick(); miss=0;
+        check(FAILURE, "PLAY(miss)->FAILURE");
+        tick();
+        check(GAME_OVER, "FAILURE(cont_failure)->GAME_OVER");
+        cont_failure=0; tick();
+        check(START, "GAME_OVER->START");
+        tick();
+        check(REQ_POS, "START->REQ_POS");
 
-        // --- TEST 5: Escenario de Fallo por Tiempo Expirado (PLAY -> FAILURE) ---
-        $display("\n[TB] --- Test 5: Ventana de Tiempo Expirada (Fallo) ---");
-        @(posedge clk);
-        window_exp = 1'b1; // Se termina el tiempo de reacción
-        @(posedge clk);
-        #1;
-        window_exp = 1'b0;
-        $display("[TB] Estado tras expiración: %s | add_failure = %b", state_name, add_failure);
+        // reset asincrono
+        req_sent=1; tick(); req_sent=0;
+        rst=1; #1;
+        check(START, "reset asincrono->START");
+        rst=0; tick();
+        check(REQ_POS, "START->REQ_POS");
 
-        // --- TEST 6: Escenario de Game Over (3 Fallos Acumulados) ---
-        $display("\n[TB] --- Test 6: Condición de Fin de Juego (GAME_OVER) ---");
-        @(posedge clk);
-        cont_failure = 1'b1;
-        @(posedge clk);
-        #1;
-        $display("[TB] Estado con 3 fallos: %s | rst_hits = %b, rst_failures = %b",
-                 state_name, rst_hits, rst_failures);
+        if (errors == 0) $display("PASS: todos los tests OK");
+        else $display("FAIL: %0d test(s) fallaron", errors);
+        $finish;
+    end
 
-        // Final de la simulación
-        #40;
-        $display("\n[TB] === Pruebas completadas exitosamente ===");
+    initial begin
+        #2000;
+        $display("TIMEOUT");
         $finish;
     end
 
