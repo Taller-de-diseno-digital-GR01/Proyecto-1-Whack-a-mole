@@ -2,8 +2,8 @@ module fsm (
     // Entradas
     input  logic       clk,
     input  logic       rst,
-    input  logic       req_sent,
-    input  logic       valid_value,
+    input  logic       req_received,
+    input  logic       valid_pos,
     input  logic       hit, //separe el antiguo valid con dos señales hit y miss
     input  logic       miss,
     input  logic       window_exp,
@@ -76,20 +76,14 @@ module fsm (
                 next_state = REQ_POS;
 
                 //REVISAR
-                //if (req_sent) begin
+                //if (req_received) begin
                 //    next_state = REQ_POS;
                 //end
             end
 
-            REQ_POS: begin
+            REQ_POS: begin //solo manda la solicitud de pos, es decir que se active el sistema discreto
                 en_numRandom        = 1'b1;
-                if (req_sent) begin
-                    next_state = WAIT_UART;
-                end
-                //REVISAR
-                //if (valid_value) begin
-                //   next_state = WAIT_UART;
-                //end
+                next_state          = WAIT_UART;
             end
 
             WAIT_UART: begin

@@ -1,6 +1,6 @@
 module fail_counter #(parameter MAX_FALLOS = 99) (
   input logic clk,
-  input logic rst,
+  input logic rst, //rst_failure
   input logic miss,
   input logic hit,
   input logic nueva_partida,
