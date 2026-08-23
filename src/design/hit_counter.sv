@@ -1,7 +1,7 @@
 module hit_counter #(parameter MAX_ACIERTO = 99) (  // máximo para el contador
   input logic clk,
-  input logic rst,
-  input logic nueva_partida, // fsm aquí
+  input logic rst, //rst_hit
+  input logic nueva_partida, // fsm aquí (No estoy claro si lo necesito)
   input logic hit,
 
   output logic [7:0] acierto // bcd --> marcador
