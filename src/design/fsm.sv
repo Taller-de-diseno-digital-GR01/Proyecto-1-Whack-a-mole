@@ -7,6 +7,7 @@ module fsm (
     input  logic       miss,
     input  logic       window_exp,
     input  logic       cont_failure, // Flag: se alcanzaron los fallos máximos
+    input  logic       fin_espera, // Flag: fin de espera de 2s tras GAME_OVER
     
     // Salidas
     output logic       rst_dificulty,
