@@ -38,6 +38,9 @@ module top (
 );
     // Señales internas
 
+    //state a fsm
+    logic       w_fin_espera;
+
     // r_uart al resto
     logic [2:0] w_pos_topo;
     logic       w_valid_pos;
@@ -107,6 +110,7 @@ module top (
         .miss              (w_miss_press), //NO le dió al top
         .window_exp        (w_window_exp), //avisa que paso el tiempo
         .cont_failure      (w_fin_partida), //psa a gameover al llegar a 3 fallso
+        .fin_espera        (w_fin_espera), //Es para pasar a START de nuevo
 
         .rst_dificulty     (w_rst_dificulty), //resetea la ventana de tiempo
         .rst_hits          (w_rst_hits), //resetea ek contador
@@ -167,6 +171,15 @@ module top (
         .leds_topo (leds_topo)
     );
 
+    state u_state (
+        .clk(clk),
+        .rst(rst),
+        .f_state_play(f_state_play),
+        .f_state_gameover(f_state_gameover),
+        .led_state(led_state),
+        .fin_espera(w_fin_espera)
 
+
+    );
 
 endmodule
