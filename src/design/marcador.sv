@@ -1,5 +1,4 @@
-// Recibe acierto[7:0] y fallo[7:0] crudos de hit_counter y fail_counter (ver m05 y m06) y los saca por 4 displays de 7 segmentos multiplexados, como trae la Basys3
-// seg y an son activo bajo porque así los maneja la tarjeta
+// Recibe acierto[7:0] y fallo[7:0] crudos de hit_counter y fail_counter (ver m05 y m06) y los saca por 4 displays de 7 segmentos multiplexados, como trae la Basys3 seg y an son activo bajo porque así los maneja la tarjeta
 module marcador #(
   parameter CLK_FREQ = 100_000_000, // <-- TODO: Revisar que CLK_FREQ esté bien
   parameter REFRESH_HZ = 1000 // <-- tasa de refresco del dígito actual, con 4 dígitos el ciclo completo queda en 250 Hz, no se nota parpadeo
@@ -54,8 +53,8 @@ module marcador #(
     endcase
   end
 
-  // Decodificador BCD a 7 segmentos, activo bajo
-  always_comb begin
+  // decodificador BCD a 7 seg
+  always_comb begin // TODO: Revisar que esto esté bien asignado
     case (digito)
       4'd0: seg = 7'b1000000;
       4'd1: seg = 7'b1111001;
