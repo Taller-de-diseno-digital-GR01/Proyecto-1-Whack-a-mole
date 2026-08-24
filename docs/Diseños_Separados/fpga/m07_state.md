@@ -1,4 +1,4 @@
-# M7: estado_juego
+# M7: State
 
 ## f) Relación con otros módulos
 
