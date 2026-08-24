@@ -25,4 +25,33 @@ module marcador #(
     contador_presc <= (rst | tick) ? 0 : contador_presc + 1;
   end
 
+  // Selector de dígito, avanza uno con cada tick de refresco y da la vuelta solo
+  logic [1:0] sel;
+
+  always_ff @(posedge clk) begin
+    if (rst) sel <= 0;
+    else if (tick) sel <= sel + 1;
+  end
+
+  // an3 an2 muestran acierto (decenas, unidades), an1 an0 muestran fallo (decenas, unidades)
+  logic [3:0] digito;
+
+  always_comb begin
+    case (sel)
+      2'd0: digito = fallo[3:0];
+      2'd1: digito = fallo[7:4];
+      2'd2: digito = acierto[3:0];
+      2'd3: digito = acierto[7:4];
+    endcase
+  end
+
+  always_comb begin
+    case (sel)
+      2'd0: an = 4'b1110;
+      2'd1: an = 4'b1101;
+      2'd2: an = 4'b1011;
+      2'd3: an = 4'b0111;
+    endcase
+  end
+
 endmodule
