@@ -7,7 +7,7 @@ module time_logic #(
   parameter VENTANA_MINIMA = 500
   ) (
   input logic clk,
-  input logic rst,
+  input logic rst, //rst_window
   input logic inicio,
   input logic hit, // <-- Viene desde la FSM
   input logic nueva_partida,
