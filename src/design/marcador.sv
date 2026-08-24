@@ -28,8 +28,7 @@ module marcador #(
   logic [1:0] sel;
 
   always_ff @(posedge clk) begin
-    if (rst) sel <= 0;
-    else if (tick) sel <= sel + 1;
+    sel <= rst ? 0 : (tick ? sel + 1 : sel);
   end
 
   // an3 an2 muestran acierto (decenas, unidades), an1 an0 muestran fallo (decenas, unidades)
