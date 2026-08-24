@@ -1,5 +1,4 @@
-//NOTA: Deberíamos eliminar este módulo, lo podemos sacar directamente de la FSM.
-module estado_juego (
+module state (
     input  logic clk,              // 100 MHz
     input  logic rst,              // reset síncrono, activo en alto
     input  logic f_state_play,     // partida activa
