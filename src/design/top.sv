@@ -12,9 +12,13 @@ module top (
     input logic       btn_6,
     input logic       btn_7,
 
+
+
     //Entrada Externa de UART
     input logic       pos,    //serial
-    //Salidas:
+
+    //Salidas State
+    output logic led_state,
 
     //Salida show_mole
     output logic [7:0] leds_topo,
@@ -162,5 +166,7 @@ module top (
         .en_topo   (f_state_play),
         .leds_topo (leds_topo)
     );
+
+
 
 endmodule
