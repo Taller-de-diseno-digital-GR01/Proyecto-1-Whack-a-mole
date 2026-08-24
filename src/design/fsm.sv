@@ -127,12 +127,13 @@ module fsm (
             end
 
             GAME_OVER: begin
-                f_state_gameover    = 1'b1;
-                rst_dificulty       = 1'b1; 
-                rst_hits            = 1'b1; 
-                rst_failures        = 1'b1; 
-                rst_window          = 1'b1;
-                next_state = START;
+                f_state_gameover = 1'b1;
+                if (fin_espera) begin
+                    next_state = START;
+                end
+                // sin fin_espera, next_state conserva su valor por defecto (state),
+                // por lo que la FSM permanece en GAME_OVER mostrando el marcador final
+                // mientras M7 cuenta los 2 s de espera
             end
 
             default: next_state = START;
