@@ -27,10 +27,9 @@ module top (
     output logic        f_state_play,
     output logic        f_state_gameover,
 
-    //Salida Externas a 7 segmentosd
-    output logic [6:0]  sev_seg_failures,
-    output logic [6:0]  sev_seg_hits_dec, //decenas del hit
-    output logic [6:0]  sev_seg_hits_uni, //unidades del hit
+    //Salida a los 4 displays de 7 segmentos (multiplexados)
+    output logic [6:0]  seg, // segmentos gfedcba, compartidos
+    output logic [3:0]  an,  // selector de dígito, uno a la vez
 
     //Salida al circuito discreto:
     output logic        en_numRandom //Señal que activa el circuito discreto
@@ -72,7 +71,6 @@ module top (
     logic [7:0] w_acierto; // [3:0]=unidades, [7:4]=decenas
     logic [7:0] w_fallo;   // [3:0]=unidades, [7:4]=decenas
 
-//TODO: Falta hacer el módulo de BCD!!!
     // M1: Receptor UART -> entrega pos_topo y valid_pos
     r_uart u_r_uart (
         .clk         (clk),
@@ -180,6 +178,16 @@ module top (
         .fin_espera(w_fin_espera)
 
 
+    );
+
+    // M8: Marcador -> multiplexa acierto/fallo en los 4 displays de 7 segmentos
+    marcador u_marcador (
+        .clk     (clk),
+        .rst     (rst),
+        .acierto (w_acierto),
+        .fallo   (w_fallo),
+        .seg     (seg),
+        .an      (an)
     );
 
 endmodule

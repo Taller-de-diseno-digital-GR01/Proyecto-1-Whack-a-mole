@@ -1,4 +1,7 @@
-module state (
+module state #(
+    parameter int N_PRESC   = 10_000_000, // ciclos por tick de 100ms (100e6 * 0.1)
+    parameter int WAIT_COUNT = 20         // ticks de 100ms a esperar en GAME_OVER (20*100ms=2s)
+) (
     input  logic clk,              // 100 MHz
     input  logic rst,              // reset síncrono, activo en alto
     input  logic f_state_play,     // partida activa
@@ -10,32 +13,29 @@ module state (
 
     // ------------------------------------------------------------
     // Prescalador: genera una habilitación de un ciclo cada 100 ms
-    // N = 100e6 * 0.1 = 10_000_000 -> requiere 24 bits (2^24 > 10^7)
+    // Por defecto N = 100e6 * 0.1 = 10_000_000 -> requiere 24 bits
     // ------------------------------------------------------------
-    localparam int N_PRESC = 10_000_000;
-
-    logic [23:0] presc_cnt;
+    logic [$clog2(N_PRESC)-1:0] presc_cnt;
     logic        tick_100ms;
 
     always_ff @(posedge clk) begin
         if (rst) begin
-            presc_cnt <= 24'd0;
+            presc_cnt <= '0;
         end else if (presc_cnt == N_PRESC - 1) begin
-            presc_cnt <= 24'd0;
+            presc_cnt <= '0;
         end else begin
-            presc_cnt <= presc_cnt + 24'd1;
+            presc_cnt <= presc_cnt + 1'b1;
         end
     end
 
     assign tick_100ms = (presc_cnt == N_PRESC - 1);
 
     // ------------------------------------------------------------
-    // Contador de espera: cuenta hasta 20 habilitaciones de 100ms
-    // (20 * 100ms = 2s) mientras f_state_gameover esté activo
+    // Contador de espera: cuenta hasta WAIT_COUNT habilitaciones de
+    // 100ms (por defecto 20*100ms=2s) mientras f_state_gameover esté
+    // activo
     // ------------------------------------------------------------
-    localparam int WAIT_COUNT = 20;
-
-    logic [4:0] wait_cnt;   // 5 bits, hasta 20
+    logic [4:0] wait_cnt;   // 5 bits, hasta 20 (ajustar si WAIT_COUNT>31)
     logic       wait_done;  // cuenta == 20
 
     assign wait_done = (wait_cnt == WAIT_COUNT);

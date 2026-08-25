@@ -46,18 +46,22 @@ module fail_counter #(parameter MAX_FALLOS = 99) (
   always_ff @(posedge clk) begin
     if(rst || nueva_partida || hit) begin // Se lee como: "Si hay reset O nueva partida O un hit"
       consecutivos <= 0; // significa que se acabó la racha de fallos o todavía no existe
-      fin_partida <= 0; // si la r acha se rompió o la partida está recién arrancada
     end
     else if(miss) begin
-      if(consecutivos == 2 || consecutivos == 3) begin // Se lee como: "¿La racha ya estaba a un fallo de terminar, o ya había terminado?"
+      if(consecutivos == 2 || consecutivos == 3) // Se lee como: "¿La racha ya estaba a un fallo de terminar, o ya había terminado?"
         consecutivos <= 3; // Deja la racha fija como el máximo 3
-        fin_partida <= 1; // 1: True ==> se acabó la partida
-      end
-      else begin
+      else
         consecutivos <= consecutivos + 1; // racha todavía corta (0 o 1), sube uno más
-        fin_partida <= 0; // todavía no se llega a 3, la partida sigue
-      end
     end
   end
+
+  // fin_partida se calcula de forma combinacional (no registrada) para
+  // que esté lista en el MISMO ciclo del fallo que la dispara. Antes
+  // estaba registrada, así que su valor nuevo solo se veía un ciclo
+  // después del fallo que la disparaba -- justo el mismo ciclo en que
+  // la fsm ya necesita leer cont_failure dentro del estado FAILURE, lo
+  // que hacía que el 3er fallo consecutivo pasara desapercibido y
+  // hiciera falta un 4to fallo para llegar a GAME_OVER.
+  assign fin_partida = miss && (consecutivos == 2 || consecutivos == 3);
 
 endmodule
