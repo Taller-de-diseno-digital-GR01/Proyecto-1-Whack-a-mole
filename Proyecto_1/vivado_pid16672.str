@@ -715,3 +715,6 @@ expandTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Simulation S
 collapseTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Simulation Sources, sim_1, fsm_tb (tb_fsm.sv)]", 15); // E (PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE)
 expandTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Simulation Sources, sim_1, m02_show_mole_tb (tb_show_mole.sv)]", 16); // E (PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE)
 collapseTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Simulation Sources, sim_1, m02_show_mole_tb (tb_show_mole.sv)]", 16); // E (PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE)
+expandTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Simulation Sources, sim_1, tb_estado_juego (tb_state.sv)]", 18); // E (PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE)
+collapseTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Simulation Sources, sim_1, tb_estado_juego (tb_state.sv)]", 18); // E (PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE)
+// HMemoryUtils.trashcanNow. Engine heap size: 1,166 MB. GUI used memory: 91 MB. Current time: 8/24/26, 8:36:44 PM CST
