@@ -1,3 +1,49 @@
 *.bkp
 *.dtmp
-src/build/
+
+# ============================================
+# Vivado - carpetas generadas automáticamente
+# ============================================
+*.cache/
+*.hw/
+*.ip_user_files/
+*.sim/
+*.runs/
+*.srcs/
+.Xil/
+*.gen/
+
+# ============================================
+# Vivado - archivos de sesión y logs
+# ============================================
+*.jou
+*.log
+*.str
+*.wcp
+*.wdb
+*.lpr
+vivado_pid*.str
+webtalk*.log
+usage_statistics_webtalk.html
+usage_statistics_webtalk.xml
+
+# ============================================
+# Vivado - archivo de proyecto (usamos flujo Tcl)
+# ============================================
+*.xpr
+
+# ============================================
+# Bitstreams y checkpoints (regenerables, pesados)
+# ============================================
+*.bit
+*.bin
+*.dcp
+*.ltx
+
+# ============================================
+# Archivos temporales del sistema / editor
+# ============================================
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
