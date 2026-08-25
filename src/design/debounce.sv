@@ -29,7 +29,7 @@ end
 
     //FFs de Entrada - Sincronizador de dos etapas
     always_ff @(posedge clk) begin
-        if (rst == 1'b0) begin
+        if (rst == 1'b1) begin
             db_out <= 1'b0;
             dff1   <= 1'b0;
             dff2   <= 1'b0;
