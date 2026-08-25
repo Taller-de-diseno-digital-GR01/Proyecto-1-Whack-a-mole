@@ -23,9 +23,6 @@ module top (
     //Salida show_mole
     output logic [7:0] leds_topo,
 
-    //Salida Externa fsm (flags)
-    output logic        f_state_play,
-    output logic        f_state_gameover,
 
     //Salida a los 4 displays de 7 segmentos (multiplexados)
     output logic [6:0]  seg, // segmentos gfedcba, compartidos
@@ -36,7 +33,12 @@ module top (
 
 );
     // Señales internas
-
+    
+    
+    //Señales internas fsm a state
+    logic      f_state_gameover;
+    logic      f_state_state;
+    
     //state a fsm
     logic       w_fin_espera;
 
