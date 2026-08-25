@@ -1,6 +1,6 @@
 module debounce(
     input logic clk,
-    input logic rst, //Revisar rst de la FPGA
+    input logic rst, //Activo en alto, igual que el resto de los módulos
     input logic btn_in,
 
     output logic db_out
@@ -29,7 +29,7 @@ end
 
     //FFs de Entrada - Sincronizador de dos etapas
     always_ff @(posedge clk) begin
-        if (rst == 1'b1) begin
+        if (rst) begin
             db_out <= 1'b0;
             dff1   <= 1'b0;
             dff2   <= 1'b0;

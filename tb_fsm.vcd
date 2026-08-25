@@ -1,0 +1,495 @@
+$date
+	Sat Aug 22 22:35:58 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module fsm_tb $end
+$var wire 1 ! rst_window $end
+$var wire 1 " rst_hits $end
+$var wire 1 # rst_failures $end
+$var wire 1 $ rst_dificulty $end
+$var wire 1 % inc_dificulty $end
+$var wire 1 & f_state_play $end
+$var wire 1 ' f_state_gameover $end
+$var wire 1 ( en_save_pos $end
+$var wire 1 ) en_numRandom $end
+$var wire 3 * current_state_out [2:0] $end
+$var wire 1 + add_hit $end
+$var wire 1 , add_failure $end
+$var parameter 3 - FAILURE $end
+$var parameter 3 . GAME_OVER $end
+$var parameter 3 / HIT $end
+$var parameter 3 0 PLAY $end
+$var parameter 3 1 REQ_POS $end
+$var parameter 3 2 START $end
+$var parameter 3 3 WAIT_UART $end
+$var reg 1 4 clk $end
+$var reg 1 5 cont_failure $end
+$var reg 1 6 hit $end
+$var reg 1 7 miss $end
+$var reg 1 8 req_sent $end
+$var reg 1 9 rst $end
+$var reg 1 : valid_pos $end
+$var reg 1 ; window_exp $end
+$var integer 32 < errors [31:0] $end
+$scope module dut $end
+$var wire 1 4 clk $end
+$var wire 1 5 cont_failure $end
+$var wire 3 = current_state_out [2:0] $end
+$var wire 1 6 hit $end
+$var wire 1 7 miss $end
+$var wire 1 9 rst $end
+$var wire 1 : valid_pos $end
+$var wire 1 ; window_exp $end
+$var reg 1 , add_failure $end
+$var reg 1 + add_hit $end
+$var reg 1 ) en_numRandom $end
+$var reg 1 ( en_save_pos $end
+$var reg 1 ' f_state_gameover $end
+$var reg 1 & f_state_play $end
+$var reg 1 % inc_dificulty $end
+$var reg 3 > next_state [2:0] $end
+$var reg 1 $ rst_dificulty $end
+$var reg 1 # rst_failures $end
+$var reg 1 " rst_hits $end
+$var reg 1 ! rst_window $end
+$var reg 3 ? state [2:0] $end
+$upscope $end
+$scope task check $end
+$upscope $end
+$scope task tick $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+b10 3
+b0 2
+b1 1
+b11 0
+b101 /
+b110 .
+b100 -
+$end
+#0
+$dumpvars
+b0 ?
+b1 >
+b0 =
+b0 <
+0;
+0:
+19
+08
+07
+06
+05
+04
+0,
+0+
+b0 *
+0)
+0(
+0'
+0&
+0%
+1$
+1#
+1"
+1!
+$end
+#5000
+14
+#10000
+04
+#15000
+14
+#16000
+09
+#20000
+04
+#25000
+b10 >
+1)
+0!
+0#
+0"
+0$
+b1 *
+b1 =
+b1 ?
+14
+#26000
+18
+#30000
+04
+#35000
+1(
+0)
+b10 *
+b10 =
+b10 ?
+14
+#36000
+b11 >
+1(
+1:
+08
+#40000
+04
+#45000
+1&
+0(
+b11 *
+b11 =
+b11 ?
+14
+#46000
+b101 >
+1&
+16
+0:
+#50000
+04
+#55000
+b1 >
+1!
+1%
+1+
+0&
+b101 *
+b101 =
+b101 ?
+14
+#56000
+1%
+1+
+1!
+b1 >
+06
+#60000
+04
+#65000
+b10 >
+1)
+0%
+0+
+0!
+b1 *
+b1 =
+b1 ?
+14
+#66000
+18
+#70000
+04
+#75000
+1(
+0)
+b10 *
+b10 =
+b10 ?
+14
+#76000
+b11 >
+1(
+1:
+08
+#80000
+04
+#85000
+1&
+0(
+b11 *
+b11 =
+b11 ?
+14
+#86000
+b100 >
+1&
+17
+0:
+#90000
+04
+#95000
+b1 >
+1!
+1,
+0&
+b100 *
+b100 =
+b100 ?
+14
+#96000
+1,
+1!
+b1 >
+07
+#100000
+04
+#105000
+b10 >
+1)
+0,
+0!
+b1 *
+b1 =
+b1 ?
+14
+#106000
+18
+#110000
+04
+#115000
+1(
+0)
+b10 *
+b10 =
+b10 ?
+14
+#116000
+b11 >
+1(
+1:
+08
+#120000
+04
+#125000
+1&
+0(
+b11 *
+b11 =
+b11 ?
+14
+#126000
+b100 >
+1&
+1;
+0:
+#130000
+04
+#135000
+b1 >
+1!
+1,
+0&
+b100 *
+b100 =
+b100 ?
+14
+#136000
+1,
+1!
+b1 >
+0;
+#140000
+04
+#145000
+b10 >
+1)
+0,
+0!
+b1 *
+b1 =
+b1 ?
+14
+#146000
+18
+#150000
+04
+#155000
+1(
+0)
+b10 *
+b10 =
+b10 ?
+14
+#156000
+b11 >
+1(
+1:
+08
+#160000
+04
+#165000
+1&
+0(
+b11 *
+b11 =
+b11 ?
+14
+#166000
+b101 >
+1&
+17
+16
+0:
+#170000
+04
+#175000
+b1 >
+1!
+1%
+1+
+0&
+b101 *
+b101 =
+b101 ?
+14
+#176000
+1%
+1+
+1!
+b1 >
+07
+06
+#180000
+04
+#185000
+b10 >
+1)
+0%
+0+
+0!
+b1 *
+b1 =
+b1 ?
+14
+#186000
+18
+#190000
+04
+#195000
+1(
+0)
+b10 *
+b10 =
+b10 ?
+14
+#196000
+b11 >
+1(
+1:
+08
+#200000
+04
+#205000
+1&
+0(
+b11 *
+b11 =
+b11 ?
+14
+#206000
+b100 >
+1&
+15
+17
+0:
+#210000
+04
+#215000
+b110 >
+1!
+1,
+0&
+b100 *
+b100 =
+b100 ?
+14
+#216000
+1,
+1!
+b110 >
+07
+#220000
+04
+#225000
+b0 >
+1#
+1"
+1$
+1'
+0,
+1!
+b110 *
+b110 =
+b110 ?
+14
+#226000
+1'
+1!
+1#
+1"
+1$
+b0 >
+05
+#230000
+04
+#235000
+b1 >
+0'
+1!
+1#
+1"
+1$
+b0 *
+b0 =
+b0 ?
+14
+#240000
+04
+#245000
+b10 >
+1)
+0!
+0#
+0"
+0$
+b1 *
+b1 =
+b1 ?
+14
+#246000
+18
+#250000
+04
+#255000
+1(
+0)
+b10 *
+b10 =
+b10 ?
+14
+#256000
+1!
+1#
+1"
+1$
+0(
+b1 >
+b0 *
+b0 =
+b0 ?
+19
+08
+#257000
+09
+#260000
+04
+#265000
+b10 >
+1)
+0!
+0#
+0"
+0$
+b1 *
+b1 =
+b1 ?
+14
+#266000
