@@ -81,7 +81,7 @@ endif
 # Hay que conocer las señales que se quieren ver, eso es lo único malo.
 
 $(NETLIST_OUT): $(DESIGN_SRCS) $(TOOLCHAIN_STAMP) | $(BUILD_DIR)
-	@$(YOSYS) -q -p " \
+	@$(YOSYS) -p " \
 		read_verilog -sv $(DESIGN_SRCS); \
 		hierarchy -check -top $(SYNTH_TOP); \
 		proc; opt; \
@@ -90,18 +90,19 @@ $(NETLIST_OUT): $(DESIGN_SRCS) $(TOOLCHAIN_STAMP) | $(BUILD_DIR)
 		stat; \
 		write_verilog $(NETLIST_OUT) \
 	" > $(SYNTH_LOG) 2>&1; status=$$?; \
-	cat $(SYNTH_LOG); \
 	if [ $$status -ne 0 ]; then \
+		cat $(SYNTH_LOG); \
 		echo ""; \
 		echo "ERROR: yosys falló sintetizando '$(SYNTH_TOP)' (ver $(SYNTH_LOG))"; \
 		exit 1; \
 	fi; \
-	if grep -qi "latch inferred" $(SYNTH_LOG); then \
-		echo ""; \
+	if grep "Latch inferred" $(SYNTH_LOG) | grep -qv "^No "; then \
 		echo "ERROR: yosys detectó latch(es) no intencionados en '$(SYNTH_TOP)':"; \
-		grep -i "latch inferred" $(SYNTH_LOG); \
+		grep "Latch inferred" $(SYNTH_LOG) | grep -v "^No "; \
 		exit 1; \
-	fi
+	fi; \
+	stat_line=$$(grep -n "Printing statistics" $(SYNTH_LOG) | tail -1 | cut -d: -f1); \
+	tail -n +$$stat_line $(SYNTH_LOG)
 
 # Nota: SYNTH_TOP debe ser un módulo instanciable de verdad (ej. top, o cualquier
 # módulo hoja como hit_counter). No sirve para testbenches (tb_*.sv no está en DESIGN_SRCS).
