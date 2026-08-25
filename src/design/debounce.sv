@@ -27,26 +27,21 @@ module debounce(
     endcase 
 end
 
-    //FFs de Entrada - Sincronizador de dos etapas
+
     always_ff @(posedge clk) begin
-        if (rst) begin
+        if (rst) begin 
+            dff1 <= 1'b0;
+            dff2 <= 1'b0;
+            q_reg <= '0;
             db_out <= 1'b0;
-            dff1   <= 1'b0;
-            dff2   <= 1'b0;
-            q_reg  <= {N{1'b0}};
         end else begin
             dff1 <= btn_in;
             dff2 <= dff1;
             q_reg <= q_next;
-        end
-    end
 
-    always_ff @(posedge clk) begin
-        if(q_reg[N-1] == 1'b1) begin //Si el contador ha llegado a su valor maximo, se actualiza la salida del debounce
-            db_out <= dff2;
-        end
-        else begin
-            db_out <= db_out; //Mantiene el valor anterior
+            if (q_reg[N-1]) begin
+                db_out <= dff2;
+            end
         end
     end
 endmodule
