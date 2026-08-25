@@ -34,7 +34,7 @@ module marcador #(
   // an3 an2 muestran acierto (decenas, unidades), an1 an0 muestran fallo (decenas, unidades)
   logic [3:0] digito;
 
-  always_comb begin
+  always @(*) begin
     case (sel)
       2'd0: digito = fallo[3:0];
       2'd1: digito = fallo[7:4];
