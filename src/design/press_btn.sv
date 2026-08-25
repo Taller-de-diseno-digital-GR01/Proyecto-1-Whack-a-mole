@@ -1,4 +1,3 @@
-
 module press_btn ( //módulo principal
     input logic       clk,
     input logic       rst,
@@ -12,7 +11,8 @@ module press_btn ( //módulo principal
     input logic       btn_7,
     input logic [2:0] pos_topo,
 
-    output logic      valid
+    output logic      valid,
+    output logic      miss
 );
 
 
@@ -95,7 +95,8 @@ module press_btn ( //módulo principal
         .enc_btn_in(enc_btn_in),
         .pos_topo(pos_topo),
         .valid_in(valid_enc),
-        .valid(valid)
+        .valid(valid),
+        .miss(miss)
     );
 
 endmodule
