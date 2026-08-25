@@ -1,0 +1,69 @@
+INFO: [Common 17-3922] A valid Vivado Design Suite BASIC license has been detected. Your current license is active and will expire on 24-aug-2027.
+#-----------------------------------------------------------
+# Vivado v2026.1 (64-bit)
+# SW Build 6511674 on Tue Jun 16 11:02:23 MDT 2026
+# IP Build 6504888 on Tue Jun 09 09:05:25 MDT 2026
+# SharedData Build 6501428 on Mon Jun 08 17:34:18 MDT 2026
+# Start of session at: Mon Aug 24 19:40:31 2026
+# Process ID         : 16672
+# Current directory  : C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/Proyecto_1
+# Command line       : vivado.exe -gui_launcher_event rodinguilauncherevent33216 C:\Users\nico1\Documents\TEC\2026\II Semestre\Taller Digital\Proyecto-1-Whack-a-mole\Proyecto_1\Proyecto_1.xpr
+# Log file           : C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/Proyecto_1/vivado.log
+# Journal file       : C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/Proyecto_1\vivado.jou
+# Running On         : NICOMENA
+# Platform           : Windows 11
+# Operating System   : 26200
+# Processor Detail   : AMD Ryzen 5 5600X 6-Core Processor             
+# CPU Frequency      : 3700 MHz
+# CPU Physical cores : 6
+# CPU Logical cores  : 12
+# Host memory        : 34240 MB
+# Swap memory        : 2147 MB
+# Total Virtual      : 36388 MB
+# Available Virtual  : 16194 MB
+#-----------------------------------------------------------
+start_gui
+open_project {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/Proyecto_1/Proyecto_1.xpr}
+INFO: [ProjectBase 1-489] The host OS only allows 260 characters in a normal path. The project is stored in a path with more than 80 characters. If you experience issues with IP, Block Designs, or files not being found, please consider moving the project to a location with a shorter path. Alternately consider using the OS subst command to map part of the path to a drive letter.
+Current project path is 'C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/Proyecto_1'
+INFO: [filemgmt 56-3] Default IP Output Path : Could not find the directory 'C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/Proyecto_1/Proyecto_1.gen/sources_1'.
+Scanning sources...
+Finished scanning sources
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'C:/AMDDesignTools/2026.1/Vivado/data/ip'.
+open_project: Time (s): cpu = 00:00:15 ; elapsed = 00:00:09 . Memory (MB): peak = 1795.301 ; gain = 348.039
+remove_files  -fileset constrs_1 C:/Users/nico1/Downloads/Basys3_Master.xdc
+add_files -fileset constrs_1 -norecurse {{C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/build/Basys3_Master.xdc}}
+add_files {{C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/fsm.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/r_uart.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/press_btn.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/show_mole.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/marcador.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/fail_counter.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/check_btn.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/time_logic.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/state.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/encoder_8_to_1.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/hit_counter.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/debounce.sv}}
+update_compile_order -fileset sources_1
+update_compile_order -fileset sources_1
+remove_files  {{C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/press_btn.sv}}
+update_compile_order -fileset sources_1
+update_compile_order -fileset sources_1
+remove_files  {{C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/check_btn.sv}}
+remove_files  {{C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/check_btn.sv}}
+WARNING: [Vivado 12-818] No files matched 'C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/check_btn.sv'
+remove_files  {{C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/check_btn.sv}}
+WARNING: [Vivado 12-818] No files matched 'C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/check_btn.sv'
+update_compile_order -fileset sources_1
+remove_files  {{C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/debounce.sv}}
+remove_files  {{C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/encoder_8_to_1.sv}}
+update_compile_order -fileset sources_1
+remove_files  {{C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/fail_counter.sv}}
+update_compile_order -fileset sources_1
+update_compile_order -fileset sources_1
+add_files {{C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/fsm.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/r_uart.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/press_btn.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/show_mole.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/marcador.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/fail_counter.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/check_btn.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/time_logic.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/state.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/encoder_8_to_1.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/hit_counter.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/debounce.sv}}
+WARNING: [filemgmt 56-12] File 'C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/fsm.sv' cannot be added to the project because it already exists in the project, skipping this file
+WARNING: [filemgmt 56-12] File 'C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/r_uart.sv' cannot be added to the project because it already exists in the project, skipping this file
+WARNING: [filemgmt 56-12] File 'C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/show_mole.sv' cannot be added to the project because it already exists in the project, skipping this file
+WARNING: [filemgmt 56-12] File 'C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/marcador.sv' cannot be added to the project because it already exists in the project, skipping this file
+WARNING: [filemgmt 56-12] File 'C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/time_logic.sv' cannot be added to the project because it already exists in the project, skipping this file
+WARNING: [filemgmt 56-12] File 'C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/state.sv' cannot be added to the project because it already exists in the project, skipping this file
+WARNING: [filemgmt 56-12] File 'C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/design/hit_counter.sv' cannot be added to the project because it already exists in the project, skipping this file
+update_compile_order -fileset sources_1
+update_compile_order -fileset sources_1
+set_property SOURCE_SET sources_1 [get_filesets sim_1]
+add_files -fileset sim_1 {{C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/sim/tb_fail_counter.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/sim/press_btn_tb.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/sim/tb_fsm.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/sim/tb_r_uart.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/sim/tb_state.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/sim/tb_time_logic.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/sim/tb_show_mole.sv} {C:/Users/nico1/Documents/TEC/2026/II Semestre/Taller Digital/Proyecto-1-Whack-a-mole/src/sim/tb_hit_counter.sv}}
+update_compile_order -fileset sim_1
+update_compile_order -fileset sim_1
