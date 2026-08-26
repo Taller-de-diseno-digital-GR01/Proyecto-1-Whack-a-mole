@@ -17,9 +17,12 @@
 ## Descripción del sistema
 El juego se implementa con dos subsistemas de reloj independiente. Un circuito en protoboard, construido
 con lógica discreta 74xx y un oscilador 555, decide de forma pseudoaleatoria (LFSR) cuál de 8 posiciones
-corresponde al topo y la indica con un LED. Esa posición se envía a la FPGA mediante un enlace serial UART
-(8N1, 9600 baudios). La FPGA concentra toda la lógica de control del juego: turnos, ventana de tiempo con
-dificultad progresiva, conteo de aciertos y fallos, y despliegue del marcador en displays de 7 segmentos.
+corresponde al topo y la indica con un LED. El transmisor UART discreto (74xx + reloj 555) no resultó
+confiable, así que esa posición llega a la FPGA por 3 líneas paralelas directas desde el LFSR; la FPGA arma
+la trama 8N1 (9600 baudios) internamente, en loopback, para conservar el formato de comunicación acordado
+entre módulos (ver `src/design/t_uart.sv`). La FPGA concentra toda la lógica de control del juego: turnos,
+ventana de tiempo con dificultad progresiva, conteo de aciertos y fallos, y despliegue del marcador en
+displays de 7 segmentos.
 
 ## Documentación de diseño
 

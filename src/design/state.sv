@@ -18,8 +18,16 @@ module state #(
     logic [$clog2(N_PRESC)-1:0] presc_cnt;
     logic        tick_100ms;
 
+    // Se reinicia con la misma condición que wait_cnt (reposo o partida
+    // activa): si corriera libre, el primer tick tras entrar a
+    // GAME_OVER podría caer casi de inmediato según la fase en que
+    // haya quedado, acortando la espera real por debajo del mínimo de
+    // 2s exigido. Al reiniciarlo junto con wait_cnt, cada espera de fin
+    // de partida arranca su propio conteo de 100ms desde cero.
     always_ff @(posedge clk) begin
         if (rst) begin
+            presc_cnt <= '0;
+        end else if (f_state_play || (!f_state_play && !f_state_gameover)) begin
             presc_cnt <= '0;
         end else if (presc_cnt == N_PRESC - 1) begin
             presc_cnt <= '0;

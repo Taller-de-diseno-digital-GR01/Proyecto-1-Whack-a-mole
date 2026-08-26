@@ -14,8 +14,10 @@ module top (
 
 
 
-    //Entrada Externa de UART
-    input logic       pos,    //serial
+    //Entrada Externa del LFSR discreto (paralela: el transmisor UART
+    //discreto no es confiable, así que la FPGA arma la trama por
+    //su cuenta a partir de este dato -- ver t_uart)
+    input logic [2:0] pos_topo_lfsr,
 
     //Salidas State
     output logic led_state,
@@ -37,7 +39,7 @@ module top (
     
     //Señales internas fsm a state
     logic      f_state_gameover;
-    logic      f_state_state;
+    logic      f_state_play;
     
     //state a fsm
     logic       w_fin_espera;
@@ -45,6 +47,13 @@ module top (
     // r_uart al resto
     logic [2:0] w_pos_topo;
     logic       w_valid_pos;
+
+    // fsm -> t_uart: dispara la transmisión (loopback interno con r_uart)
+    logic       w_en_numRandom;
+
+    // t_uart -> r_uart: trama serial en loopback interno (reemplaza al
+    // enlace serie externo, que dependía del transmisor discreto roto)
+    logic       w_pos_serial;
 
     // press_btn a fsm
     logic       w_hit_press;   // "valid" de press_btn: botón correcto
@@ -73,17 +82,30 @@ module top (
     logic [7:0] w_acierto; // [3:0]=unidades, [7:4]=decenas
     logic [7:0] w_fallo;   // [3:0]=unidades, [7:4]=decenas
 
+    // M1b: Transmisor UART -> arma la trama a partir del dato paralelo
+    // del LFSR discreto y la entrega en loopback interno a r_uart,
+    // disparada por el mismo pulso que antes solo activaba el circuito
+    // discreto (en_numRandom)
+    t_uart u_t_uart (
+        .clk      (clk),
+        .rst      (rst),
+        .pos_topo (pos_topo_lfsr),
+        .start    (w_en_numRandom),
+        .tx       (w_pos_serial),
+        .busy     ()
+    );
+
     // M1: Receptor UART -> entrega pos_topo y valid_pos
     r_uart u_r_uart (
         .clk         (clk),
         .rst         (rst),
-        .pos         (pos),
+        .pos         (w_pos_serial),
         .en_save_pos (w_en_save_pos),
         .pos_topo    (w_pos_topo),
         .valid_pos   (w_valid_pos)
     );
 
-    
+
     // M2: Botones (debounce + encoder + check_btn) -> hit / miss
     press_btn u_press_btn (
         .clk      (clk),
@@ -115,7 +137,7 @@ module top (
         .rst_dificulty     (w_rst_dificulty), //resetea la ventana de tiempo
         .rst_hits          (w_rst_hits), //resetea ek contador
         .rst_failures      (w_rst_failures), //resetea los fallos
-        .en_numRandom      (en_numRandom), //este activa el circuito discreto
+        .en_numRandom      (w_en_numRandom), //dispara t_uart y activa el circuito discreto
         .en_save_pos       (w_en_save_pos), //almacena el valor
         .add_hit           (w_add_hit), //añade el acierto
         .add_failure       (w_add_failure), //añade el fallo
@@ -181,6 +203,8 @@ module top (
 
 
     );
+
+    assign en_numRandom = w_en_numRandom;
 
     // M8: Marcador -> multiplexa acierto/fallo en los 4 displays de 7 segmentos
     marcador u_marcador (

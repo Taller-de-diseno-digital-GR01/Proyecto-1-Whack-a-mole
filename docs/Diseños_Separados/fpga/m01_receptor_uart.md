@@ -1,5 +1,13 @@
 # M1: Receptor UART
 
+> **Nota de implementación (post-diseño):** el transmisor UART del subsistema discreto (74xx +
+> reloj 555) no resultó confiable en la práctica. `pos(8)` descrito abajo ya no llega desde un pin
+> externo de la FPGA: el LFSR discreto (funcional) se conecta directo a la FPGA por 3 líneas
+> paralelas (`pos_topo_lfsr[2:0]`, puerto de `top`), y un nuevo módulo `t_uart` arma la trama 8N1
+> dentro de la FPGA y la entrega en loopback interno a este receptor, que no cambió. El
+> comportamiento y las tablas de este documento siguen aplicando tal cual para `r_uart`; ver
+> `src/design/t_uart.sv` para el transmisor.
+
 ## f) Relación con otros módulos
 
 `pos(8)` proviene del subsistema discreto, conectado por GPIO, y llega de forma serial siguiendo el protocolo UART. Al provenir de un reloj independiente al de la FPGA, este módulo resuelve primero la metaestabilidad mediante un sincronizador de dos etapas. La FSM general del sistema (M8), al entrar al estado `001` (`en_numAleatorios`), solicita al subsistema discreto una nueva posición; ese pulso de solicitud no forma parte de este módulo. Una vez que el subsistema discreto responde con la trama serial, este módulo la recibe y decodifica de forma autónoma, sin esperar ninguna señal de la FSM, y levanta `valid_pos` en cuanto detecta el bit de inicio, recibe los 8 bits de datos y confirma el bit de parada. La FSM permanece en el estado `010` monitoreando `valid_pos`; al recibirlo, activa `en_save_pos` para que la posición quede retenida en un registro estable, y transiciona hacia el estado de juego. `pos_topo[2:0]` se entrega tanto a la FSM (para comparar contra el botón presionado) como al módulo Show_Mole (M2), que la usa para encender el LED correspondiente. `rst` reinicia todos los elementos secuenciales del módulo a un estado conocido.

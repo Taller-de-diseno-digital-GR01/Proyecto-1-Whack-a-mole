@@ -33,10 +33,9 @@ module tb_top;
 
     logic clk, rst;
     logic btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7;
-    logic pos;
+    logic [2:0] pos_topo_lfsr;
     logic led_state;
     logic [7:0] leds_topo;
-    logic f_state_play, f_state_gameover;
     logic [6:0] seg;
     logic [3:0] an;
     logic en_numRandom;
@@ -54,11 +53,9 @@ module tb_top;
         .btn_5             (btn_5),
         .btn_6             (btn_6),
         .btn_7             (btn_7),
-        .pos               (pos),
+        .pos_topo_lfsr     (pos_topo_lfsr),
         .led_state         (led_state),
         .leds_topo         (leds_topo),
-        .f_state_play      (f_state_play),
-        .f_state_gameover  (f_state_gameover),
         .seg               (seg),
         .an                (an),
         .en_numRandom      (en_numRandom)
@@ -68,6 +65,7 @@ module tb_top;
     // SOLO para velocidad de simulación (ver nota arriba)
     // ---------------------------------------------------------
     defparam dut.u_r_uart.BAUD_RATE    = 1_000_000; // 100 ciclos/bit en vez de 10417
+    defparam dut.u_t_uart.BAUD_RATE    = 1_000_000; // debe coincidir con u_r_uart (mismo N en el loopback)
     defparam dut.u_time_logic.CLK_FREQ = 10_000;     // ~1000 ciclos/tick en vez de 10_000_000
     defparam dut.u_state.N_PRESC       = 50;         // tick de "100ms" cada 50 ciclos
     defparam dut.u_state.WAIT_COUNT    = 4;          // espera de game over: 4 ticks en vez de 20
@@ -81,8 +79,6 @@ module tb_top;
     defparam dut.u_press_btn.db6.N = 6;
     defparam dut.u_press_btn.db7.N = 6;
 
-    localparam int UART_BIT_CYCLES = 100; // debe coincidir con BAUD_RATE de arriba
-
     // ---------------------------------------------------------
     // Reloj
     // ---------------------------------------------------------
@@ -93,23 +89,14 @@ module tb_top;
     // Tareas auxiliares
     // ---------------------------------------------------------
 
-    task automatic uart_send_byte(input logic [7:0] data);
-        int i;
-        begin
-            pos = 1'b0; // start bit
-            repeat (UART_BIT_CYCLES) @(posedge clk);
-            for (i = 0; i < 8; i++) begin
-                pos = data[i];
-                repeat (UART_BIT_CYCLES) @(posedge clk);
-            end
-            pos = 1'b1; // stop bit
-            repeat (UART_BIT_CYCLES) @(posedge clk);
-        end
-    endtask
-
+    // El LFSR discreto (funcional) mantiene su valor en pos_topo_lfsr de
+    // forma continua; el transmisor UART discreto es el que estaba roto,
+    // así que aquí simulamos solo el dato paralelo. La FPGA (t_uart)
+    // arma la trama sola en cuanto ve el pulso en_numRandom -- no hace
+    // falta bit-banging desde el testbench.
     task automatic enviar_pos(input logic [2:0] posicion);
         begin
-            uart_send_byte({5'b0, posicion});
+            pos_topo_lfsr = posicion;
         end
     endtask
 
@@ -172,7 +159,7 @@ module tb_top;
         $dumpvars(0, tb_top);
 
         rst = 1'b1;
-        pos = 1'b1; // linea UART en reposo
+        pos_topo_lfsr = 3'd3; // primera posicion (caso 1), lista antes del primer REQ_POS
         {btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7} = 8'b0;
 
         repeat (5) @(posedge clk);
@@ -186,12 +173,11 @@ module tb_top;
         esperar_estado(ST_REQ_POS, 20);
         check(en_numRandom === 1'b1, "en_numRandom se activa al pedir una posicion nueva");
 
-        esperar_estado(ST_WAIT_UART, 20);
-        enviar_pos(3'd3);
-        @(posedge clk);
+        esperar_estado(ST_PLAY, 1200); // cubre la trama t_uart -> r_uart en loopback (~10*N ciclos)
         check(leds_topo === 8'b0000_1000, "leds_topo muestra la posicion 3 durante PLAY");
         check(led_state === 1'b1, "led_state fijo en alto durante PLAY");
 
+        enviar_pos(3'd5); // deja lista la siguiente posicion antes del proximo REQ_POS
         presionar_boton(3);
         esperar_estado(ST_REQ_POS, 20);
         check(dut.w_acierto[3:0] === 4'd1, "hit_counter subio a 1 acierto");
@@ -202,9 +188,9 @@ module tb_top;
         // Caso 2: fallo por boton equivocado
         // -------------------------------------------------
         $display("\n--- Caso 2: fallo por boton incorrecto ---");
-        esperar_estado(ST_WAIT_UART, 20);
-        enviar_pos(3'd5);
-        @(posedge clk);
+        esperar_estado(ST_PLAY, 1200);
+
+        enviar_pos(3'd1); // deja lista la siguiente posicion antes del proximo REQ_POS
         presionar_boton(2); // deberia ser el 5
         esperar_estado(ST_REQ_POS, 20);
         check(dut.w_fallo[3:0] === 4'd1, "fail_counter subio a 1 fallo");
@@ -213,21 +199,21 @@ module tb_top;
         // Caso 3: dos fallos consecutivos mas -> game over
         // -------------------------------------------------
         $display("\n--- Caso 3: fallos consecutivos hasta game over ---");
-        esperar_estado(ST_WAIT_UART, 20);
-        enviar_pos(3'd1);
-        @(posedge clk);
+        esperar_estado(ST_PLAY, 1200);
+
+        enviar_pos(3'd1); // misma posicion, lista antes del proximo REQ_POS
         presionar_boton(0); // incorrecto (2do fallo consecutivo)
         esperar_estado(ST_REQ_POS, 20);
 
-        esperar_estado(ST_WAIT_UART, 20);
-        enviar_pos(3'd1);
-        @(posedge clk);
+        esperar_estado(ST_PLAY, 1200);
         presionar_boton(0); // incorrecto (3er fallo consecutivo -> game over)
         esperar_estado(ST_GAME_OVER, 20);
         check(dut.w_current_state === ST_GAME_OVER, "fsm llego a GAME_OVER tras 3 fallos consecutivos");
-        check(f_state_gameover === 1'b1, "f_state_gameover se activo");
+        check(dut.f_state_gameover === 1'b1, "f_state_gameover se activo");
         check(dut.w_acierto[3:0] === 4'd1 && dut.w_fallo[3:0] === 4'd3,
               "el marcador mantiene el puntaje final (1 acierto, 3 fallos) al ENTRAR a GAME_OVER");
+
+        enviar_pos(3'd7); // deja lista la posicion del caso 4 antes de que la FSM vuelva a pedir (nueva partida)
 
         // Debe parpadear: muestreamos led_state dos veces separadas por
         // un tick completo de state (N_PRESC=50 ciclos) y verificamos
@@ -257,9 +243,7 @@ module tb_top;
         // Caso 4: se acaba la ventana de tiempo sin presionar nada
         // -------------------------------------------------
         $display("\n--- Caso 4: expira la ventana de tiempo (window_exp) ---");
-        esperar_estado(ST_WAIT_UART, 20);
-        enviar_pos(3'd7);
-        @(posedge clk);
+        esperar_estado(ST_PLAY, 1200);
         esperar_estado(ST_FAILURE, 25000);
         check(dut.w_current_state === ST_FAILURE, "la ventana expiro y disparo FAILURE sin presionar boton");
 

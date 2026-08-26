@@ -151,16 +151,19 @@ set_property PACKAGE_PIN U18 [get_ports rst]
 
 ##Pmod Header JB
 ##Sch name = JB1
-set_property PACKAGE_PIN A14 [get_ports {pos}]					
-	set_property IOSTANDARD LVCMOS33 [get_ports {pos}]
+## El transmisor UART discreto no es confiable: en vez del enlace serie
+## por este pin, ahora pos_topo_lfsr[2:0] viaja paralelo por JB1/JB2/JB3
+## (la FPGA arma la trama 8N1 internamente, ver t_uart)
+set_property PACKAGE_PIN A14 [get_ports {pos_topo_lfsr[0]}]
+	set_property IOSTANDARD LVCMOS33 [get_ports {pos_topo_lfsr[0]}]
 ##Sch name = JB2
-#set_property PACKAGE_PIN A16 [get_ports {JB[1]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {JB[1]}]
+set_property PACKAGE_PIN A16 [get_ports {pos_topo_lfsr[1]}]
+	set_property IOSTANDARD LVCMOS33 [get_ports {pos_topo_lfsr[1]}]
 ##Sch name = JB3
-#set_property PACKAGE_PIN B15 [get_ports {JB[2]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {JB[2]}]
+set_property PACKAGE_PIN B15 [get_ports {pos_topo_lfsr[2]}]
+	set_property IOSTANDARD LVCMOS33 [get_ports {pos_topo_lfsr[2]}]
 ##Sch name = JB4
-set_property PACKAGE_PIN B16 [get_ports {en_numRandom}]					
+set_property PACKAGE_PIN B16 [get_ports {en_numRandom}]
 	set_property IOSTANDARD LVCMOS33 [get_ports {en_numRandom}]
 ##Sch name = JB7
 #set_property PACKAGE_PIN A15 [get_ports {JB[4]}]					
