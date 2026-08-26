@@ -1,0 +1,2060 @@
+
+ /----------------------------------------------------------------------------\
+ |                                                                            |
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |                                                                            |
+ |  Copyright (C) 2012 - 2020  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |                                                                            |
+ |  Permission to use, copy, modify, and/or distribute this software for any  |
+ |  purpose with or without fee is hereby granted, provided that the above    |
+ |  copyright notice and this permission notice appear in all copies.         |
+ |                                                                            |
+ |  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES  |
+ |  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF          |
+ |  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR   |
+ |  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES    |
+ |  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN     |
+ |  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF   |
+ |  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.            |
+ |                                                                            |
+ \----------------------------------------------------------------------------/
+
+ Yosys 0.26+1 (git sha1 b1a011138, clang 10.0.0-4ubuntu1 -fPIC -Os)
+
+
+-- Running command ` 	read_verilog -sv src/design/check_btn.sv src/design/debounce.sv src/design/encoder_8_to_1.sv src/design/fail_counter.sv src/design/fsm.sv src/design/hit_counter.sv src/design/marcador.sv src/design/press_btn.sv src/design/r_uart.sv src/design/show_mole.sv src/design/state.sv src/design/time_logic.sv src/design/top.sv; 	hierarchy -check -top top; 	proc; opt; 	prep -top top; 	opt_clean; 	stat; 	write_verilog src/build/top_synth.v ' --
+
+1. Executing Verilog-2005 frontend: src/design/check_btn.sv
+Parsing SystemVerilog input from `src/design/check_btn.sv' to AST representation.
+Generating RTLIL representation for module `\check_btn'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: src/design/debounce.sv
+Parsing SystemVerilog input from `src/design/debounce.sv' to AST representation.
+Generating RTLIL representation for module `\debounce'.
+Successfully finished Verilog frontend.
+
+3. Executing Verilog-2005 frontend: src/design/encoder_8_to_1.sv
+Parsing SystemVerilog input from `src/design/encoder_8_to_1.sv' to AST representation.
+Generating RTLIL representation for module `\encoder_8_to_1'.
+Successfully finished Verilog frontend.
+
+4. Executing Verilog-2005 frontend: src/design/fail_counter.sv
+Parsing SystemVerilog input from `src/design/fail_counter.sv' to AST representation.
+Generating RTLIL representation for module `\fail_counter'.
+Successfully finished Verilog frontend.
+
+5. Executing Verilog-2005 frontend: src/design/fsm.sv
+Parsing SystemVerilog input from `src/design/fsm.sv' to AST representation.
+Generating RTLIL representation for module `\fsm'.
+Successfully finished Verilog frontend.
+
+6. Executing Verilog-2005 frontend: src/design/hit_counter.sv
+Parsing SystemVerilog input from `src/design/hit_counter.sv' to AST representation.
+Generating RTLIL representation for module `\hit_counter'.
+Successfully finished Verilog frontend.
+
+7. Executing Verilog-2005 frontend: src/design/marcador.sv
+Parsing SystemVerilog input from `src/design/marcador.sv' to AST representation.
+Generating RTLIL representation for module `\marcador'.
+Successfully finished Verilog frontend.
+
+8. Executing Verilog-2005 frontend: src/design/press_btn.sv
+Parsing SystemVerilog input from `src/design/press_btn.sv' to AST representation.
+Generating RTLIL representation for module `\press_btn'.
+Successfully finished Verilog frontend.
+
+9. Executing Verilog-2005 frontend: src/design/r_uart.sv
+Parsing SystemVerilog input from `src/design/r_uart.sv' to AST representation.
+Generating RTLIL representation for module `\r_uart'.
+Successfully finished Verilog frontend.
+
+10. Executing Verilog-2005 frontend: src/design/show_mole.sv
+Parsing SystemVerilog input from `src/design/show_mole.sv' to AST representation.
+Generating RTLIL representation for module `\show_mole'.
+Successfully finished Verilog frontend.
+
+11. Executing Verilog-2005 frontend: src/design/state.sv
+Parsing SystemVerilog input from `src/design/state.sv' to AST representation.
+Generating RTLIL representation for module `\state'.
+Successfully finished Verilog frontend.
+
+12. Executing Verilog-2005 frontend: src/design/time_logic.sv
+Parsing SystemVerilog input from `src/design/time_logic.sv' to AST representation.
+Generating RTLIL representation for module `\time_logic'.
+Successfully finished Verilog frontend.
+
+13. Executing Verilog-2005 frontend: src/design/top.sv
+Parsing SystemVerilog input from `src/design/top.sv' to AST representation.
+Generating RTLIL representation for module `\top'.
+src/design/top.sv:146: Warning: Identifier `\f_state_play' is implicitly declared.
+Successfully finished Verilog frontend.
+
+14. Executing HIERARCHY pass (managing design hierarchy).
+
+14.1. Analyzing design hierarchy..
+Top module:  \top
+Used module:     \marcador
+Used module:     \state
+Used module:     \show_mole
+Used module:     \fail_counter
+Used module:     \hit_counter
+Used module:     \time_logic
+Used module:     \fsm
+Used module:     \press_btn
+Used module:         \check_btn
+Used module:         \encoder_8_to_1
+Used module:         \debounce
+Used module:     \r_uart
+
+14.2. Analyzing design hierarchy..
+Top module:  \top
+Used module:     \marcador
+Used module:     \state
+Used module:     \show_mole
+Used module:     \fail_counter
+Used module:     \hit_counter
+Used module:     \time_logic
+Used module:     \fsm
+Used module:     \press_btn
+Used module:         \check_btn
+Used module:         \encoder_8_to_1
+Used module:         \debounce
+Used module:     \r_uart
+Removed 0 unused modules.
+
+15. Executing PROC pass (convert processes to netlists).
+
+15.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+15.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 4 switch rules as full_case in process $proc$src/design/time_logic.sv:56$132 in module time_logic.
+Marked 2 switch rules as full_case in process $proc$src/design/time_logic.sv:46$127 in module time_logic.
+Marked 2 switch rules as full_case in process $proc$src/design/state.sv:0$113 in module state.
+Marked 2 switch rules as full_case in process $proc$src/design/state.sv:65$109 in module state.
+Marked 2 switch rules as full_case in process $proc$src/design/state.sv:43$95 in module state.
+Marked 2 switch rules as full_case in process $proc$src/design/state.sv:21$90 in module state.
+Removed 1 dead cases from process $proc$src/design/show_mole.sv:0$89 in module show_mole.
+Marked 2 switch rules as full_case in process $proc$src/design/show_mole.sv:0$89 in module show_mole.
+Marked 1 switch rules as full_case in process $proc$src/design/r_uart.sv:192$88 in module r_uart.
+Removed 1 dead cases from process $proc$src/design/r_uart.sv:0$79 in module r_uart.
+Marked 6 switch rules as full_case in process $proc$src/design/r_uart.sv:0$79 in module r_uart.
+Marked 1 switch rules as full_case in process $proc$src/design/r_uart.sv:123$78 in module r_uart.
+Marked 1 switch rules as full_case in process $proc$src/design/r_uart.sv:113$77 in module r_uart.
+Marked 2 switch rules as full_case in process $proc$src/design/r_uart.sv:97$70 in module r_uart.
+Marked 2 switch rules as full_case in process $proc$src/design/r_uart.sv:79$66 in module r_uart.
+Marked 1 switch rules as full_case in process $proc$src/design/r_uart.sv:54$61 in module r_uart.
+Marked 1 switch rules as full_case in process $proc$src/design/r_uart.sv:39$60 in module r_uart.
+Marked 1 switch rules as full_case in process $proc$src/design/marcador.sv:0$59 in module marcador.
+Removed 1 dead cases from process $proc$src/design/marcador.sv:0$58 in module marcador.
+Marked 1 switch rules as full_case in process $proc$src/design/marcador.sv:0$58 in module marcador.
+Removed 1 dead cases from process $proc$src/design/marcador.sv:0$57 in module marcador.
+Marked 1 switch rules as full_case in process $proc$src/design/marcador.sv:0$57 in module marcador.
+Marked 2 switch rules as full_case in process $proc$src/design/hit_counter.sv:15$37 in module hit_counter.
+Marked 6 switch rules as full_case in process $proc$src/design/fsm.sv:0$35 in module fsm.
+Marked 1 switch rules as full_case in process $proc$src/design/fsm.sv:44$34 in module fsm.
+Marked 2 switch rules as full_case in process $proc$src/design/fail_counter.sv:46$23 in module fail_counter.
+Marked 2 switch rules as full_case in process $proc$src/design/fail_counter.sv:22$13 in module fail_counter.
+Marked 1 switch rules as full_case in process $proc$src/design/encoder_8_to_1.sv:0$11 in module encoder_8_to_1.
+Marked 1 switch rules as full_case in process $proc$src/design/debounce.sv:31$10 in module debounce.
+Marked 1 switch rules as full_case in process $proc$src/design/debounce.sv:0$8 in module debounce.
+Marked 2 switch rules as full_case in process $proc$src/design/check_btn.sv:0$1 in module check_btn.
+Removed a total of 4 dead cases.
+
+15.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 11 redundant assignments.
+Promoted 29 assignments to connections.
+
+15.4. Executing PROC_INIT pass (extract init attributes).
+
+15.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst in `\fsm.$proc$src/design/fsm.sv:44$34'.
+
+15.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 2 switches.
+<suppressed ~61 debug messages>
+
+15.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\time_logic.$proc$src/design/time_logic.sv:56$132'.
+     1/1: $0\contador_ventana[3:0]
+Creating decoders for process `\time_logic.$proc$src/design/time_logic.sv:46$127'.
+     1/1: $0\ventana_ticks[3:0]
+Creating decoders for process `\time_logic.$proc$src/design/time_logic.sv:34$119'.
+Creating decoders for process `\state.$proc$src/design/state.sv:0$113'.
+     1/2: $2\led_state[0:0]
+     2/2: $1\led_state[0:0]
+Creating decoders for process `\state.$proc$src/design/state.sv:65$109'.
+     1/1: $0\blink_toggle[0:0]
+Creating decoders for process `\state.$proc$src/design/state.sv:43$95'.
+     1/1: $0\wait_cnt[4:0]
+Creating decoders for process `\state.$proc$src/design/state.sv:21$90'.
+     1/1: $0\presc_cnt[23:0]
+Creating decoders for process `\show_mole.$proc$src/design/show_mole.sv:0$89'.
+     1/2: $2\leds_topo[7:0]
+     2/2: $1\leds_topo[7:0]
+Creating decoders for process `\r_uart.$proc$src/design/r_uart.sv:192$88'.
+     1/1: $0\pos_topo[2:0]
+Creating decoders for process `\r_uart.$proc$src/design/r_uart.sv:0$81'.
+Creating decoders for process `\r_uart.$proc$src/design/r_uart.sv:0$79'.
+     1/12: $7\next_state[1:0]
+     2/12: $6\next_state[1:0]
+     3/12: $5\next_state[1:0]
+     4/12: $5\load[0:0]
+     5/12: $4\load[0:0]
+     6/12: $4\next_state[1:0]
+     7/12: $3\load[0:0]
+     8/12: $3\next_state[1:0]
+     9/12: $2\load[0:0]
+    10/12: $2\next_state[1:0]
+    11/12: $1\load[0:0]
+    12/12: $1\next_state[1:0]
+Creating decoders for process `\r_uart.$proc$src/design/r_uart.sv:123$78'.
+     1/1: $0\state[1:0]
+Creating decoders for process `\r_uart.$proc$src/design/r_uart.sv:113$77'.
+     1/1: $0\shift_reg[7:0]
+Creating decoders for process `\r_uart.$proc$src/design/r_uart.sv:97$70'.
+     1/1: $0\bit_cnt[2:0]
+Creating decoders for process `\r_uart.$proc$src/design/r_uart.sv:79$66'.
+     1/1: $0\time_cntr[13:0]
+Creating decoders for process `\r_uart.$proc$src/design/r_uart.sv:54$61'.
+     1/1: $0\pos_sync_prev[0:0]
+Creating decoders for process `\r_uart.$proc$src/design/r_uart.sv:39$60'.
+     1/2: $0\pos_sync[0:0]
+     2/2: $0\pos_ff1[0:0]
+Creating decoders for process `\marcador.$proc$src/design/marcador.sv:0$59'.
+     1/1: $1\seg[6:0]
+Creating decoders for process `\marcador.$proc$src/design/marcador.sv:0$58'.
+     1/1: $1\an[3:0]
+Creating decoders for process `\marcador.$proc$src/design/marcador.sv:0$57'.
+     1/1: $1\digito[3:0]
+Creating decoders for process `\marcador.$proc$src/design/marcador.sv:30$52'.
+Creating decoders for process `\marcador.$proc$src/design/marcador.sv:23$48'.
+Creating decoders for process `\hit_counter.$proc$src/design/hit_counter.sv:15$37'.
+     1/2: $0\decenas[3:0]
+     2/2: $0\unidades[3:0]
+Creating decoders for process `\fsm.$proc$src/design/fsm.sv:0$35'.
+     1/17: $6\next_state[2:0]
+     2/17: $5\next_state[2:0]
+     3/17: $4\next_state[2:0]
+     4/17: $3\next_state[2:0]
+     5/17: $2\next_state[2:0]
+     6/17: $1\next_state[2:0]
+     7/17: $1\rst_window[0:0]
+     8/17: $1\rst_failures[0:0]
+     9/17: $1\rst_hits[0:0]
+    10/17: $1\rst_dificulty[0:0]
+    11/17: $1\f_state_gameover[0:0]
+    12/17: $1\f_state_play[0:0]
+    13/17: $1\inc_dificulty[0:0]
+    14/17: $1\add_failure[0:0]
+    15/17: $1\add_hit[0:0]
+    16/17: $1\en_save_pos[0:0]
+    17/17: $1\en_numRandom[0:0]
+Creating decoders for process `\fsm.$proc$src/design/fsm.sv:44$34'.
+     1/1: $0\state[2:0]
+Creating decoders for process `\fail_counter.$proc$src/design/fail_counter.sv:46$23'.
+     1/1: $0\consecutivos[1:0]
+Creating decoders for process `\fail_counter.$proc$src/design/fail_counter.sv:22$13'.
+     1/2: $0\decenas[3:0]
+     2/2: $0\unidades[3:0]
+Creating decoders for process `\encoder_8_to_1.$proc$src/design/encoder_8_to_1.sv:0$11'.
+     1/1: $1\btn_out[2:0]
+Creating decoders for process `\debounce.$proc$src/design/debounce.sv:31$10'.
+     1/4: $0\q_reg[20:0]
+     2/4: $0\dff2[0:0]
+     3/4: $0\dff1[0:0]
+     4/4: $0\db_out[0:0]
+Creating decoders for process `\debounce.$proc$src/design/debounce.sv:0$8'.
+     1/1: $1\q_next[20:0]
+Creating decoders for process `\check_btn.$proc$src/design/check_btn.sv:0$1'.
+     1/4: $2\miss[0:0]
+     2/4: $2\valid[0:0]
+     3/4: $1\miss[0:0]
+     4/4: $1\valid[0:0]
+
+15.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\state.\led_state' from process `\state.$proc$src/design/state.sv:0$113'.
+No latch inferred for signal `\show_mole.\leds_topo' from process `\show_mole.$proc$src/design/show_mole.sv:0$89'.
+No latch inferred for signal `\r_uart.\shift_en' from process `\r_uart.$proc$src/design/r_uart.sv:0$81'.
+No latch inferred for signal `\r_uart.\valid_pos_int' from process `\r_uart.$proc$src/design/r_uart.sv:0$81'.
+No latch inferred for signal `\r_uart.\next_state' from process `\r_uart.$proc$src/design/r_uart.sv:0$79'.
+No latch inferred for signal `\r_uart.\load' from process `\r_uart.$proc$src/design/r_uart.sv:0$79'.
+No latch inferred for signal `\marcador.\seg' from process `\marcador.$proc$src/design/marcador.sv:0$59'.
+No latch inferred for signal `\marcador.\an' from process `\marcador.$proc$src/design/marcador.sv:0$58'.
+No latch inferred for signal `\marcador.\digito' from process `\marcador.$proc$src/design/marcador.sv:0$57'.
+No latch inferred for signal `\fsm.\rst_dificulty' from process `\fsm.$proc$src/design/fsm.sv:0$35'.
+No latch inferred for signal `\fsm.\rst_hits' from process `\fsm.$proc$src/design/fsm.sv:0$35'.
+No latch inferred for signal `\fsm.\rst_failures' from process `\fsm.$proc$src/design/fsm.sv:0$35'.
+No latch inferred for signal `\fsm.\en_numRandom' from process `\fsm.$proc$src/design/fsm.sv:0$35'.
+No latch inferred for signal `\fsm.\en_save_pos' from process `\fsm.$proc$src/design/fsm.sv:0$35'.
+No latch inferred for signal `\fsm.\add_hit' from process `\fsm.$proc$src/design/fsm.sv:0$35'.
+No latch inferred for signal `\fsm.\add_failure' from process `\fsm.$proc$src/design/fsm.sv:0$35'.
+No latch inferred for signal `\fsm.\rst_window' from process `\fsm.$proc$src/design/fsm.sv:0$35'.
+No latch inferred for signal `\fsm.\inc_dificulty' from process `\fsm.$proc$src/design/fsm.sv:0$35'.
+No latch inferred for signal `\fsm.\f_state_play' from process `\fsm.$proc$src/design/fsm.sv:0$35'.
+No latch inferred for signal `\fsm.\f_state_gameover' from process `\fsm.$proc$src/design/fsm.sv:0$35'.
+No latch inferred for signal `\fsm.\next_state' from process `\fsm.$proc$src/design/fsm.sv:0$35'.
+No latch inferred for signal `\encoder_8_to_1.\btn_out' from process `\encoder_8_to_1.$proc$src/design/encoder_8_to_1.sv:0$11'.
+No latch inferred for signal `\encoder_8_to_1.\valid_out' from process `\encoder_8_to_1.$proc$src/design/encoder_8_to_1.sv:0$11'.
+No latch inferred for signal `\debounce.\q_next' from process `\debounce.$proc$src/design/debounce.sv:0$8'.
+No latch inferred for signal `\check_btn.\valid' from process `\check_btn.$proc$src/design/check_btn.sv:0$1'.
+No latch inferred for signal `\check_btn.\miss' from process `\check_btn.$proc$src/design/check_btn.sv:0$1'.
+
+15.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\time_logic.\contador_ventana' using process `\time_logic.$proc$src/design/time_logic.sv:56$132'.
+  created $dff cell `$procdff$561' with positive edge clock.
+Creating register for signal `\time_logic.\ventana_ticks' using process `\time_logic.$proc$src/design/time_logic.sv:46$127'.
+  created $dff cell `$procdff$562' with positive edge clock.
+Creating register for signal `\time_logic.\contador_presc' using process `\time_logic.$proc$src/design/time_logic.sv:34$119'.
+  created $dff cell `$procdff$563' with positive edge clock.
+Creating register for signal `\state.\blink_toggle' using process `\state.$proc$src/design/state.sv:65$109'.
+  created $dff cell `$procdff$564' with positive edge clock.
+Creating register for signal `\state.\wait_cnt' using process `\state.$proc$src/design/state.sv:43$95'.
+  created $dff cell `$procdff$565' with positive edge clock.
+Creating register for signal `\state.\presc_cnt' using process `\state.$proc$src/design/state.sv:21$90'.
+  created $dff cell `$procdff$566' with positive edge clock.
+Creating register for signal `\r_uart.\pos_topo' using process `\r_uart.$proc$src/design/r_uart.sv:192$88'.
+  created $dff cell `$procdff$567' with positive edge clock.
+Creating register for signal `\r_uart.\state' using process `\r_uart.$proc$src/design/r_uart.sv:123$78'.
+  created $dff cell `$procdff$568' with positive edge clock.
+Creating register for signal `\r_uart.\shift_reg' using process `\r_uart.$proc$src/design/r_uart.sv:113$77'.
+  created $dff cell `$procdff$569' with positive edge clock.
+Creating register for signal `\r_uart.\bit_cnt' using process `\r_uart.$proc$src/design/r_uart.sv:97$70'.
+  created $dff cell `$procdff$570' with positive edge clock.
+Creating register for signal `\r_uart.\time_cntr' using process `\r_uart.$proc$src/design/r_uart.sv:79$66'.
+  created $dff cell `$procdff$571' with positive edge clock.
+Creating register for signal `\r_uart.\pos_sync_prev' using process `\r_uart.$proc$src/design/r_uart.sv:54$61'.
+  created $dff cell `$procdff$572' with positive edge clock.
+Creating register for signal `\r_uart.\pos_ff1' using process `\r_uart.$proc$src/design/r_uart.sv:39$60'.
+  created $dff cell `$procdff$573' with positive edge clock.
+Creating register for signal `\r_uart.\pos_sync' using process `\r_uart.$proc$src/design/r_uart.sv:39$60'.
+  created $dff cell `$procdff$574' with positive edge clock.
+Creating register for signal `\marcador.\sel' using process `\marcador.$proc$src/design/marcador.sv:30$52'.
+  created $dff cell `$procdff$575' with positive edge clock.
+Creating register for signal `\marcador.\contador_presc' using process `\marcador.$proc$src/design/marcador.sv:23$48'.
+  created $dff cell `$procdff$576' with positive edge clock.
+Creating register for signal `\hit_counter.\unidades' using process `\hit_counter.$proc$src/design/hit_counter.sv:15$37'.
+  created $dff cell `$procdff$577' with positive edge clock.
+Creating register for signal `\hit_counter.\decenas' using process `\hit_counter.$proc$src/design/hit_counter.sv:15$37'.
+  created $dff cell `$procdff$578' with positive edge clock.
+Creating register for signal `\fsm.\state' using process `\fsm.$proc$src/design/fsm.sv:44$34'.
+  created $adff cell `$procdff$579' with positive edge clock and positive level reset.
+Creating register for signal `\fail_counter.\consecutivos' using process `\fail_counter.$proc$src/design/fail_counter.sv:46$23'.
+  created $dff cell `$procdff$580' with positive edge clock.
+Creating register for signal `\fail_counter.\unidades' using process `\fail_counter.$proc$src/design/fail_counter.sv:22$13'.
+  created $dff cell `$procdff$581' with positive edge clock.
+Creating register for signal `\fail_counter.\decenas' using process `\fail_counter.$proc$src/design/fail_counter.sv:22$13'.
+  created $dff cell `$procdff$582' with positive edge clock.
+Creating register for signal `\debounce.\db_out' using process `\debounce.$proc$src/design/debounce.sv:31$10'.
+  created $dff cell `$procdff$583' with positive edge clock.
+Creating register for signal `\debounce.\q_reg' using process `\debounce.$proc$src/design/debounce.sv:31$10'.
+  created $dff cell `$procdff$584' with positive edge clock.
+Creating register for signal `\debounce.\dff1' using process `\debounce.$proc$src/design/debounce.sv:31$10'.
+  created $dff cell `$procdff$585' with positive edge clock.
+Creating register for signal `\debounce.\dff2' using process `\debounce.$proc$src/design/debounce.sv:31$10'.
+  created $dff cell `$procdff$586' with positive edge clock.
+
+15.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+15.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 4 empty switches in `\time_logic.$proc$src/design/time_logic.sv:56$132'.
+Removing empty process `time_logic.$proc$src/design/time_logic.sv:56$132'.
+Found and cleaned up 2 empty switches in `\time_logic.$proc$src/design/time_logic.sv:46$127'.
+Removing empty process `time_logic.$proc$src/design/time_logic.sv:46$127'.
+Removing empty process `time_logic.$proc$src/design/time_logic.sv:34$119'.
+Found and cleaned up 2 empty switches in `\state.$proc$src/design/state.sv:0$113'.
+Removing empty process `state.$proc$src/design/state.sv:0$113'.
+Found and cleaned up 3 empty switches in `\state.$proc$src/design/state.sv:65$109'.
+Removing empty process `state.$proc$src/design/state.sv:65$109'.
+Found and cleaned up 4 empty switches in `\state.$proc$src/design/state.sv:43$95'.
+Removing empty process `state.$proc$src/design/state.sv:43$95'.
+Found and cleaned up 2 empty switches in `\state.$proc$src/design/state.sv:21$90'.
+Removing empty process `state.$proc$src/design/state.sv:21$90'.
+Found and cleaned up 2 empty switches in `\show_mole.$proc$src/design/show_mole.sv:0$89'.
+Removing empty process `show_mole.$proc$src/design/show_mole.sv:0$89'.
+Found and cleaned up 2 empty switches in `\r_uart.$proc$src/design/r_uart.sv:192$88'.
+Removing empty process `r_uart.$proc$src/design/r_uart.sv:192$88'.
+Removing empty process `r_uart.$proc$src/design/r_uart.sv:0$81'.
+Found and cleaned up 7 empty switches in `\r_uart.$proc$src/design/r_uart.sv:0$79'.
+Removing empty process `r_uart.$proc$src/design/r_uart.sv:0$79'.
+Found and cleaned up 1 empty switch in `\r_uart.$proc$src/design/r_uart.sv:123$78'.
+Removing empty process `r_uart.$proc$src/design/r_uart.sv:123$78'.
+Found and cleaned up 2 empty switches in `\r_uart.$proc$src/design/r_uart.sv:113$77'.
+Removing empty process `r_uart.$proc$src/design/r_uart.sv:113$77'.
+Found and cleaned up 3 empty switches in `\r_uart.$proc$src/design/r_uart.sv:97$70'.
+Removing empty process `r_uart.$proc$src/design/r_uart.sv:97$70'.
+Found and cleaned up 3 empty switches in `\r_uart.$proc$src/design/r_uart.sv:79$66'.
+Removing empty process `r_uart.$proc$src/design/r_uart.sv:79$66'.
+Found and cleaned up 1 empty switch in `\r_uart.$proc$src/design/r_uart.sv:54$61'.
+Removing empty process `r_uart.$proc$src/design/r_uart.sv:54$61'.
+Found and cleaned up 1 empty switch in `\r_uart.$proc$src/design/r_uart.sv:39$60'.
+Removing empty process `r_uart.$proc$src/design/r_uart.sv:39$60'.
+Found and cleaned up 1 empty switch in `\marcador.$proc$src/design/marcador.sv:0$59'.
+Removing empty process `marcador.$proc$src/design/marcador.sv:0$59'.
+Found and cleaned up 1 empty switch in `\marcador.$proc$src/design/marcador.sv:0$58'.
+Removing empty process `marcador.$proc$src/design/marcador.sv:0$58'.
+Found and cleaned up 1 empty switch in `\marcador.$proc$src/design/marcador.sv:0$57'.
+Removing empty process `marcador.$proc$src/design/marcador.sv:0$57'.
+Removing empty process `marcador.$proc$src/design/marcador.sv:30$52'.
+Removing empty process `marcador.$proc$src/design/marcador.sv:23$48'.
+Found and cleaned up 3 empty switches in `\hit_counter.$proc$src/design/hit_counter.sv:15$37'.
+Removing empty process `hit_counter.$proc$src/design/hit_counter.sv:15$37'.
+Found and cleaned up 6 empty switches in `\fsm.$proc$src/design/fsm.sv:0$35'.
+Removing empty process `fsm.$proc$src/design/fsm.sv:0$35'.
+Removing empty process `fsm.$proc$src/design/fsm.sv:44$34'.
+Found and cleaned up 3 empty switches in `\fail_counter.$proc$src/design/fail_counter.sv:46$23'.
+Removing empty process `fail_counter.$proc$src/design/fail_counter.sv:46$23'.
+Found and cleaned up 3 empty switches in `\fail_counter.$proc$src/design/fail_counter.sv:22$13'.
+Removing empty process `fail_counter.$proc$src/design/fail_counter.sv:22$13'.
+Found and cleaned up 1 empty switch in `\encoder_8_to_1.$proc$src/design/encoder_8_to_1.sv:0$11'.
+Removing empty process `encoder_8_to_1.$proc$src/design/encoder_8_to_1.sv:0$11'.
+Found and cleaned up 2 empty switches in `\debounce.$proc$src/design/debounce.sv:31$10'.
+Removing empty process `debounce.$proc$src/design/debounce.sv:31$10'.
+Found and cleaned up 1 empty switch in `\debounce.$proc$src/design/debounce.sv:0$8'.
+Removing empty process `debounce.$proc$src/design/debounce.sv:0$8'.
+Found and cleaned up 2 empty switches in `\check_btn.$proc$src/design/check_btn.sv:0$1'.
+Removing empty process `check_btn.$proc$src/design/check_btn.sv:0$1'.
+Cleaned up 63 empty switches.
+
+15.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module top.
+Optimizing module time_logic.
+<suppressed ~2 debug messages>
+Optimizing module state.
+Optimizing module show_mole.
+Optimizing module r_uart.
+<suppressed ~9 debug messages>
+Optimizing module press_btn.
+Optimizing module marcador.
+<suppressed ~2 debug messages>
+Optimizing module hit_counter.
+Optimizing module fsm.
+<suppressed ~5 debug messages>
+Optimizing module fail_counter.
+Optimizing module encoder_8_to_1.
+Optimizing module debounce.
+<suppressed ~1 debug messages>
+Optimizing module check_btn.
+
+16. Executing OPT pass (performing simple optimizations).
+
+16.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module top.
+Optimizing module time_logic.
+Optimizing module state.
+Optimizing module show_mole.
+Optimizing module r_uart.
+Optimizing module press_btn.
+Optimizing module marcador.
+Optimizing module hit_counter.
+Optimizing module fsm.
+Optimizing module fail_counter.
+Optimizing module encoder_8_to_1.
+Optimizing module debounce.
+Optimizing module check_btn.
+
+16.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\top'.
+Finding identical cells in module `\time_logic'.
+<suppressed ~12 debug messages>
+Finding identical cells in module `\state'.
+<suppressed ~27 debug messages>
+Finding identical cells in module `\show_mole'.
+Finding identical cells in module `\r_uart'.
+<suppressed ~54 debug messages>
+Finding identical cells in module `\press_btn'.
+Finding identical cells in module `\marcador'.
+<suppressed ~12 debug messages>
+Finding identical cells in module `\hit_counter'.
+Finding identical cells in module `\fsm'.
+<suppressed ~54 debug messages>
+Finding identical cells in module `\fail_counter'.
+<suppressed ~12 debug messages>
+Finding identical cells in module `\encoder_8_to_1'.
+Finding identical cells in module `\debounce'.
+Finding identical cells in module `\check_btn'.
+Removed a total of 57 cells.
+
+16.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \time_logic..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \state..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$186.
+Running muxtree optimizer on module \show_mole..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 2/2 on $mux $procmux$217.
+Running muxtree optimizer on module \r_uart..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 2/2 on $mux $procmux$301.
+    dead port 2/2 on $mux $procmux$293.
+    dead port 2/2 on $mux $procmux$285.
+    dead port 2/2 on $mux $procmux$278.
+    dead port 2/2 on $mux $procmux$271.
+    dead port 2/2 on $mux $procmux$269.
+    dead port 2/2 on $mux $procmux$261.
+    dead port 2/2 on $mux $procmux$259.
+    dead port 2/2 on $mux $procmux$251.
+    dead port 2/2 on $mux $procmux$245.
+    dead port 2/2 on $mux $procmux$239.
+    dead port 2/2 on $mux $procmux$237.
+    dead port 2/2 on $mux $procmux$230.
+Running muxtree optimizer on module \press_btn..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \marcador..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \hit_counter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \fsm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 2/2 on $mux $procmux$414.
+    dead port 2/2 on $mux $procmux$404.
+    dead port 2/2 on $mux $procmux$395.
+    dead port 1/2 on $mux $procmux$393.
+    dead port 2/2 on $mux $procmux$383.
+    dead port 2/2 on $mux $procmux$375.
+Running muxtree optimizer on module \fail_counter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \encoder_8_to_1..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \debounce..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \check_btn..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$553.
+    dead port 1/2 on $mux $procmux$548.
+Removed 23 multiplexer ports.
+<suppressed ~46 debug messages>
+
+16.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \top.
+  Optimizing cells in module \time_logic.
+  Optimizing cells in module \state.
+  Optimizing cells in module \show_mole.
+  Optimizing cells in module \r_uart.
+  Optimizing cells in module \press_btn.
+  Optimizing cells in module \marcador.
+  Optimizing cells in module \hit_counter.
+  Optimizing cells in module \fsm.
+    New ctrl vector for $pmux cell $procmux$417: { $procmux$494_CMP $procmux$486_CMP $procmux$466_CMP $procmux$475_CMP $auto$opt_reduce.cc:134:opt_pmux$588 $procmux$460_CMP }
+    New ctrl vector for $pmux cell $procmux$427: $auto$opt_reduce.cc:134:opt_pmux$590
+  Optimizing cells in module \fsm.
+  Optimizing cells in module \fail_counter.
+  Optimizing cells in module \encoder_8_to_1.
+  Optimizing cells in module \debounce.
+  Optimizing cells in module \check_btn.
+Performed a total of 2 changes.
+
+16.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\top'.
+Finding identical cells in module `\time_logic'.
+Finding identical cells in module `\state'.
+Finding identical cells in module `\show_mole'.
+Finding identical cells in module `\r_uart'.
+Finding identical cells in module `\press_btn'.
+Finding identical cells in module `\marcador'.
+Finding identical cells in module `\hit_counter'.
+Finding identical cells in module `\fsm'.
+<suppressed ~9 debug messages>
+Finding identical cells in module `\fail_counter'.
+Finding identical cells in module `\encoder_8_to_1'.
+Finding identical cells in module `\debounce'.
+Finding identical cells in module `\check_btn'.
+Removed a total of 3 cells.
+
+16.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding SRST signal on $procdff$561 ($dff) from module time_logic (D = $procmux$171_Y, Q = \contador_ventana, rval = 4'0000).
+Adding EN signal on $auto$ff.cc:266:slice$591 ($sdff) from module time_logic (D = $procmux$171_Y, Q = \contador_ventana).
+Adding SRST signal on $procdff$562 ($dff) from module time_logic (D = $procmux$177_Y, Q = \ventana_ticks, rval = 4'1111).
+Adding EN signal on $auto$ff.cc:266:slice$599 ($sdff) from module time_logic (D = $sub$src/design/time_logic.sv:48$131_Y [3:0], Q = \ventana_ticks).
+Adding SRST signal on $procdff$563 ($dff) from module time_logic (D = $add$src/design/time_logic.sv:35$125_Y [23:0], Q = \contador_presc, rval = 24'000000000000000000000000).
+Adding SRST signal on $procdff$564 ($dff) from module state (D = $procmux$192_Y, Q = \blink_toggle, rval = 1'0).
+Adding EN signal on $auto$ff.cc:266:slice$602 ($sdff) from module state (D = $not$src/design/state.sv:70$112_Y, Q = \blink_toggle).
+Adding SRST signal on $procdff$565 ($dff) from module state (D = $procmux$201_Y, Q = \wait_cnt, rval = 5'00000).
+Adding EN signal on $auto$ff.cc:266:slice$608 ($sdff) from module state (D = $add$src/design/state.sv:51$104_Y, Q = \wait_cnt).
+Adding SRST signal on $procdff$566 ($dff) from module state (D = $add$src/design/state.sv:27$92_Y, Q = \presc_cnt, rval = 24'000000000000000000000000).
+Adding SRST signal on $procdff$571 ($dff) from module r_uart (D = $procmux$332_Y, Q = \time_cntr, rval = 14'00000000000000).
+Adding EN signal on $auto$ff.cc:266:slice$617 ($sdff) from module r_uart (D = $procmux$332_Y, Q = \time_cntr).
+Adding SRST signal on $procdff$572 ($dff) from module r_uart (D = \pos_sync, Q = \pos_sync_prev, rval = 1'1).
+Adding SRST signal on $procdff$573 ($dff) from module r_uart (D = \pos, Q = \pos_ff1, rval = 1'1).
+Adding SRST signal on $procdff$574 ($dff) from module r_uart (D = \pos_ff1, Q = \pos_sync, rval = 1'1).
+Adding SRST signal on $procdff$567 ($dff) from module r_uart (D = $procmux$222_Y, Q = \pos_topo, rval = 3'000).
+Adding EN signal on $auto$ff.cc:266:slice$624 ($sdff) from module r_uart (D = \shift_reg [2:0], Q = \pos_topo).
+Adding SRST signal on $procdff$568 ($dff) from module r_uart (D = \next_state, Q = \state, rval = 2'00).
+Adding SRST signal on $procdff$569 ($dff) from module r_uart (D = $procmux$316_Y, Q = \shift_reg, rval = 8'00000000).
+Adding EN signal on $auto$ff.cc:266:slice$627 ($sdff) from module r_uart (D = { \pos_sync \shift_reg [7:1] }, Q = \shift_reg).
+Adding SRST signal on $procdff$570 ($dff) from module r_uart (D = $procmux$321_Y, Q = \bit_cnt, rval = 3'000).
+Adding EN signal on $auto$ff.cc:266:slice$629 ($sdff) from module r_uart (D = $add$src/design/r_uart.sv:103$74_Y, Q = \bit_cnt).
+Adding SRST signal on $procdff$575 ($dff) from module marcador (D = $ternary$src/design/marcador.sv:31$55_Y [1:0], Q = \sel, rval = 2'00).
+Adding SRST signal on $procdff$576 ($dff) from module marcador (D = $add$src/design/marcador.sv:24$50_Y [16:0], Q = \contador_presc, rval = 17'00000000000000000).
+Adding SRST signal on $procdff$577 ($dff) from module hit_counter (D = $procmux$363_Y, Q = \unidades, rval = 4'0000).
+Adding EN signal on $auto$ff.cc:266:slice$635 ($sdff) from module hit_counter (D = $add$src/design/hit_counter.sv:27$46_Y [3:0], Q = \unidades).
+Adding SRST signal on $procdff$578 ($dff) from module hit_counter (D = $procmux$358_Y, Q = \decenas, rval = 4'0000).
+Adding EN signal on $auto$ff.cc:266:slice$639 ($sdff) from module hit_counter (D = $add$src/design/hit_counter.sv:23$43_Y [3:0], Q = \decenas).
+Adding EN signal on $procdff$579 ($adff) from module fsm (D = $procmux$417_Y, Q = \state).
+Adding SRST signal on $procdff$580 ($dff) from module fail_counter (D = $procmux$498_Y, Q = \consecutivos, rval = 2'00).
+Adding EN signal on $auto$ff.cc:266:slice$650 ($sdff) from module fail_counter (D = $procmux$496_Y, Q = \consecutivos).
+Adding SRST signal on $procdff$581 ($dff) from module fail_counter (D = $procmux$509_Y, Q = \unidades, rval = 4'0000).
+Adding EN signal on $auto$ff.cc:266:slice$652 ($sdff) from module fail_counter (D = $add$src/design/fail_counter.sv:34$22_Y [3:0], Q = \unidades).
+Adding SRST signal on $procdff$582 ($dff) from module fail_counter (D = $procmux$504_Y, Q = \decenas, rval = 4'0000).
+Adding EN signal on $auto$ff.cc:266:slice$656 ($sdff) from module fail_counter (D = $add$src/design/fail_counter.sv:30$19_Y [3:0], Q = \decenas).
+Adding SRST signal on $procdff$583 ($dff) from module debounce (D = $procmux$535_Y, Q = \db_out, rval = 1'0).
+Adding EN signal on $auto$ff.cc:266:slice$658 ($sdff) from module debounce (D = \dff2, Q = \db_out).
+Adding SRST signal on $procdff$584 ($dff) from module debounce (D = \q_next, Q = \q_reg, rval = 21'000000000000000000000).
+Adding SRST signal on $procdff$585 ($dff) from module debounce (D = \btn_in, Q = \dff1, rval = 1'0).
+Adding SRST signal on $procdff$586 ($dff) from module debounce (D = \dff1, Q = \dff2, rval = 1'0).
+
+16.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \top..
+Finding unused cells or wires in module \time_logic..
+Finding unused cells or wires in module \state..
+Finding unused cells or wires in module \show_mole..
+Finding unused cells or wires in module \r_uart..
+Finding unused cells or wires in module \press_btn..
+Finding unused cells or wires in module \marcador..
+Finding unused cells or wires in module \hit_counter..
+Finding unused cells or wires in module \fsm..
+Finding unused cells or wires in module \fail_counter..
+Finding unused cells or wires in module \encoder_8_to_1..
+Finding unused cells or wires in module \debounce..
+Finding unused cells or wires in module \check_btn..
+Removed 45 unused cells and 345 unused wires.
+<suppressed ~59 debug messages>
+
+16.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module check_btn.
+Optimizing module debounce.
+Optimizing module encoder_8_to_1.
+Optimizing module fail_counter.
+Optimizing module fsm.
+Optimizing module hit_counter.
+Optimizing module marcador.
+Optimizing module press_btn.
+Optimizing module r_uart.
+<suppressed ~1 debug messages>
+Optimizing module show_mole.
+Optimizing module state.
+Optimizing module time_logic.
+<suppressed ~1 debug messages>
+Optimizing module top.
+
+16.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+16.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \check_btn..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \debounce..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \encoder_8_to_1..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \fail_counter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \fsm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \hit_counter..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \marcador..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \press_btn..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \r_uart..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \show_mole..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \state..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \time_logic..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+<suppressed ~23 debug messages>
+
+16.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \check_btn.
+  Optimizing cells in module \debounce.
+  Optimizing cells in module \encoder_8_to_1.
+  Optimizing cells in module \fail_counter.
+  Optimizing cells in module \fsm.
+  Optimizing cells in module \hit_counter.
+  Optimizing cells in module \marcador.
+  Optimizing cells in module \press_btn.
+  Optimizing cells in module \r_uart.
+  Optimizing cells in module \show_mole.
+  Optimizing cells in module \state.
+  Optimizing cells in module \time_logic.
+  Optimizing cells in module \top.
+Performed a total of 0 changes.
+
+16.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\check_btn'.
+Finding identical cells in module `\debounce'.
+Finding identical cells in module `\encoder_8_to_1'.
+Finding identical cells in module `\fail_counter'.
+Finding identical cells in module `\fsm'.
+Finding identical cells in module `\hit_counter'.
+Finding identical cells in module `\marcador'.
+Finding identical cells in module `\press_btn'.
+Finding identical cells in module `\r_uart'.
+Finding identical cells in module `\show_mole'.
+Finding identical cells in module `\state'.
+Finding identical cells in module `\time_logic'.
+Finding identical cells in module `\top'.
+Removed a total of 0 cells.
+
+16.13. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $auto$ff.cc:266:slice$660 ($sdff) from module debounce (D = \q_next, Q = \q_reg).
+Adding EN signal on $auto$ff.cc:266:slice$633 ($sdff) from module marcador (D = $add$src/design/marcador.sv:31$53_Y [1:0], Q = \sel).
+
+16.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \check_btn..
+Finding unused cells or wires in module \debounce..
+Finding unused cells or wires in module \encoder_8_to_1..
+Finding unused cells or wires in module \fail_counter..
+Finding unused cells or wires in module \fsm..
+Finding unused cells or wires in module \hit_counter..
+Finding unused cells or wires in module \marcador..
+Finding unused cells or wires in module \press_btn..
+Finding unused cells or wires in module \r_uart..
+Finding unused cells or wires in module \show_mole..
+Finding unused cells or wires in module \state..
+Finding unused cells or wires in module \time_logic..
+Finding unused cells or wires in module \top..
+Removed 1 unused cells and 1 unused wires.
+<suppressed ~2 debug messages>
+
+16.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module check_btn.
+Optimizing module debounce.
+<suppressed ~2 debug messages>
+Optimizing module encoder_8_to_1.
+Optimizing module fail_counter.
+Optimizing module fsm.
+Optimizing module hit_counter.
+Optimizing module marcador.
+Optimizing module press_btn.
+Optimizing module r_uart.
+Optimizing module show_mole.
+Optimizing module state.
+Optimizing module time_logic.
+Optimizing module top.
+
+16.16. Rerunning OPT passes. (Maybe there is more to do..)
+
+16.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \check_btn..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \debounce..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \encoder_8_to_1..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \fail_counter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \fsm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \hit_counter..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \marcador..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \press_btn..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \r_uart..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \show_mole..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \state..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \time_logic..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+<suppressed ~22 debug messages>
+
+16.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \check_btn.
+  Optimizing cells in module \debounce.
+  Optimizing cells in module \encoder_8_to_1.
+  Optimizing cells in module \fail_counter.
+  Optimizing cells in module \fsm.
+  Optimizing cells in module \hit_counter.
+  Optimizing cells in module \marcador.
+  Optimizing cells in module \press_btn.
+  Optimizing cells in module \r_uart.
+  Optimizing cells in module \show_mole.
+  Optimizing cells in module \state.
+  Optimizing cells in module \time_logic.
+  Optimizing cells in module \top.
+Performed a total of 0 changes.
+
+16.19. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\check_btn'.
+Finding identical cells in module `\debounce'.
+Finding identical cells in module `\encoder_8_to_1'.
+Finding identical cells in module `\fail_counter'.
+Finding identical cells in module `\fsm'.
+Finding identical cells in module `\hit_counter'.
+Finding identical cells in module `\marcador'.
+Finding identical cells in module `\press_btn'.
+Finding identical cells in module `\r_uart'.
+Finding identical cells in module `\show_mole'.
+Finding identical cells in module `\state'.
+Finding identical cells in module `\time_logic'.
+Finding identical cells in module `\top'.
+Removed a total of 0 cells.
+
+16.20. Executing OPT_DFF pass (perform DFF optimizations).
+
+16.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \check_btn..
+Finding unused cells or wires in module \debounce..
+Finding unused cells or wires in module \encoder_8_to_1..
+Finding unused cells or wires in module \fail_counter..
+Finding unused cells or wires in module \fsm..
+Finding unused cells or wires in module \hit_counter..
+Finding unused cells or wires in module \marcador..
+Finding unused cells or wires in module \press_btn..
+Finding unused cells or wires in module \r_uart..
+Finding unused cells or wires in module \show_mole..
+Finding unused cells or wires in module \state..
+Finding unused cells or wires in module \time_logic..
+Finding unused cells or wires in module \top..
+Removed 1 unused cells and 1 unused wires.
+<suppressed ~2 debug messages>
+
+16.22. Executing OPT_EXPR pass (perform const folding).
+Optimizing module check_btn.
+Optimizing module debounce.
+Optimizing module encoder_8_to_1.
+Optimizing module fail_counter.
+Optimizing module fsm.
+Optimizing module hit_counter.
+Optimizing module marcador.
+Optimizing module press_btn.
+Optimizing module r_uart.
+Optimizing module show_mole.
+Optimizing module state.
+Optimizing module time_logic.
+Optimizing module top.
+
+16.23. Rerunning OPT passes. (Maybe there is more to do..)
+
+16.24. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \check_btn..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \debounce..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \encoder_8_to_1..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \fail_counter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \fsm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \hit_counter..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \marcador..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \press_btn..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \r_uart..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \show_mole..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \state..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \time_logic..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+<suppressed ~22 debug messages>
+
+16.25. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \check_btn.
+  Optimizing cells in module \debounce.
+  Optimizing cells in module \encoder_8_to_1.
+  Optimizing cells in module \fail_counter.
+  Optimizing cells in module \fsm.
+  Optimizing cells in module \hit_counter.
+  Optimizing cells in module \marcador.
+  Optimizing cells in module \press_btn.
+  Optimizing cells in module \r_uart.
+  Optimizing cells in module \show_mole.
+  Optimizing cells in module \state.
+  Optimizing cells in module \time_logic.
+  Optimizing cells in module \top.
+Performed a total of 0 changes.
+
+16.26. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\check_btn'.
+Finding identical cells in module `\debounce'.
+Finding identical cells in module `\encoder_8_to_1'.
+Finding identical cells in module `\fail_counter'.
+Finding identical cells in module `\fsm'.
+Finding identical cells in module `\hit_counter'.
+Finding identical cells in module `\marcador'.
+Finding identical cells in module `\press_btn'.
+Finding identical cells in module `\r_uart'.
+Finding identical cells in module `\show_mole'.
+Finding identical cells in module `\state'.
+Finding identical cells in module `\time_logic'.
+Finding identical cells in module `\top'.
+Removed a total of 0 cells.
+
+16.27. Executing OPT_DFF pass (perform DFF optimizations).
+
+16.28. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \check_btn..
+Finding unused cells or wires in module \debounce..
+Finding unused cells or wires in module \encoder_8_to_1..
+Finding unused cells or wires in module \fail_counter..
+Finding unused cells or wires in module \fsm..
+Finding unused cells or wires in module \hit_counter..
+Finding unused cells or wires in module \marcador..
+Finding unused cells or wires in module \press_btn..
+Finding unused cells or wires in module \r_uart..
+Finding unused cells or wires in module \show_mole..
+Finding unused cells or wires in module \state..
+Finding unused cells or wires in module \time_logic..
+Finding unused cells or wires in module \top..
+
+16.29. Executing OPT_EXPR pass (perform const folding).
+Optimizing module check_btn.
+Optimizing module debounce.
+Optimizing module encoder_8_to_1.
+Optimizing module fail_counter.
+Optimizing module fsm.
+Optimizing module hit_counter.
+Optimizing module marcador.
+Optimizing module press_btn.
+Optimizing module r_uart.
+Optimizing module show_mole.
+Optimizing module state.
+Optimizing module time_logic.
+Optimizing module top.
+
+16.30. Finished OPT passes. (There is nothing left to do.)
+
+17. Executing PREP pass.
+
+17.1. Executing HIERARCHY pass (managing design hierarchy).
+
+17.1.1. Analyzing design hierarchy..
+Top module:  \top
+Used module:     \fail_counter
+Used module:     \fsm
+Used module:     \hit_counter
+Used module:     \marcador
+Used module:     \press_btn
+Used module:         \check_btn
+Used module:         \debounce
+Used module:         \encoder_8_to_1
+Used module:     \r_uart
+Used module:     \show_mole
+Used module:     \state
+Used module:     \time_logic
+
+17.1.2. Analyzing design hierarchy..
+Top module:  \top
+Used module:     \fail_counter
+Used module:     \fsm
+Used module:     \hit_counter
+Used module:     \marcador
+Used module:     \press_btn
+Used module:         \check_btn
+Used module:         \debounce
+Used module:         \encoder_8_to_1
+Used module:     \r_uart
+Used module:     \show_mole
+Used module:     \state
+Used module:     \time_logic
+Removed 0 unused modules.
+
+17.2. Executing PROC pass (convert processes to netlists).
+
+17.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+17.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Removed a total of 0 dead cases.
+
+17.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 0 assignments to connections.
+
+17.2.4. Executing PROC_INIT pass (extract init attributes).
+
+17.2.5. Executing PROC_ARST pass (detect async resets in processes).
+
+17.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+
+17.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+
+17.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+17.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+
+17.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+17.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+17.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module check_btn.
+Optimizing module debounce.
+Optimizing module encoder_8_to_1.
+Optimizing module fail_counter.
+Optimizing module fsm.
+Optimizing module hit_counter.
+Optimizing module marcador.
+Optimizing module press_btn.
+Optimizing module r_uart.
+Optimizing module show_mole.
+Optimizing module state.
+Optimizing module time_logic.
+Optimizing module top.
+
+17.3. Executing OPT_EXPR pass (perform const folding).
+Optimizing module check_btn.
+Optimizing module debounce.
+Optimizing module encoder_8_to_1.
+Optimizing module fail_counter.
+Optimizing module fsm.
+Optimizing module hit_counter.
+Optimizing module marcador.
+Optimizing module press_btn.
+Optimizing module r_uart.
+Optimizing module show_mole.
+Optimizing module state.
+Optimizing module time_logic.
+Optimizing module top.
+
+17.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \check_btn..
+Finding unused cells or wires in module \debounce..
+Finding unused cells or wires in module \encoder_8_to_1..
+Finding unused cells or wires in module \fail_counter..
+Finding unused cells or wires in module \fsm..
+Finding unused cells or wires in module \hit_counter..
+Finding unused cells or wires in module \marcador..
+Finding unused cells or wires in module \press_btn..
+Finding unused cells or wires in module \r_uart..
+Finding unused cells or wires in module \show_mole..
+Finding unused cells or wires in module \state..
+Finding unused cells or wires in module \time_logic..
+Finding unused cells or wires in module \top..
+
+17.5. Executing CHECK pass (checking for obvious problems).
+Checking module check_btn...
+Checking module debounce...
+Checking module encoder_8_to_1...
+Checking module fail_counter...
+Checking module fsm...
+Checking module hit_counter...
+Checking module marcador...
+Checking module press_btn...
+Checking module r_uart...
+Checking module show_mole...
+Checking module state...
+Checking module time_logic...
+Checking module top...
+Found and reported 0 problems.
+
+17.6. Executing OPT pass (performing simple optimizations).
+
+17.6.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module check_btn.
+Optimizing module debounce.
+Optimizing module encoder_8_to_1.
+Optimizing module fail_counter.
+Optimizing module fsm.
+Optimizing module hit_counter.
+Optimizing module marcador.
+Optimizing module press_btn.
+Optimizing module r_uart.
+Optimizing module show_mole.
+Optimizing module state.
+Optimizing module time_logic.
+Optimizing module top.
+
+17.6.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\check_btn'.
+Finding identical cells in module `\debounce'.
+Finding identical cells in module `\encoder_8_to_1'.
+Finding identical cells in module `\fail_counter'.
+Finding identical cells in module `\fsm'.
+Finding identical cells in module `\hit_counter'.
+Finding identical cells in module `\marcador'.
+Finding identical cells in module `\press_btn'.
+Finding identical cells in module `\r_uart'.
+Finding identical cells in module `\show_mole'.
+Finding identical cells in module `\state'.
+Finding identical cells in module `\time_logic'.
+Finding identical cells in module `\top'.
+Removed a total of 0 cells.
+
+17.6.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \check_btn..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \debounce..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \encoder_8_to_1..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \fail_counter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \fsm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \hit_counter..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \marcador..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \press_btn..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \r_uart..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \show_mole..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \state..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \time_logic..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+<suppressed ~22 debug messages>
+
+17.6.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \check_btn.
+  Optimizing cells in module \debounce.
+  Optimizing cells in module \encoder_8_to_1.
+  Optimizing cells in module \fail_counter.
+  Optimizing cells in module \fsm.
+  Optimizing cells in module \hit_counter.
+  Optimizing cells in module \marcador.
+  Optimizing cells in module \press_btn.
+  Optimizing cells in module \r_uart.
+  Optimizing cells in module \show_mole.
+  Optimizing cells in module \state.
+  Optimizing cells in module \time_logic.
+  Optimizing cells in module \top.
+Performed a total of 0 changes.
+
+17.6.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\check_btn'.
+Finding identical cells in module `\debounce'.
+Finding identical cells in module `\encoder_8_to_1'.
+Finding identical cells in module `\fail_counter'.
+Finding identical cells in module `\fsm'.
+Finding identical cells in module `\hit_counter'.
+Finding identical cells in module `\marcador'.
+Finding identical cells in module `\press_btn'.
+Finding identical cells in module `\r_uart'.
+Finding identical cells in module `\show_mole'.
+Finding identical cells in module `\state'.
+Finding identical cells in module `\time_logic'.
+Finding identical cells in module `\top'.
+Removed a total of 0 cells.
+
+17.6.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \check_btn..
+Finding unused cells or wires in module \debounce..
+Finding unused cells or wires in module \encoder_8_to_1..
+Finding unused cells or wires in module \fail_counter..
+Finding unused cells or wires in module \fsm..
+Finding unused cells or wires in module \hit_counter..
+Finding unused cells or wires in module \marcador..
+Finding unused cells or wires in module \press_btn..
+Finding unused cells or wires in module \r_uart..
+Finding unused cells or wires in module \show_mole..
+Finding unused cells or wires in module \state..
+Finding unused cells or wires in module \time_logic..
+Finding unused cells or wires in module \top..
+
+17.6.7. Executing OPT_EXPR pass (perform const folding).
+Optimizing module check_btn.
+Optimizing module debounce.
+Optimizing module encoder_8_to_1.
+Optimizing module fail_counter.
+Optimizing module fsm.
+Optimizing module hit_counter.
+Optimizing module marcador.
+Optimizing module press_btn.
+Optimizing module r_uart.
+Optimizing module show_mole.
+Optimizing module state.
+Optimizing module time_logic.
+Optimizing module top.
+
+17.6.8. Finished OPT passes. (There is nothing left to do.)
+
+17.7. Executing WREDUCE pass (reducing word size of cells).
+Removed top 31 bits (of 32) from port B of cell debounce.$add$src/design/debounce.sv:24$9 ($add).
+Removed top 11 bits (of 32) from port Y of cell debounce.$add$src/design/debounce.sv:24$9 ($add).
+Removed top 1 bits (of 2) from port B of cell debounce.$procmux$543_CMP0 ($eq).
+Removed top 11 bits (of 32) from wire debounce.$add$src/design/debounce.sv:24$9_Y.
+Removed top 1 bits (of 8) from port B of cell encoder_8_to_1.$procmux$520_CMP0 ($eq).
+Removed top 2 bits (of 8) from port B of cell encoder_8_to_1.$procmux$521_CMP0 ($eq).
+Removed top 3 bits (of 8) from port B of cell encoder_8_to_1.$procmux$522_CMP0 ($eq).
+Removed top 4 bits (of 8) from port B of cell encoder_8_to_1.$procmux$523_CMP0 ($eq).
+Removed top 5 bits (of 8) from port B of cell encoder_8_to_1.$procmux$524_CMP0 ($eq).
+Removed top 6 bits (of 8) from port B of cell encoder_8_to_1.$procmux$525_CMP0 ($eq).
+Removed top 31 bits (of 32) from port B of cell fail_counter.$add$src/design/fail_counter.sv:30$19 ($add).
+Removed top 28 bits (of 32) from port Y of cell fail_counter.$add$src/design/fail_counter.sv:30$19 ($add).
+Removed top 31 bits (of 32) from port B of cell fail_counter.$add$src/design/fail_counter.sv:34$22 ($add).
+Removed top 28 bits (of 32) from port Y of cell fail_counter.$add$src/design/fail_counter.sv:34$22 ($add).
+Removed top 31 bits (of 32) from port B of cell fail_counter.$add$src/design/fail_counter.sv:54$29 ($add).
+Removed top 30 bits (of 32) from port Y of cell fail_counter.$add$src/design/fail_counter.sv:54$29 ($add).
+Removed top 28 bits (of 32) from wire fail_counter.$add$src/design/fail_counter.sv:30$19_Y.
+Removed top 1 bits (of 3) from port B of cell fsm.$procmux$466_CMP0 ($eq).
+Removed top 1 bits (of 3) from port B of cell fsm.$procmux$486_CMP0 ($eq).
+Removed top 2 bits (of 3) from port B of cell fsm.$procmux$494_CMP0 ($eq).
+Removed top 31 bits (of 32) from port B of cell hit_counter.$add$src/design/hit_counter.sv:23$43 ($add).
+Removed top 28 bits (of 32) from port Y of cell hit_counter.$add$src/design/hit_counter.sv:23$43 ($add).
+Removed top 31 bits (of 32) from port B of cell hit_counter.$add$src/design/hit_counter.sv:27$46 ($add).
+Removed top 28 bits (of 32) from port Y of cell hit_counter.$add$src/design/hit_counter.sv:27$46 ($add).
+Removed top 28 bits (of 32) from wire hit_counter.$add$src/design/hit_counter.sv:23$43_Y.
+Removed top 28 address bits (of 32) from memory init port marcador.$auto$mem.cc:319:emit$163 ($auto$proc_rom.cc:150:do_switch$161).
+Removed top 31 bits (of 32) from port B of cell marcador.$add$src/design/marcador.sv:24$50 ($add).
+Removed top 15 bits (of 32) from port Y of cell marcador.$add$src/design/marcador.sv:24$50 ($add).
+Removed top 31 bits (of 32) from port B of cell marcador.$add$src/design/marcador.sv:31$53 ($add).
+Removed top 30 bits (of 32) from port Y of cell marcador.$add$src/design/marcador.sv:31$53 ($add).
+Removed top 1 bits (of 2) from port B of cell marcador.$procmux$355_CMP0 ($eq).
+Removed top 15 bits (of 32) from wire marcador.$add$src/design/marcador.sv:24$50_Y.
+Removed top 1 bits (of 2) from port B of cell r_uart.$procmux$311_CMP0 ($eq).
+Removed top 29 address bits (of 32) from memory init port show_mole.$auto$mem.cc:319:emit$159 ($auto$proc_rom.cc:150:do_switch$157).
+Removed top 4 bits (of 5) from port B of cell state.$add$src/design/state.sv:51$104 ($add).
+Removed top 31 bits (of 32) from port B of cell time_logic.$add$src/design/time_logic.sv:35$125 ($add).
+Removed top 8 bits (of 32) from port Y of cell time_logic.$add$src/design/time_logic.sv:35$125 ($add).
+Removed top 29 bits (of 32) from port B of cell time_logic.$gt$src/design/time_logic.sv:48$129 ($gt).
+Removed top 31 bits (of 32) from port B of cell time_logic.$sub$src/design/time_logic.sv:48$131 ($sub).
+Removed top 28 bits (of 32) from port Y of cell time_logic.$sub$src/design/time_logic.sv:48$131 ($sub).
+Removed top 31 bits (of 32) from port B of cell time_logic.$sub$src/design/time_logic.sv:60$137 ($sub).
+Removed top 28 bits (of 32) from port Y of cell time_logic.$sub$src/design/time_logic.sv:60$137 ($sub).
+Removed top 1 bits (of 2) from port B of cell time_logic.$auto$opt_dff.cc:195:make_patterns_logic$596 ($ne).
+Removed top 8 bits (of 32) from wire time_logic.$add$src/design/time_logic.sv:35$125_Y.
+
+17.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \check_btn..
+Finding unused cells or wires in module \debounce..
+Finding unused cells or wires in module \encoder_8_to_1..
+Finding unused cells or wires in module \fail_counter..
+Finding unused cells or wires in module \fsm..
+Finding unused cells or wires in module \hit_counter..
+Finding unused cells or wires in module \marcador..
+Finding unused cells or wires in module \press_btn..
+Finding unused cells or wires in module \r_uart..
+Finding unused cells or wires in module \show_mole..
+Finding unused cells or wires in module \state..
+Finding unused cells or wires in module \time_logic..
+Finding unused cells or wires in module \top..
+Removed 0 unused cells and 5 unused wires.
+<suppressed ~5 debug messages>
+
+17.9. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+17.10. Executing OPT pass (performing simple optimizations).
+
+17.10.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module check_btn.
+Optimizing module debounce.
+Optimizing module encoder_8_to_1.
+Optimizing module fail_counter.
+Optimizing module fsm.
+Optimizing module hit_counter.
+Optimizing module marcador.
+Optimizing module press_btn.
+Optimizing module r_uart.
+Optimizing module show_mole.
+Optimizing module state.
+Optimizing module time_logic.
+Optimizing module top.
+
+17.10.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\check_btn'.
+Finding identical cells in module `\debounce'.
+Finding identical cells in module `\encoder_8_to_1'.
+Finding identical cells in module `\fail_counter'.
+Finding identical cells in module `\fsm'.
+Finding identical cells in module `\hit_counter'.
+Finding identical cells in module `\marcador'.
+Finding identical cells in module `\press_btn'.
+Finding identical cells in module `\r_uart'.
+Finding identical cells in module `\show_mole'.
+Finding identical cells in module `\state'.
+Finding identical cells in module `\time_logic'.
+Finding identical cells in module `\top'.
+Removed a total of 0 cells.
+
+17.10.3. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \check_btn..
+Finding unused cells or wires in module \debounce..
+Finding unused cells or wires in module \encoder_8_to_1..
+Finding unused cells or wires in module \fail_counter..
+Finding unused cells or wires in module \fsm..
+Finding unused cells or wires in module \hit_counter..
+Finding unused cells or wires in module \marcador..
+Finding unused cells or wires in module \press_btn..
+Finding unused cells or wires in module \r_uart..
+Finding unused cells or wires in module \show_mole..
+Finding unused cells or wires in module \state..
+Finding unused cells or wires in module \time_logic..
+Finding unused cells or wires in module \top..
+
+17.10.4. Finished fast OPT passes.
+
+17.11. Printing statistics.
+
+=== check_btn ===
+
+   Number of wires:                 10
+   Number of wire bits:             14
+   Number of public wires:           5
+   Number of public wire bits:       9
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  7
+     $eq                             1
+     $logic_and                      2
+     $mux                            3
+     $ne                             1
+
+=== debounce ===
+
+   Number of wires:                 13
+   Number of wire bits:             73
+   Number of public wires:          10
+   Number of public wire bits:      50
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 10
+     $add                            1
+     $eq                             1
+     $logic_not                      1
+     $not                            1
+     $pmux                           1
+     $sdff                           2
+     $sdffe                          2
+     $xor                            1
+
+=== encoder_8_to_1 ===
+
+   Number of wires:                 18
+   Number of wire bits:             27
+   Number of public wires:          11
+   Number of public wire bits:      20
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  9
+     $eq                             7
+     $pmux                           1
+     $reduce_or                      1
+
+=== fail_counter ===
+
+   Number of wires:                 26
+   Number of wire bits:            106
+   Number of public wires:          10
+   Number of public wire bits:      24
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 20
+     $add                            3
+     $eq                             3
+     $logic_and                      4
+     $logic_or                       3
+     $mux                            1
+     $ne                             2
+     $reduce_or                      1
+     $sdffe                          3
+
+=== fsm ===
+
+   Number of wires:                 41
+   Number of wire bits:             57
+   Number of public wires:          22
+   Number of public wire bits:      28
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 29
+     $adffe                          1
+     $eq                             6
+     $logic_not                      1
+     $logic_or                       1
+     $mux                           13
+     $ne                             3
+     $pmux                           1
+     $reduce_and                     1
+     $reduce_or                      2
+
+=== hit_counter ===
+
+   Number of wires:                 17
+   Number of wire bits:             64
+   Number of public wires:           7
+   Number of public wire bits:      20
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 12
+     $add                            2
+     $eq                             1
+     $logic_and                      3
+     $logic_or                       1
+     $ne                             2
+     $reduce_or                      1
+     $sdffe                          2
+
+=== marcador ===
+
+   Number of wires:                 17
+   Number of wire bits:            107
+   Number of public wires:          10
+   Number of public wire bits:      53
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 13
+     $add                            2
+     $eq                             4
+     $logic_not                      1
+     $mem_v2                         1
+     $or                             1
+     $pmux                           2
+     $sdff                           1
+     $sdffe                          1
+
+=== press_btn ===
+
+   Number of wires:                 23
+   Number of wire bits:             27
+   Number of public wires:          23
+   Number of public wire bits:      27
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 10
+     check_btn                       1
+     debounce                        8
+     encoder_8_to_1                  1
+
+=== r_uart ===
+
+   Number of wires:                 48
+   Number of wire bits:            134
+   Number of public wires:          22
+   Number of public wire bits:      61
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 43
+     $add                            1
+     $and                            3
+     $eq                             5
+     $logic_and                      4
+     $logic_not                      2
+     $mux                           13
+     $not                            1
+     $pmux                           2
+     $reduce_bool                    2
+     $reduce_or                      1
+     $sdff                           4
+     $sdffe                          4
+     $sub                            1
+
+=== show_mole ===
+
+   Number of wires:                  4
+   Number of wire bits:             20
+   Number of public wires:           3
+   Number of public wire bits:      12
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  2
+     $mem_v2                         1
+     $mux                            1
+
+=== state ===
+
+   Number of wires:                 29
+   Number of wire bits:             83
+   Number of public wires:          11
+   Number of public wire bits:      38
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 25
+     $add                            2
+     $eq                             2
+     $logic_and                      6
+     $logic_not                      3
+     $logic_or                       1
+     $mux                            2
+     $not                            2
+     $reduce_and                     1
+     $reduce_or                      3
+     $sdff                           1
+     $sdffe                          2
+
+=== time_logic ===
+
+   Number of wires:                 37
+   Number of wire bits:            160
+   Number of public wires:          11
+   Number of public wire bits:      40
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 31
+     $add                            1
+     $and                            6
+     $eq                             1
+     $gt                             1
+     $logic_not                      4
+     $mux                            3
+     $ne                             1
+     $or                             6
+     $reduce_and                     1
+     $reduce_bool                    2
+     $sdff                           1
+     $sdffe                          2
+     $sub                            2
+
+=== top ===
+
+   Number of wires:                 44
+   Number of wire bits:             78
+   Number of public wires:          44
+   Number of public wire bits:      78
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 17
+     $not                            8
+     fail_counter                    1
+     fsm                             1
+     hit_counter                     1
+     marcador                        1
+     press_btn                       1
+     r_uart                          1
+     show_mole                       1
+     state                           1
+     time_logic                      1
+
+=== design hierarchy ===
+
+   top                               1
+     fail_counter                    1
+     fsm                             1
+     hit_counter                     1
+     marcador                        1
+     press_btn                       1
+       check_btn                     1
+       debounce                      8
+       encoder_8_to_1                1
+     r_uart                          1
+     show_mole                       1
+     state                           1
+     time_logic                      1
+
+   Number of wires:                418
+   Number of wire bits:           1461
+   Number of public wires:         259
+   Number of public wire bits:     810
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                279
+     $add                           19
+     $adffe                          1
+     $and                            9
+     $eq                            38
+     $gt                             1
+     $logic_and                     19
+     $logic_not                     19
+     $logic_or                       6
+     $mem_v2                         2
+     $mux                           36
+     $ne                             9
+     $not                           19
+     $or                             7
+     $pmux                          14
+     $reduce_and                     3
+     $reduce_bool                    4
+     $reduce_or                      9
+     $sdff                          23
+     $sdffe                         30
+     $sub                            3
+     $xor                            8
+
+17.12. Executing CHECK pass (checking for obvious problems).
+Checking module check_btn...
+Checking module debounce...
+Checking module encoder_8_to_1...
+Checking module fail_counter...
+Checking module fsm...
+Checking module hit_counter...
+Checking module marcador...
+Checking module press_btn...
+Checking module r_uart...
+Checking module show_mole...
+Checking module state...
+Checking module time_logic...
+Checking module top...
+Found and reported 0 problems.
+
+18. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \check_btn..
+Finding unused cells or wires in module \debounce..
+Finding unused cells or wires in module \encoder_8_to_1..
+Finding unused cells or wires in module \fail_counter..
+Finding unused cells or wires in module \fsm..
+Finding unused cells or wires in module \hit_counter..
+Finding unused cells or wires in module \marcador..
+Finding unused cells or wires in module \press_btn..
+Finding unused cells or wires in module \r_uart..
+Finding unused cells or wires in module \show_mole..
+Finding unused cells or wires in module \state..
+Finding unused cells or wires in module \time_logic..
+Finding unused cells or wires in module \top..
+
+19. Printing statistics.
+
+=== check_btn ===
+
+   Number of wires:                 10
+   Number of wire bits:             14
+   Number of public wires:           5
+   Number of public wire bits:       9
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  7
+     $eq                             1
+     $logic_and                      2
+     $mux                            3
+     $ne                             1
+
+=== debounce ===
+
+   Number of wires:                 13
+   Number of wire bits:             73
+   Number of public wires:          10
+   Number of public wire bits:      50
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 10
+     $add                            1
+     $eq                             1
+     $logic_not                      1
+     $not                            1
+     $pmux                           1
+     $sdff                           2
+     $sdffe                          2
+     $xor                            1
+
+=== encoder_8_to_1 ===
+
+   Number of wires:                 18
+   Number of wire bits:             27
+   Number of public wires:          11
+   Number of public wire bits:      20
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  9
+     $eq                             7
+     $pmux                           1
+     $reduce_or                      1
+
+=== fail_counter ===
+
+   Number of wires:                 26
+   Number of wire bits:            106
+   Number of public wires:          10
+   Number of public wire bits:      24
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 20
+     $add                            3
+     $eq                             3
+     $logic_and                      4
+     $logic_or                       3
+     $mux                            1
+     $ne                             2
+     $reduce_or                      1
+     $sdffe                          3
+
+=== fsm ===
+
+   Number of wires:                 41
+   Number of wire bits:             57
+   Number of public wires:          22
+   Number of public wire bits:      28
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 29
+     $adffe                          1
+     $eq                             6
+     $logic_not                      1
+     $logic_or                       1
+     $mux                           13
+     $ne                             3
+     $pmux                           1
+     $reduce_and                     1
+     $reduce_or                      2
+
+=== hit_counter ===
+
+   Number of wires:                 17
+   Number of wire bits:             64
+   Number of public wires:           7
+   Number of public wire bits:      20
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 12
+     $add                            2
+     $eq                             1
+     $logic_and                      3
+     $logic_or                       1
+     $ne                             2
+     $reduce_or                      1
+     $sdffe                          2
+
+=== marcador ===
+
+   Number of wires:                 17
+   Number of wire bits:            107
+   Number of public wires:          10
+   Number of public wire bits:      53
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 13
+     $add                            2
+     $eq                             4
+     $logic_not                      1
+     $mem_v2                         1
+     $or                             1
+     $pmux                           2
+     $sdff                           1
+     $sdffe                          1
+
+=== press_btn ===
+
+   Number of wires:                 23
+   Number of wire bits:             27
+   Number of public wires:          23
+   Number of public wire bits:      27
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 10
+     check_btn                       1
+     debounce                        8
+     encoder_8_to_1                  1
+
+=== r_uart ===
+
+   Number of wires:                 48
+   Number of wire bits:            134
+   Number of public wires:          22
+   Number of public wire bits:      61
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 43
+     $add                            1
+     $and                            3
+     $eq                             5
+     $logic_and                      4
+     $logic_not                      2
+     $mux                           13
+     $not                            1
+     $pmux                           2
+     $reduce_bool                    2
+     $reduce_or                      1
+     $sdff                           4
+     $sdffe                          4
+     $sub                            1
+
+=== show_mole ===
+
+   Number of wires:                  4
+   Number of wire bits:             20
+   Number of public wires:           3
+   Number of public wire bits:      12
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  2
+     $mem_v2                         1
+     $mux                            1
+
+=== state ===
+
+   Number of wires:                 29
+   Number of wire bits:             83
+   Number of public wires:          11
+   Number of public wire bits:      38
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 25
+     $add                            2
+     $eq                             2
+     $logic_and                      6
+     $logic_not                      3
+     $logic_or                       1
+     $mux                            2
+     $not                            2
+     $reduce_and                     1
+     $reduce_or                      3
+     $sdff                           1
+     $sdffe                          2
+
+=== time_logic ===
+
+   Number of wires:                 37
+   Number of wire bits:            160
+   Number of public wires:          11
+   Number of public wire bits:      40
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 31
+     $add                            1
+     $and                            6
+     $eq                             1
+     $gt                             1
+     $logic_not                      4
+     $mux                            3
+     $ne                             1
+     $or                             6
+     $reduce_and                     1
+     $reduce_bool                    2
+     $sdff                           1
+     $sdffe                          2
+     $sub                            2
+
+=== top ===
+
+   Number of wires:                 44
+   Number of wire bits:             78
+   Number of public wires:          44
+   Number of public wire bits:      78
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 17
+     $not                            8
+     fail_counter                    1
+     fsm                             1
+     hit_counter                     1
+     marcador                        1
+     press_btn                       1
+     r_uart                          1
+     show_mole                       1
+     state                           1
+     time_logic                      1
+
+=== design hierarchy ===
+
+   top                               1
+     fail_counter                    1
+     fsm                             1
+     hit_counter                     1
+     marcador                        1
+     press_btn                       1
+       check_btn                     1
+       debounce                      8
+       encoder_8_to_1                1
+     r_uart                          1
+     show_mole                       1
+     state                           1
+     time_logic                      1
+
+   Number of wires:                418
+   Number of wire bits:           1461
+   Number of public wires:         259
+   Number of public wire bits:     810
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                279
+     $add                           19
+     $adffe                          1
+     $and                            9
+     $eq                            38
+     $gt                             1
+     $logic_and                     19
+     $logic_not                     19
+     $logic_or                       6
+     $mem_v2                         2
+     $mux                           36
+     $ne                             9
+     $not                           19
+     $or                             7
+     $pmux                          14
+     $reduce_and                     3
+     $reduce_bool                    4
+     $reduce_or                      9
+     $sdff                          23
+     $sdffe                         30
+     $sub                            3
+     $xor                            8
+
+20. Executing Verilog backend.
+
+20.1. Executing BMUXMAP pass.
+
+20.2. Executing DEMUXMAP pass.
+
+20.3. Executing BWMUXMAP pass.
+Dumping module `\check_btn'.
+Dumping module `\debounce'.
+Dumping module `\encoder_8_to_1'.
+Dumping module `\fail_counter'.
+Dumping module `\fsm'.
+Dumping module `\hit_counter'.
+Dumping module `\marcador'.
+Dumping module `\press_btn'.
+Dumping module `\r_uart'.
+Dumping module `\show_mole'.
+Dumping module `\state'.
+Dumping module `\time_logic'.
+Dumping module `\top'.
+
+Warnings: 1 unique messages, 1 total
+End of script. Logfile hash: cda911ed8b, CPU: user 0.21s system 0.02s, MEM: 13.98 MB peak
+Yosys 0.26+1 (git sha1 b1a011138, clang 10.0.0-4ubuntu1 -fPIC -Os)
+Time spent: 19% 11x opt_expr (0 sec), 17% 8x opt_merge (0 sec), ...

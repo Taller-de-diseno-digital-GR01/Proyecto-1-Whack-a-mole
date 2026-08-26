@@ -1277,9 +1277,9 @@ module time_logic(clk, rst_dificulty, rst_window, inicio, hit, nueva_partida, UP
 endmodule
 
 (* top =  1  *)
-(* src = "src/design/top.sv:1.1-193.10" *)
-module top(clk, rst, btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, pos, led_state, leds_topo, f_state_play, f_state_gameover, seg, an, en_numRandom);
-  (* src = "src/design/top.sv:32.25-32.27" *)
+(* src = "src/design/top.sv:1.1-215.10" *)
+module top(clk, rst, btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, pos, led_state, leds_topo, seg, an, en_numRandom);
+  (* src = "src/design/top.sv:29.25-29.27" *)
   output [3:0] an;
   wire [3:0] an;
   (* src = "src/design/top.sv:6.23-6.28" *)
@@ -1309,14 +1309,12 @@ module top(clk, rst, btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, pos
   (* src = "src/design/top.sv:2.17-2.20" *)
   input clk;
   wire clk;
-  (* src = "src/design/top.sv:35.25-35.37" *)
+  (* src = "src/design/top.sv:32.25-32.37" *)
   output en_numRandom;
   wire en_numRandom;
-  (* src = "src/design/top.sv:28.25-28.41" *)
-  output f_state_gameover;
+  (* src = "src/design/top.sv:48.16-48.32" *)
   wire f_state_gameover;
-  (* src = "src/design/top.sv:27.25-27.37" *)
-  output f_state_play;
+  (* src = "src/design/top.sv:146.29-146.41" *)
   wire f_state_play;
   (* src = "src/design/top.sv:21.18-21.27" *)
   output led_state;
@@ -1324,55 +1322,79 @@ module top(clk, rst, btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, pos
   (* src = "src/design/top.sv:24.24-24.33" *)
   output [7:0] leds_topo;
   wire [7:0] leds_topo;
+  (* src = "src/design/top.sv:36.11-36.18" *)
+  wire n_btn_0;
+  (* src = "src/design/top.sv:37.11-37.18" *)
+  wire n_btn_1;
+  (* src = "src/design/top.sv:38.11-38.18" *)
+  wire n_btn_2;
+  (* src = "src/design/top.sv:39.11-39.18" *)
+  wire n_btn_3;
+  (* src = "src/design/top.sv:40.11-40.18" *)
+  wire n_btn_4;
+  (* src = "src/design/top.sv:41.11-41.18" *)
+  wire n_btn_5;
+  (* src = "src/design/top.sv:42.11-42.18" *)
+  wire n_btn_6;
+  (* src = "src/design/top.sv:43.11-43.18" *)
+  wire n_btn_7;
   (* src = "src/design/top.sv:18.23-18.26" *)
   input pos;
   wire pos;
   (* src = "src/design/top.sv:3.17-3.20" *)
   input rst;
   wire rst;
-  (* src = "src/design/top.sv:31.25-31.28" *)
+  (* src = "src/design/top.sv:28.25-28.28" *)
   output [6:0] seg;
   wire [6:0] seg;
-  (* src = "src/design/top.sv:71.17-71.26" *)
+  (* src = "src/design/top.sv:82.17-82.26" *)
   wire [7:0] w_acierto;
-  (* src = "src/design/top.sv:58.17-58.30" *)
+  (* src = "src/design/top.sv:69.17-69.30" *)
   wire w_add_failure;
-  (* src = "src/design/top.sv:57.17-57.26" *)
+  (* src = "src/design/top.sv:68.17-68.26" *)
   wire w_add_hit;
-  (* src = "src/design/top.sv:60.17-60.32" *)
+  (* src = "src/design/top.sv:71.17-71.32" *)
   (* unused_bits = "0 1 2" *)
   wire [2:0] w_current_state;
-  (* src = "src/design/top.sv:56.17-56.30" *)
+  (* src = "src/design/top.sv:67.17-67.30" *)
   wire w_en_save_pos;
-  (* src = "src/design/top.sv:72.17-72.24" *)
+  (* src = "src/design/top.sv:83.17-83.24" *)
   wire [7:0] w_fallo;
-  (* src = "src/design/top.sv:41.17-41.29" *)
+  (* src = "src/design/top.sv:52.17-52.29" *)
   wire w_fin_espera;
-  (* src = "src/design/top.sv:66.17-66.30" *)
+  (* src = "src/design/top.sv:77.17-77.30" *)
   wire w_fin_partida;
-  (* src = "src/design/top.sv:48.17-48.28" *)
+  (* src = "src/design/top.sv:59.17-59.28" *)
   wire w_hit_press;
-  (* src = "src/design/top.sv:59.17-59.32" *)
+  (* src = "src/design/top.sv:70.17-70.32" *)
   (* unused_bits = "0" *)
   wire w_inc_dificulty;
-  (* src = "src/design/top.sv:49.17-49.29" *)
+  (* src = "src/design/top.sv:60.17-60.29" *)
   wire w_miss_press;
-  (* src = "src/design/top.sv:44.17-44.27" *)
+  (* src = "src/design/top.sv:55.17-55.27" *)
   wire [2:0] w_pos_topo;
-  (* src = "src/design/top.sv:52.17-52.32" *)
+  (* src = "src/design/top.sv:63.17-63.32" *)
   wire w_rst_dificulty;
-  (* src = "src/design/top.sv:54.17-54.31" *)
+  (* src = "src/design/top.sv:65.17-65.31" *)
   wire w_rst_failures;
-  (* src = "src/design/top.sv:53.17-53.27" *)
+  (* src = "src/design/top.sv:64.17-64.27" *)
   wire w_rst_hits;
-  (* src = "src/design/top.sv:55.17-55.29" *)
+  (* src = "src/design/top.sv:66.17-66.29" *)
   wire w_rst_window;
-  (* src = "src/design/top.sv:45.17-45.28" *)
+  (* src = "src/design/top.sv:56.17-56.28" *)
   wire w_valid_pos;
-  (* src = "src/design/top.sv:63.17-63.29" *)
+  (* src = "src/design/top.sv:74.17-74.29" *)
   wire w_window_exp;
+  assign n_btn_0 = ~ (* src = "src/design/top.sv:86.22-86.28" *) btn_0;
+  assign n_btn_1 = ~ (* src = "src/design/top.sv:87.22-87.28" *) btn_1;
+  assign n_btn_2 = ~ (* src = "src/design/top.sv:88.22-88.28" *) btn_2;
+  assign n_btn_3 = ~ (* src = "src/design/top.sv:89.22-89.28" *) btn_3;
+  assign n_btn_4 = ~ (* src = "src/design/top.sv:90.22-90.28" *) btn_4;
+  assign n_btn_5 = ~ (* src = "src/design/top.sv:91.22-91.28" *) btn_5;
+  assign n_btn_6 = ~ (* src = "src/design/top.sv:92.22-92.28" *) btn_6;
+  assign n_btn_7 = ~ (* src = "src/design/top.sv:93.22-93.28" *) btn_7;
   (* module_not_derived = 32'd1 *)
-  (* src = "src/design/top.sv:154.18-162.6" *)
+  (* src = "src/design/top.sv:176.18-184.6" *)
   fail_counter u_fail_counter (
     .clk(clk),
     .fallo(w_fallo),
@@ -1383,7 +1405,7 @@ module top(clk, rst, btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, pos
     .rst(w_rst_failures)
   );
   (* module_not_derived = 32'd1 *)
-  (* src = "src/design/top.sv:103.9-126.6" *)
+  (* src = "src/design/top.sv:125.9-148.6" *)
   fsm u_fsm (
     .add_failure(w_add_failure),
     .add_hit(w_add_hit),
@@ -1407,7 +1429,7 @@ module top(clk, rst, btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, pos
     .window_exp(w_window_exp)
   );
   (* module_not_derived = 32'd1 *)
-  (* src = "src/design/top.sv:143.17-149.6" *)
+  (* src = "src/design/top.sv:165.17-171.6" *)
   hit_counter u_hit_counter (
     .acierto(w_acierto),
     .clk(clk),
@@ -1416,7 +1438,7 @@ module top(clk, rst, btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, pos
     .rst(w_rst_hits)
   );
   (* module_not_derived = 32'd1 *)
-  (* src = "src/design/top.sv:184.14-191.6" *)
+  (* src = "src/design/top.sv:206.14-213.6" *)
   marcador u_marcador (
     .acierto(w_acierto),
     .an(an),
@@ -1426,16 +1448,16 @@ module top(clk, rst, btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, pos
     .seg(seg)
   );
   (* module_not_derived = 32'd1 *)
-  (* src = "src/design/top.sv:86.15-100.6" *)
+  (* src = "src/design/top.sv:108.15-122.6" *)
   press_btn u_press_btn (
-    .btn_0(btn_0),
-    .btn_1(btn_1),
-    .btn_2(btn_2),
-    .btn_3(btn_3),
-    .btn_4(btn_4),
-    .btn_5(btn_5),
-    .btn_6(btn_6),
-    .btn_7(btn_7),
+    .btn_0(n_btn_0),
+    .btn_1(n_btn_1),
+    .btn_2(n_btn_2),
+    .btn_3(n_btn_3),
+    .btn_4(n_btn_4),
+    .btn_5(n_btn_5),
+    .btn_6(n_btn_6),
+    .btn_7(n_btn_7),
     .clk(clk),
     .miss(w_miss_press),
     .pos_topo(w_pos_topo),
@@ -1443,7 +1465,7 @@ module top(clk, rst, btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, pos
     .valid(w_hit_press)
   );
   (* module_not_derived = 32'd1 *)
-  (* src = "src/design/top.sv:75.12-82.6" *)
+  (* src = "src/design/top.sv:97.12-104.6" *)
   r_uart u_r_uart (
     .clk(clk),
     .en_save_pos(w_en_save_pos),
@@ -1453,14 +1475,14 @@ module top(clk, rst, btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, pos
     .valid_pos(w_valid_pos)
   );
   (* module_not_derived = 32'd1 *)
-  (* src = "src/design/top.sv:166.15-170.6" *)
+  (* src = "src/design/top.sv:188.15-192.6" *)
   show_mole u_show_mole (
     .en_topo(f_state_play),
     .leds_topo(leds_topo),
     .pos_topo(w_pos_topo)
   );
   (* module_not_derived = 32'd1 *)
-  (* src = "src/design/top.sv:172.11-181.6" *)
+  (* src = "src/design/top.sv:194.11-203.6" *)
   state u_state (
     .clk(clk),
     .f_state_gameover(f_state_gameover),
@@ -1470,7 +1492,7 @@ module top(clk, rst, btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, pos
     .rst(rst)
   );
   (* module_not_derived = 32'd1 *)
-  (* src = "src/design/top.sv:130.16-138.2" *)
+  (* src = "src/design/top.sv:152.16-160.2" *)
   time_logic u_time_logic (
     .UP(w_window_exp),
     .clk(clk),

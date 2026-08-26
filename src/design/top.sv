@@ -33,6 +33,15 @@ module top (
 
 );
     // Señales internas
+    logic n_btn_0;
+    logic n_btn_1;
+    logic n_btn_2;
+    logic n_btn_3;
+    logic n_btn_4;
+    logic n_btn_5;
+    logic n_btn_6;
+    logic n_btn_7;
+
     
     
     //Señales internas fsm a state
@@ -73,6 +82,17 @@ module top (
     logic [7:0] w_acierto; // [3:0]=unidades, [7:4]=decenas
     logic [7:0] w_fallo;   // [3:0]=unidades, [7:4]=decenas
 
+
+    assign n_btn_0 = ~btn_0;
+    assign n_btn_1 = ~btn_1;
+    assign n_btn_2 = ~btn_2;
+    assign n_btn_3 = ~btn_3;
+    assign n_btn_4 = ~btn_4;
+    assign n_btn_5 = ~btn_5;
+    assign n_btn_6 = ~btn_6;
+    assign n_btn_7 = ~btn_7;
+
+
     // M1: Receptor UART -> entrega pos_topo y valid_pos
     r_uart u_r_uart (
         .clk         (clk),
@@ -88,14 +108,14 @@ module top (
     press_btn u_press_btn (
         .clk      (clk),
         .rst      (rst),
-        .btn_0    (btn_0),
-        .btn_1    (btn_1),
-        .btn_2    (btn_2),
-        .btn_3    (btn_3),
-        .btn_4    (btn_4),
-        .btn_5    (btn_5),
-        .btn_6    (btn_6),
-        .btn_7    (btn_7),
+        .btn_0    (n_btn_0),
+        .btn_1    (n_btn_1),
+        .btn_2    (n_btn_2),
+        .btn_3    (n_btn_3),
+        .btn_4    (n_btn_4),
+        .btn_5    (n_btn_5),
+        .btn_6    (n_btn_6),
+        .btn_7    (n_btn_7),
         .pos_topo (w_pos_topo),
         .valid    (w_hit_press),
         .miss     (w_miss_press)
