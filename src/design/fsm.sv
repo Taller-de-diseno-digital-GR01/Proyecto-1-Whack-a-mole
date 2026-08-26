@@ -87,7 +87,8 @@ module fsm (
             end
 
             WAIT_UART: begin
-                en_save_pos = 1'b1;
+                en_numRandom = 1'b1; // se mantiene en alto hasta que llega la trama completa
+                en_save_pos  = 1'b1;
                 if (valid_pos) begin
                     next_state = PLAY;
                 end
