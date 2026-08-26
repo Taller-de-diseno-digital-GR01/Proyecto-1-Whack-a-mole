@@ -8,9 +8,18 @@ VVP            := vvp
 GTKWAVE        := gtkwave
 VECDUMP        := vecdump # Programa para pasar de .vcd a .svg
 YOSYS          := yosys
-VIVADO         := vivado
 OPENFPGALOADER := openFPGALoader
 BOARD          := basys3
+
+# Toolchain openXC7 (yosys + nextpnr-xilinx + prjxray), sin Vivado.
+# Requiere /opt/openxc7/bin en el PATH -- correr antes: source /opt/openxc7/export.sh
+NEXTPNR_XILINX  := nextpnr-xilinx
+FASM2FRAMES     := python3 /opt/openxc7/bin/fasm2frames.py
+XC7FRAMES2BIT   := xc7frames2bit
+PART            := xc7a35tcpg236-1
+PRJXRAY_DB_ROOT := /opt/openxc7/share/nextpnr/prjxray-db/artix7
+CHIPDB          := /opt/openxc7/share/nextpnr-xilinx/chipdb/xc7a35tcpg236.bin
+XDC             := src/fpga/basys3.xdc
 
 DESIGN_SRCS := $(wildcard $(DESIGN_DIR)/*.sv)
 TB_SRCS     := $(wildcard $(SIM_DIR)/tb_*.sv)
@@ -26,25 +35,31 @@ SVG_OUT := $(BUILD_DIR)/tb_$(TB).svg
 NETLIST_OUT := $(BUILD_DIR)/$(SYNTH_TOP)_synth.v
 SYNTH_LOG   := $(BUILD_DIR)/$(SYNTH_TOP)_synth.log
 
-VIVADO_TCL := src/fpga/build_bitstream.tcl
-BIT_OUT    := $(BUILD_DIR)/top.bit
+JSON_OUT   := $(BUILD_DIR)/$(SYNTH_TOP).json
+ROUTED_OUT := $(BUILD_DIR)/$(SYNTH_TOP)_routed.json
+FASM_OUT   := $(BUILD_DIR)/$(SYNTH_TOP).fasm
+FRAMES_OUT := $(BUILD_DIR)/$(SYNTH_TOP).frames
+BIT_OUT    := $(BUILD_DIR)/$(SYNTH_TOP).bit
 BIT        ?= $(BIT_OUT)
 
-# Identifica el toolchain (ruta + versión de iverilog/yosys) para invalidar el build si src/build/ quedó con binarios de otra máquina
+# Identifica el toolchain (ruta + versión de iverilog/yosys/nextpnr-xilinx) para invalidar
+# el build si src/build/ quedó con binarios de otra máquina
 TOOLCHAIN_STAMP := $(BUILD_DIR)/.toolchain
 
-.PHONY: all help list sim wave dump test synth bitstream program clean check-tb
+.PHONY: all help list sim wave dump test synth bitstream program clean check-tb check-fpga-toolchain
 
-all: help
+all: bitstream program
 
 help:
+	@echo "make all                genera el bitstream y lo carga a la FPGA (bitstream + program)"
 	@echo "make list              lista los testbenches disponibles"
 	@echo "make sim  TB=<modulo>  compila y corre src/sim/tb_<modulo>.sv"
 	@echo "make wave TB=<modulo>  corre la simulación y abre GTKWave"
 	@echo "make dump TB=<modulo> SIGS=sig1,sig2,...  corre la simulación y exporta un SVG con vecdump"
 	@echo "make test"
 	@echo "make synth SYNTH_TOP=<modulo>  sintetiza con yosys (genérico) y revisa que no haya latches inferidos"
-	@echo "make bitstream          genera $(BIT_OUT) con Vivado (requiere vivado en el PATH)"
+	@echo "make bitstream          genera $(BIT_OUT) con yosys + nextpnr-xilinx + prjxray (openXC7, sin Vivado)"
+	@echo "                        requiere /opt/openxc7/bin en el PATH (source /opt/openxc7/export.sh)"
 	@echo "make program BIT=<archivo.bit>  carga un .bit al Basys3 con openFPGALoader"
 	@echo "make clean"
 	@echo ""
@@ -66,7 +81,8 @@ $(BUILD_DIR):
 
 $(TOOLCHAIN_STAMP): | $(BUILD_DIR)
 	@{ echo "$$($(IVERILOG) -V | head -1)|$$(command -v $(IVERILOG))"; \
-	   echo "$$($(YOSYS) -V)|$$(command -v $(YOSYS))"; } > $@.tmp
+	   echo "$$($(YOSYS) -V)|$$(command -v $(YOSYS))"; \
+	   echo "$$(command -v $(NEXTPNR_XILINX))"; } > $@.tmp
 	@cmp -s $@.tmp $@ 2>/dev/null && rm -f $@.tmp || mv $@.tmp $@
 
 $(VVP_OUT): $(DESIGN_SRCS) $(SIM_DIR)/tb_$(TB).sv $(TOOLCHAIN_STAMP) | $(BUILD_DIR) check-tb
@@ -118,10 +134,39 @@ $(NETLIST_OUT): $(DESIGN_SRCS) $(TOOLCHAIN_STAMP) | $(BUILD_DIR)
 synth: $(NETLIST_OUT)
 	@echo "Netlist generado en $(NETLIST_OUT)"
 
-# Place & route + bitstream para el Basys3 (XC7A35T) via Vivado, batch mode.
-# Ver src/fpga/build_bitstream.tcl y src/fpga/basys3.xdc.
-bitstream: | $(BUILD_DIR)
-	$(VIVADO) -mode batch -source $(VIVADO_TCL)
+# Falla temprano y con un mensaje claro si falta el toolchain openXC7 en el PATH
+check-fpga-toolchain:
+	@command -v $(YOSYS) >/dev/null 2>&1 || \
+		{ echo "ERROR: '$(YOSYS)' no encontrado en PATH. Correr: source /opt/openxc7/export.sh"; exit 1; }
+	@command -v $(NEXTPNR_XILINX) >/dev/null 2>&1 || \
+		{ echo "ERROR: '$(NEXTPNR_XILINX)' no encontrado en PATH. Correr: source /opt/openxc7/export.sh"; exit 1; }
+	@command -v $(XC7FRAMES2BIT) >/dev/null 2>&1 || \
+		{ echo "ERROR: '$(XC7FRAMES2BIT)' no encontrado en PATH. Correr: source /opt/openxc7/export.sh"; exit 1; }
+	@[ -f $(CHIPDB) ] || \
+		{ echo "ERROR: chipdb no encontrado en $(CHIPDB) (ver docs de generación en /home/mc/Documents/CLAUDE.md)"; exit 1; }
+
+# Bitstream para el Basys3 (XC7A35T, part $(PART)) con el toolchain openXC7 (yosys ->
+# nextpnr-xilinx -> fasm2frames -> xc7frames2bit), sin Vivado. Ver src/fpga/basys3.xdc.
+$(JSON_OUT): $(DESIGN_SRCS) $(TOOLCHAIN_STAMP) | $(BUILD_DIR)
+	$(YOSYS) -p " \
+		read_verilog -sv $(DESIGN_SRCS); \
+		synth_xilinx -flatten -abc9 -nobram -arch xc7 -top $(SYNTH_TOP); \
+		write_json $(JSON_OUT) \
+	"
+
+$(ROUTED_OUT) $(FASM_OUT) &: $(JSON_OUT) $(XDC) $(CHIPDB)
+	$(NEXTPNR_XILINX) --chipdb $(CHIPDB) --xdc $(XDC) --json $(JSON_OUT) \
+		--write $(ROUTED_OUT) --fasm $(FASM_OUT)
+
+$(FRAMES_OUT): $(FASM_OUT)
+	$(FASM2FRAMES) --part $(PART) --db-root $(PRJXRAY_DB_ROOT) $(FASM_OUT) > $(FRAMES_OUT)
+
+$(BIT_OUT): $(FRAMES_OUT)
+	$(XC7FRAMES2BIT) --part_file $(PRJXRAY_DB_ROOT)/$(PART)/part.yaml --part_name $(PART) \
+		--frm_file $(FRAMES_OUT) --output_file $(BIT_OUT)
+
+bitstream: check-fpga-toolchain $(BIT_OUT)
+	@echo "Bitstream generado en $(BIT_OUT)"
 
 program:
 	$(OPENFPGALOADER) -b $(BOARD) $(BIT)
