@@ -12,7 +12,8 @@ module top (
     input logic       btn_6,
     input logic       btn_7,
 
-
+    //switch de testeo valid_pos
+    input logic      sw_0,
 
     //Entrada Externa de UART
     input logic       pos,    //serial
@@ -28,10 +29,20 @@ module top (
     output logic [6:0]  seg, // segmentos gfedcba, compartidos
     output logic [3:0]  an,  // selector de dígito, uno a la vez
 
-    //Salida al circuito discreto:
-    output logic        en_numRandom //Señal que activa el circuito discreto
+    //flags Testeo
+    output logic       f_state_start,
+    output logic       f_state_req_pos,
+    output logic       f_state_wait_uart,
+    output logic       f_state_hit,
+    output logic       f_state_failure,
 
+
+    
+
+     //Salida al circuito discreto:
+    output logic        en_numRandom //Señal que activa el circuito discreto
 );
+
     // Señales internas
     logic n_btn_0;
     logic n_btn_1;
@@ -83,15 +94,25 @@ module top (
     logic [7:0] w_fallo;   // [3:0]=unidades, [7:4]=decenas
 
 
-    assign n_btn_0 = ~btn_0;
-    assign n_btn_1 = ~btn_1;
-    assign n_btn_2 = ~btn_2;
-    assign n_btn_3 = ~btn_3;
-    assign n_btn_4 = ~btn_4;
-    assign n_btn_5 = ~btn_5;
-    assign n_btn_6 = ~btn_6;
-    assign n_btn_7 = ~btn_7;
+    //testeo switch valid pos
+    logic w_valid_pos_test;
 
+    //edge detectors para testing
+    logic w_hit_pulse, w_miss_pulse, w_valid_pos_pulse;
+
+    //testeo debounce
+    //logic [7:0] w_db_btn_out;
+
+    //assign n_btn_0 = btn_0;
+    //assign n_btn_1 = btn_1;
+    //assign n_btn_2 = btn_2;
+    //assign n_btn_3 = btn_3;
+    //assign n_btn_4 = btn_4;
+    //assign n_btn_5 = btn_5;
+    //assign n_btn_6 = btn_6;
+    //assign n_btn_7 = btn_7;
+//
+    //assign leds_topo = w_db_btn_out;
 
     // M1: Receptor UART -> entrega pos_topo y valid_pos
     r_uart u_r_uart (
@@ -102,32 +123,60 @@ module top (
         .pos_topo    (w_pos_topo),
         .valid_pos   (w_valid_pos)
     );
+    
+    
+    debounce db_valid_pos_test (//debounde del switch 
+    .clk    (clk),
+    .rst    (rst),
+    .btn_in (sw_0),
+    .db_out (w_valid_pos_test)
+    );
+
+    edge_detector ed_hit (
+    .clk(clk), .rst(rst),
+    .level_in(w_hit_press),
+    .pulse_out(w_hit_pulse)
+);
+
+    edge_detector ed_miss (
+    .clk(clk), .rst(rst),
+    .level_in(w_miss_press),
+    .pulse_out(w_miss_pulse)
+);
+
+edge_detector ed_valid_pos (
+    .clk(clk), .rst(rst),
+    .level_in(w_valid_pos_test),
+    .pulse_out(w_valid_pos_pulse)
+);
+    
 
     
     // M2: Botones (debounce + encoder + check_btn) -> hit / miss
     press_btn u_press_btn (
         .clk      (clk),
         .rst      (rst),
-        .btn_0    (n_btn_0),
-        .btn_1    (n_btn_1),
-        .btn_2    (n_btn_2),
-        .btn_3    (n_btn_3),
-        .btn_4    (n_btn_4),
-        .btn_5    (n_btn_5),
-        .btn_6    (n_btn_6),
-        .btn_7    (n_btn_7),
-        .pos_topo (w_pos_topo),
+        .btn_0    (btn_0),
+        .btn_1    (btn_1),
+        .btn_2    (btn_2),
+        .btn_3    (btn_3),
+        .btn_4    (btn_4),
+        .btn_5    (btn_5),
+        .btn_6    (btn_6),
+        .btn_7    (btn_7),
+        .pos_topo (3'b010),
         .valid    (w_hit_press),
         .miss     (w_miss_press)
+        //.db_btn_out(w_db_btn_out)
     );
 
     // M3: FSM principal
     fsm u_fsm (
         .clk               (clk),
         .rst               (rst),
-        .valid_pos         (w_valid_pos), //da el valor de posición
-        .hit               (w_hit_press), //le dió al top
-        .miss              (w_miss_press), //NO le dió al top
+        .valid_pos         (w_valid_pos_pulse), //da el visto bueno de posición
+        .hit               (w_hit_pulse), //le dió al top
+        .miss              (w_miss_pulse), //NO le dió al top
         .window_exp        (w_window_exp), //avisa que paso el tiempo
         .cont_failure      (w_fin_partida), //psa a gameover al llegar a 3 fallso
         .fin_espera        (w_fin_espera), //Es para pasar a START de nuevo
@@ -144,8 +193,13 @@ module top (
         .current_state_out (w_current_state), 
 
         .f_state_play      (f_state_play),
-        .f_state_gameover  (f_state_gameover)
-    );
+        .f_state_gameover  (f_state_gameover),
+        .f_state_start     (f_state_start),
+        .f_state_req_pos   (f_state_req_pos),
+        .f_state_wait_uart       (f_wait_uart),
+        .f_state_hit             (f_hit),
+        .f_state_failure         (f_failure)
+);
 
 
     // M4: Lógica de tiempo / ventana de reacción
@@ -153,15 +207,14 @@ module top (
     .clk           (clk),
     .rst_dificulty (w_rst_dificulty),
     .rst_window    (w_rst_window),
-    .inicio        (w_valid_pos),
+    .inicio        (w_valid_pos_pulse),
     .hit           (w_add_hit),
     .nueva_partida (1'b0),
     .UP            (w_window_exp)
 );
 
-    
-    // M5: Contador de aciertos (BCD)
 
+    // M5: Contador de aciertos (BCD)
     hit_counter u_hit_counter (
         .clk           (clk),
         .rst           (w_rst_hits),

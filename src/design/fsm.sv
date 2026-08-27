@@ -23,7 +23,12 @@ module fsm (
 
     //flags
     output logic       f_state_play,
-    output logic       f_state_gameover
+    output logic       f_state_gameover,
+    output logic       f_state_start,
+    output logic       f_state_req_pos,
+    output logic       f_state_wait_uart,
+    output logic       f_state_hit,
+    output logic       f_state_failure
 );
 
     typedef enum logic [2:0] {    
@@ -41,7 +46,7 @@ module fsm (
     assign current_state_out = state; 
 
     // Bloque Secuencial
-    always_ff @(posedge clk or posedge rst) begin
+    always_ff @(posedge clk) begin
         if (rst) begin
             state <= START;
         end else begin
@@ -64,6 +69,12 @@ module fsm (
         inc_dificulty       = 1'b0;
         f_state_play        = 1'b0;
         f_state_gameover    = 1'b0;
+        f_state_start       = 1'b0;
+        f_state_req_pos     = 1'b0;
+        f_state_wait_uart   = 1'b0;
+        f_state_hit         = 1'b0;
+        f_state_failure     = 1'b0;
+
 
 
         case (state)
@@ -74,6 +85,7 @@ module fsm (
                 rst_failures  = 1'b1;
                 rst_window    = 1'b1;
                 next_state = REQ_POS;
+                f_state_start = 1'b1;
 
                 //REVISAR
                 //if (req_received) begin
@@ -84,10 +96,12 @@ module fsm (
             REQ_POS: begin //solo manda la solicitud de pos, es decir que se active el sistema discreto
                 en_numRandom        = 1'b1;
                 next_state          = WAIT_UART;
+                f_state_req_pos     = 1'b1;
             end
 
             WAIT_UART: begin
                 en_save_pos = 1'b1;
+                f_state_wait_uart = 1'b1;
                 if (valid_pos) begin
                     next_state = PLAY;
                 end
@@ -108,7 +122,7 @@ module fsm (
             FAILURE: begin
                 add_failure = 1'b1;
                 rst_window  = 1'b1; // Reinicia el temporizador de ventana
-                
+                f_state_failure = 1'b1;
                 // Transición inmediata tras el pulso de fallo
                 if (cont_failure) begin
                     next_state = GAME_OVER;
@@ -121,6 +135,7 @@ module fsm (
                 add_hit       = 1'b1;
                 inc_dificulty = 1'b1;
                 rst_window    = 1'b1; // Reinicia el temporizador de ventana
+                f_state_hit   = 1'b1;
                 
                 // Transición inmediata a solicitar nueva posición
                 next_state = REQ_POS;

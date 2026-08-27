@@ -13,6 +13,7 @@ module press_btn ( //módulo principal
 
     output logic      valid,
     output logic      miss
+    //output logic [7:0] db_btn_out
 );
 
 
@@ -98,5 +99,7 @@ module press_btn ( //módulo principal
         .valid(valid),
         .miss(miss)
     );
+
+    //assign db_btn_out = {db_btn_0, db_btn_1, db_btn_2, db_btn_3, db_btn_4, db_btn_5, db_btn_6, db_btn_7};
 
 endmodule
