@@ -26,7 +26,10 @@ module press_btn ( //módulo principal
     logic db_btn_7;
     
     logic [2:0] enc_btn_in;
-    logic       valid_enc;    
+    logic       valid_enc;
+
+    logic       valid_lvl, miss_lvl; // salidas de check_btn, en nivel (dura mientras el botón está abajo)
+    logic       valid_prev, miss_prev;
 
     debounce db0 (
         .clk(clk),
@@ -95,8 +98,24 @@ module press_btn ( //módulo principal
         .enc_btn_in(enc_btn_in),
         .pos_topo(pos_topo),
         .valid_in(valid_enc),
-        .valid(valid),
-        .miss(miss)
+        .valid(valid_lvl),
+        .miss(miss_lvl)
     );
+
+    // Flanco de subida: un pulso de un ciclo por presión, sin importar
+    // cuánto tiempo el botón se mantenga abajo (valid_lvl/miss_lvl duran
+    // todo el tiempo que el botón está físicamente presionado)
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            valid_prev <= 1'b0;
+            miss_prev  <= 1'b0;
+        end else begin
+            valid_prev <= valid_lvl;
+            miss_prev  <= miss_lvl;
+        end
+    end
+
+    assign valid = valid_lvl & ~valid_prev;
+    assign miss  = miss_lvl  & ~miss_prev;
 
 endmodule
