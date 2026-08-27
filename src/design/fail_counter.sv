@@ -4,6 +4,7 @@ module fail_counter #(parameter MAX_FALLOS = 99) (
   input logic miss,
   input logic hit,
   input logic nueva_partida,
+  input logic cont_failure,
 
   output logic [7:0] fallo,
   output logic fin_partida
@@ -14,13 +15,13 @@ module fail_counter #(parameter MAX_FALLOS = 99) (
   // 2. fin_partida, esto es solo la tabla del punto h) pero implementada
 
   // 1. De aquí hasta 'FIN' es exáctamente lo mismo que en hit_counter pero con fallo en vez de acierto
-  localparam MAX_UNIDADES = MAX_FALLOS / 11; // dígito de unidades del techo, Ej: 99%10 =9
+  localparam MAX_UNIDADES = MAX_FALLOS / 33; // dígito de unidades del techo, Ej: 99/33 =3
   localparam MAX_DECENAS  = 0; // dígito de decenas del techo, Ej: 99/10 = 9
 
   logic [3:0] unidades, decenas;
 
   always_ff @(posedge clk) begin
-    if (rst || nueva_partida) begin // reset gana aunque llegue hit el mismo ciclo
+    if (rst || nueva_partida || hit) begin // reset gana aunque llegue hit el mismo ciclo
       unidades <= 0;
       decenas  <= 0;
     end
@@ -29,7 +30,7 @@ module fail_counter #(parameter MAX_FALLOS = 99) (
       unidades <= 0; // acarreo, las unidades a 0, las decenas suben
       decenas  <= decenas + 1;
     end
-    // Incremento normal
+    // Incremento normal 
     else if (miss && unidades != MAX_UNIDADES) begin // acierto y unidades todavía no llega al límite
       unidades <= unidades + 1;
     end
@@ -44,7 +45,7 @@ module fail_counter #(parameter MAX_FALLOS = 99) (
   logic [1:0] consecutivos; // <-- Sirve para fallos consecutivos, es interno. 2 bits porque llega hasta el valor '3'
 
   always_ff @(posedge clk) begin
-    if(rst || nueva_partida || hit) begin // Se lee como: "Si hay reset O nueva partida O un hit"
+    if(rst || nueva_partida || hit ) begin // Se lee como: "Si hay reset O nueva partida O un hit"
       consecutivos <= 0; // significa que se acabó la racha de fallos o todavía no existe
     end
     else if(miss) begin

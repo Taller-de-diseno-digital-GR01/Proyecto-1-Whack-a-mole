@@ -3,7 +3,7 @@ module time_logic #(
   parameter CLK_FREQ = 100_000_000, // <-- TODO: Revisar que CLK_FREQ esté bien
   parameter TICK = 100,
   parameter UNI_TIEMPO=1000,
-  parameter VENTANA_INICIAL = 3000,
+  parameter VENTANA_INICIAL = 5000,
   parameter VENTANA_MINIMA = 500
   ) (
   input logic clk,

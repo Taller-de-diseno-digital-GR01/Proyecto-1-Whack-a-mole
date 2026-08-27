@@ -177,10 +177,10 @@ module top (
 
     fail_counter u_fail_counter (
         .clk           (clk),
-        .rst           (rst),
+        .rst           (w_rst_failures),
         .miss          (w_add_failure),
         .hit           (w_add_hit),
-        .nueva_partida (w_add_hit), //no lo estamos usasndo
+        .nueva_partida (1'b0), //no lo estamos usasndo
         .fallo         (w_fallo),
         .fin_partida   (w_fin_partida)
     );
