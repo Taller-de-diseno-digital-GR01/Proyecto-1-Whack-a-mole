@@ -14,7 +14,7 @@ module fail_counter #(parameter MAX_FALLOS = 99) (
   // 2. fin_partida, esto es solo la tabla del punto h) pero implementada
 
   // 1. De aquí hasta 'FIN' es exáctamente lo mismo que en hit_counter pero con fallo en vez de acierto
-  localparam MAX_UNIDADES = MAX_FALLOS % 10; // dígito de unidades del techo, Ej: 99%10 =9
+  localparam MAX_UNIDADES = MAX_FALLOS / 11; // dígito de unidades del techo, Ej: 99%10 =9
   localparam MAX_DECENAS  = 0; // dígito de decenas del techo, Ej: 99/10 = 9
 
   logic [3:0] unidades, decenas;
