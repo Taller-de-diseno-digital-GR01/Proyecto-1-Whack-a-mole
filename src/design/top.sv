@@ -163,7 +163,7 @@ module top (
 
     
     // M5: Contador de aciertos (BCD)
-
+    
     hit_counter u_hit_counter (
         .clk           (clk),
         .rst           (w_rst_hits),
@@ -177,10 +177,10 @@ module top (
 
     fail_counter u_fail_counter (
         .clk           (clk),
-        .rst           (w_rst_failures),
+        .rst           (rst),
         .miss          (w_add_failure),
         .hit           (w_add_hit),
-        .nueva_partida (1'b0), //no lo estamos usasndo
+        .nueva_partida (w_add_hit), //no lo estamos usasndo
         .fallo         (w_fallo),
         .fin_partida   (w_fin_partida)
     );
