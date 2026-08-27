@@ -46,7 +46,7 @@ BIT        ?= $(BIT_OUT)
 # el build si src/build/ quedó con binarios de otra máquina
 TOOLCHAIN_STAMP := $(BUILD_DIR)/.toolchain
 
-.PHONY: all help list sim wave dump test synth bitstream program clean check-tb check-fpga-toolchain
+.PHONY: all help list sim wave dump test synth bitstream program connect clean check-tb check-fpga-toolchain
 
 all: bitstream program
 
@@ -61,6 +61,7 @@ help:
 	@echo "make bitstream          genera $(BIT_OUT) con yosys + nextpnr-xilinx + prjxray (openXC7, sin Vivado)"
 	@echo "                        requiere /opt/openxc7/bin en el PATH (source /opt/openxc7/export.sh)"
 	@echo "make program BIT=<archivo.bit>  carga un .bit al Basys3 con openFPGALoader"
+	@echo "make connect             verifica que la Basys3 esté detectable por USB/JTAG antes de programar"
 	@echo "make clean"
 	@echo ""
 	@echo "Testbenches disponibles, $(TBS)"
@@ -168,7 +169,49 @@ $(BIT_OUT): $(FRAMES_OUT)
 bitstream: check-fpga-toolchain $(BIT_OUT)
 	@echo "Bitstream generado en $(BIT_OUT)"
 
-program:
+# Diagnóstico de conectividad antes de programar: revisa que openFPGALoader esté
+# en PATH, que la Basys3 aparezca en el bus USB, y que se pueda hablar JTAG con
+# ella. En FreeBSD el chip FT2232 de la Basys3 suele quedar acaparado por el
+# driver de puerto serie uftdi(4), que le bloquea el acceso exclusivo a
+# libusb/openFPGALoader -- este target lo detecta y avisa, no lo descarga solo
+# (kldunload necesita root y es una acción del sistema, no del build).
+connect: | $(BUILD_DIR)
+	@echo "== make connect: verificando acceso a la Basys3 =="
+	@command -v $(OPENFPGALOADER) >/dev/null 2>&1 || \
+		{ echo "ERROR: '$(OPENFPGALOADER)' no encontrado en PATH."; exit 1; }
+	@case "$$(uname)" in \
+		FreeBSD) \
+			if command -v usbconfig >/dev/null 2>&1; then \
+				if ! usbconfig list 2>/dev/null | grep -qi "FT2232"; then \
+					echo "ERROR: no se detecta el chip FT2232 (Basys3) en el bus USB (usbconfig list)."; \
+					echo "       revisá el cable (debe ser de datos, no solo carga), el puerto usado,"; \
+					echo "       y que el switch de encendido (SW16) de la tarjeta esté en ON."; \
+					exit 1; \
+				fi; \
+				echo "OK: Basys3 (FT2232) detectada en el bus USB."; \
+			fi; \
+			if command -v kldstat >/dev/null 2>&1 && kldstat -q -m uftdi 2>/dev/null; then \
+				echo "AVISO: el módulo uftdi está cargado y puede acaparar el FT2232 antes que"; \
+				echo "       libusb/openFPGALoader -- si el chequeo de JTAG de abajo falla, corré:"; \
+				echo "         doas kldunload uftdi"; \
+				echo "       y volvé a conectar el cable USB de la Basys3 antes de reintentar."; \
+			fi ;; \
+		*) \
+			if command -v lsusb >/dev/null 2>&1 && ! lsusb 2>/dev/null | grep -qi "FTDI\|Future Technology"; then \
+				echo "ERROR: no se detecta el chip FTDI (Basys3) en lsusb."; \
+				exit 1; \
+			fi ;; \
+	esac
+	@if ! $(OPENFPGALOADER) --detect > $(BUILD_DIR)/.connect.log 2>&1; then \
+		echo "ERROR: openFPGALoader no logra hablar JTAG con la tarjeta:"; \
+		cat $(BUILD_DIR)/.connect.log; \
+		echo ""; \
+		echo "Si el chip sí aparece en el bus pero esto falla, es casi seguro el conflicto de uftdi de arriba."; \
+		exit 1; \
+	fi
+	@echo "OK: openFPGALoader detecta la FPGA por JTAG. Todo listo para 'make program' / 'make all'."
+
+program: connect
 	$(OPENFPGALOADER) -b $(BOARD) $(BIT)
 
 test: check-tb # <-- Esto corre make sim para cada testbench en $(TBS), uno por uno
