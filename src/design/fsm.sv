@@ -41,7 +41,7 @@ module fsm (
     assign current_state_out = state; 
 
     // Bloque Secuencial
-    always_ff @(posedge clk or posedge rst) begin
+    always_ff @(posedge clk) begin
         if (rst) begin
             state <= START;
         end else begin
