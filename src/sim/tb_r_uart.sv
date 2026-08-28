@@ -126,7 +126,7 @@ module tb_r_uart;
     // Secuencia principal de prueba
     // -----------------------------------------------------------
     initial begin
-        $dumpfile("dump.vcd");
+        $dumpfile("tb_r_uart.vcd");
         $dumpvars(0, tb_r_uart);
     end
 
