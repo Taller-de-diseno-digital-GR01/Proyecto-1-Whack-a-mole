@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1034.00" height="176.00" viewBox="0 0 1034.00 176.00">
+<line x1="214.00" y1="16.00" x2="214.00" y2="148.00" stroke="#ccc"/>
+<text x="214.00" y="160.00" font-family="monospace" font-size="10" text-anchor="middle" fill="#666">0</text>
+<line x1="308.12" y1="16.00" x2="308.12" y2="148.00" stroke="#ccc"/>
+<text x="308.12" y="160.00" font-family="monospace" font-size="10" text-anchor="middle" fill="#666">20000</text>
+<line x1="402.24" y1="16.00" x2="402.24" y2="148.00" stroke="#ccc"/>
+<text x="402.24" y="160.00" font-family="monospace" font-size="10" text-anchor="middle" fill="#666">40000</text>
+<line x1="496.35" y1="16.00" x2="496.35" y2="148.00" stroke="#ccc"/>
+<text x="496.35" y="160.00" font-family="monospace" font-size="10" text-anchor="middle" fill="#666">60000</text>
+<line x1="590.47" y1="16.00" x2="590.47" y2="148.00" stroke="#ccc"/>
+<text x="590.47" y="160.00" font-family="monospace" font-size="10" text-anchor="middle" fill="#666">80000</text>
+<line x1="684.59" y1="16.00" x2="684.59" y2="148.00" stroke="#ccc"/>
+<text x="684.59" y="160.00" font-family="monospace" font-size="10" text-anchor="middle" fill="#666">100000</text>
+<line x1="778.71" y1="16.00" x2="778.71" y2="148.00" stroke="#ccc"/>
+<text x="778.71" y="160.00" font-family="monospace" font-size="10" text-anchor="middle" fill="#666">120000</text>
+<line x1="872.82" y1="16.00" x2="872.82" y2="148.00" stroke="#ccc"/>
+<text x="872.82" y="160.00" font-family="monospace" font-size="10" text-anchor="middle" fill="#666">140000</text>
+<line x1="966.94" y1="16.00" x2="966.94" y2="148.00" stroke="#ccc"/>
+<text x="966.94" y="160.00" font-family="monospace" font-size="10" text-anchor="middle" fill="#666">160000</text>
+<text x="202.00" y="44.00" font-family="monospace" font-size="12" text-anchor="end" fill="#000">m02_show_mole_tb.pos_topo</text>
+<polygon points="214.00,40.00 222.00,28.00 253.06,28.00 261.06,40.00 253.06,52.00 222.00,52.00" fill="#eef2ff" stroke="#333"/>
+<text x="237.53" y="40.00" font-family="monospace" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#000">000</text>
+<polygon points="261.06,40.00 269.06,28.00 300.12,28.00 308.12,40.00 300.12,52.00 269.06,52.00" fill="#eef2ff" stroke="#333"/>
+<text x="284.59" y="40.00" font-family="monospace" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#000">001</text>
+<polygon points="308.12,40.00 316.12,28.00 347.18,28.00 355.18,40.00 347.18,52.00 316.12,52.00" fill="#eef2ff" stroke="#333"/>
+<text x="331.65" y="40.00" font-family="monospace" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#000">010</text>
+<polygon points="355.18,40.00 363.18,28.00 394.24,28.00 402.24,40.00 394.24,52.00 363.18,52.00" fill="#eef2ff" stroke="#333"/>
+<text x="378.71" y="40.00" font-family="monospace" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#000">011</text>
+<polygon points="402.24,40.00 410.24,28.00 441.29,28.00 449.29,40.00 441.29,52.00 410.24,52.00" fill="#eef2ff" stroke="#333"/>
+<text x="425.76" y="40.00" font-family="monospace" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#000">100</text>
+<polygon points="449.29,40.00 457.29,28.00 488.35,28.00 496.35,40.00 488.35,52.00 457.29,52.00" fill="#eef2ff" stroke="#333"/>
+<text x="472.82" y="40.00" font-family="monospace" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#000">101</text>
+<polygon points="496.35,40.00 504.35,28.00 535.41,28.00 543.41,40.00 535.41,52.00 504.35,52.00" fill="#eef2ff" stroke="#333"/>
+<text x="519.88" y="40.00" font-family="monospace" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#000">110</text>
+<polygon points="543.41,40.00 551.41,28.00 582.47,28.00 590.47,40.00 582.47,52.00 551.41,52.00" fill="#eef2ff" stroke="#333"/>
+<text x="566.94" y="40.00" font-family="monospace" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#000">111</text>
+<polygon points="590.47,40.00 598.47,28.00 629.53,28.00 637.53,40.00 629.53,52.00 598.47,52.00" fill="#eef2ff" stroke="#333"/>
+<text x="614.00" y="40.00" font-family="monospace" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#000">000</text>
+<polygon points="637.53,40.00 645.53,28.00 676.59,28.00 684.59,40.00 676.59,52.00 645.53,52.00" fill="#eef2ff" stroke="#333"/>
+<text x="661.06" y="40.00" font-family="monospace" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#000">001</text>
+<polygon points="684.59,40.00 692.59,28.00 723.65,28.00 731.65,40.00 723.65,52.00 692.59,52.00" fill="#eef2ff" stroke="#333"/>
+<text x="708.12" y="40.00" font-family="monospace" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#000">010</text>
+<polygon points="731.65,40.00 739.65,28.00 770.71,28.00 778.71,40.00 770.71,52.00 739.65,52.00" fill="#eef2ff" stroke="#333"/>
+<text x="755.18" y="40.00" font-family="monospace" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#000">011</text>
+<polygon points="778.71,40.00 786.71,28.00 817.76,28.00 825.76,40.00 817.76,52.00 786.71,52.00" fill="#eef2ff" stroke="#333"/>
+<text x="802.24" y="40.00" font-family="monospace" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#000">100</text>
+<polygon points="825.76,40.00 833.76,28.00 864.82,28.00 872.82,40.00 864.82,52.00 833.76,52.00" fill="#eef2ff" stroke="#333"/>
+<text x="849.29" y="40.00" font-family="monospace" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#000">101</text>
+<polygon points="872.82,40.00 880.82,28.00 911.88,28.00 919.88,40.00 911.88,52.00 880.82,52.00" fill="#eef2ff" stroke="#333"/>
+<text x="896.35" y="40.00" font-family="monospace" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#000">110</text>
+<polygon points="919.88,40.00 927.88,28.00 1006.00,28.00 1014.00,40.00 1006.00,52.00 927.88,52.00" fill="#eef2ff" stroke="#333"/>
+<text x="966.94" y="40.00" font-family="monospace" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#000">111</text>
+<text x="202.00" y="88.00" font-family="monospace" font-size="12" text-anchor="end" fill="#000">m02_show_mole_tb.en_topo</text>
+<line x1="214.00" y1="96.00" x2="590.47" y2="96.00" stroke="#000" stroke-width="1.5"/>
+<line x1="590.47" y1="96.00" x2="590.47" y2="72.00" stroke="#000" stroke-width="1.5"/>
+<line x1="590.47" y1="72.00" x2="966.94" y2="72.00" stroke="#000" stroke-width="1.5"/>
+<line x1="966.94" y1="72.00" x2="966.94" y2="96.00" stroke="#000" stroke-width="1.5"/>
+<line x1="966.94" y1="96.00" x2="1014.00" y2="96.00" stroke="#000" stroke-width="1.5"/>
+<text x="202.00" y="132.00" font-family="monospace" font-size="12" text-anchor="end" fill="#000">m02_show_mole_tb.leds_topo</text>
+<polygon points="214.00,128.00 222.00,116.00 582.47,116.00 590.47,128.00 582.47,140.00 222.00,140.00" fill="#eef2ff" stroke="#333"/>
+<text x="402.24" y="128.00" font-family="monospace" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#000">00000000</text>
+<polygon points="590.47,128.00 598.47,116.00 629.53,116.00 637.53,128.00 629.53,140.00 598.47,140.00" fill="#eef2ff" stroke="#333"/>
+<polygon points="637.53,128.00 645.53,116.00 676.59,116.00 684.59,128.00 676.59,140.00 645.53,140.00" fill="#eef2ff" stroke="#333"/>
+<polygon points="684.59,128.00 692.59,116.00 723.65,116.00 731.65,128.00 723.65,140.00 692.59,140.00" fill="#eef2ff" stroke="#333"/>
+<polygon points="731.65,128.00 739.65,116.00 770.71,116.00 778.71,128.00 770.71,140.00 739.65,140.00" fill="#eef2ff" stroke="#333"/>
+<polygon points="778.71,128.00 786.71,116.00 817.76,116.00 825.76,128.00 817.76,140.00 786.71,140.00" fill="#eef2ff" stroke="#333"/>
+<polygon points="825.76,128.00 833.76,116.00 864.82,116.00 872.82,128.00 864.82,140.00 833.76,140.00" fill="#eef2ff" stroke="#333"/>
+<polygon points="872.82,128.00 880.82,116.00 911.88,116.00 919.88,128.00 911.88,140.00 880.82,140.00" fill="#eef2ff" stroke="#333"/>
+<polygon points="919.88,128.00 927.88,116.00 958.94,116.00 966.94,128.00 958.94,140.00 927.88,140.00" fill="#eef2ff" stroke="#333"/>
+<polygon points="966.94,128.00 974.94,116.00 1006.00,116.00 1014.00,128.00 1006.00,140.00 974.94,140.00" fill="#eef2ff" stroke="#333"/>
+</svg>
