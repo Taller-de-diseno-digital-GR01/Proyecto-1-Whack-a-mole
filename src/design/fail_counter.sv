@@ -1,0 +1,68 @@
+module fail_counter #(parameter MAX_FALLOS = 99) (
+  input logic clk,
+  input logic rst, //rst_failure
+  input logic miss,
+  input logic hit,
+  input logic nueva_partida,
+  input logic cont_failure,
+
+  output logic [7:0] fallo,
+  output logic fin_partida
+  );
+
+  // La idea es hacer dos contadores independientes como dice el .md para este diseño en las secciones g) & h)
+  // 1. Acumulado en BCD, es la misma idea a lo que ya hice en hit_counter, entonces nada más le voy a cambiar lo que no quiero con miss
+  // 2. fin_partida, esto es solo la tabla del punto h) pero implementada
+
+  // 1. De aquí hasta 'FIN' es exáctamente lo mismo que en hit_counter pero con fallo en vez de acierto
+  localparam MAX_UNIDADES = MAX_FALLOS / 33; // dígito de unidades del techo, Ej: 99/33 =3
+  localparam MAX_DECENAS  = 0; // dígito de decenas del techo, Ej: 99/10 = 9
+
+  logic [3:0] unidades, decenas;
+
+  always_ff @(posedge clk) begin
+    if (rst || nueva_partida || hit) begin // reset gana aunque llegue hit el mismo ciclo
+      unidades <= 0;
+      decenas  <= 0;
+    end
+    // Acarreo
+    else if (miss && unidades == MAX_UNIDADES && decenas != MAX_DECENAS) begin // acierto y unidades llegó al tope, pero decenas todavía no hay acarreo
+      unidades <= 0; // acarreo, las unidades a 0, las decenas suben
+      decenas  <= decenas + 1;
+    end
+    // Incremento normal 
+    else if (miss && unidades != MAX_UNIDADES) begin // acierto y unidades todavía no llega al límite
+      unidades <= unidades + 1;
+    end
+  end
+
+  assign fallo[3:0] = unidades;
+  assign fallo[7:4] = decenas;
+  // FIN
+
+
+  // 2.
+  logic [1:0] consecutivos; // <-- Sirve para fallos consecutivos, es interno. 2 bits porque llega hasta el valor '3'
+
+  always_ff @(posedge clk) begin
+    if(rst || nueva_partida || hit ) begin // Se lee como: "Si hay reset O nueva partida O un hit"
+      consecutivos <= 0; // significa que se acabó la racha de fallos o todavía no existe
+    end
+    else if(miss) begin
+      if(consecutivos == 2 || consecutivos == 3) // Se lee como: "¿La racha ya estaba a un fallo de terminar, o ya había terminado?"
+        consecutivos <= 3; // Deja la racha fija como el máximo 3
+      else
+        consecutivos <= consecutivos + 1; // racha todavía corta (0 o 1), sube uno más
+    end
+  end
+
+  // fin_partida se calcula de forma combinacional (no registrada) para
+  // que esté lista en el MISMO ciclo del fallo que la dispara. Antes
+  // estaba registrada, así que su valor nuevo solo se veía un ciclo
+  // después del fallo que la disparaba -- justo el mismo ciclo en que
+  // la fsm ya necesita leer cont_failure dentro del estado FAILURE, lo
+  // que hacía que el 3er fallo consecutivo pasara desapercibido y
+  // hiciera falta un 4to fallo para llegar a GAME_OVER.
+  assign fin_partida = miss && (consecutivos == 2 || consecutivos == 3);
+
+endmodule

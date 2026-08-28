@@ -1,5 +1,5 @@
 
-### M2: Show_Mole
+# M2: Show_Mole
 
 
 
@@ -46,4 +46,28 @@ La siguiente tabla detalla la lógica de decodificación tipo one-hot con activa
 | **1** | 1 | 1 | 0 | 0 | **1** | 0 | 0 | 0 | 0 | 0 | 0 | LED 6 encendido |
 | **1** | 1 | 1 | 1 | **1** | 0 | 0 | 0 | 0 | 0 | 0 | 0 | LED 7 encendido |
 
+## i) Diagrama detallado del diseño
 
+```mermaid
+flowchart LR
+    %% Entradas
+    pos["pos_topo[2:0]"]
+    en["en_topo"]
+
+    subgraph Logica_Combinacional ["Lógica Combinacional (always_comb)"]
+        direction TB
+        DEC["Decodificador 3 a 8 bits<br/>(One-Hot)"]
+        DEFAULT["Asignación por defecto:<br/>leds = 8'b0000_0000"]
+    end
+
+    %% Salidas
+    out_leds["leds_topo[7:0]"]
+
+    %% Conexiones
+    pos --> DEC
+    en -->|Habilita (si es 1)| DEC
+    en -->|Apaga (si es 0)| DEFAULT
+    
+    DEC --> out_leds
+    DEFAULT --> out_leds
+```
