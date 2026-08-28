@@ -69,16 +69,20 @@ module state #(
     // (periodo de 400ms -> 2.5 Hz)
     // ------------------------------------------------------------
     logic blink_toggle;
+    logic blink_div; // cuenta los ticks de 100ms de a 2, para que blink_toggle conmute cada 2 y no cada 1
 
     always_ff @(posedge clk) begin
         if (rst) begin
             blink_toggle <= 1'b0;
+            blink_div <= 1'b0;
         end else if (f_state_gameover && !f_state_play) begin
             if (tick_100ms) begin
-                blink_toggle <= ~blink_toggle;
+                if (blink_div) blink_toggle <= ~blink_toggle;
+                blink_div <= ~blink_div;
             end
         end else begin
             blink_toggle <= 1'b0;
+            blink_div <= 1'b0;
         end
     end
     
