@@ -25,53 +25,38 @@ ventana de tiempo con dificultad progresiva, conteo de aciertos y fallos, y desp
 displays de 7 segmentos.
 
 ## Documentación de docs/Diseños_Separados
-
 ### Nivel 1 - Descripción general
-[Objetivos, entradas y salidas del sistema](docs/Diseños_Separados/objetivos_descripciones.md#nivel-1)
-[Diagrama de flujo general del juego](docs/Diseños_Separados/Diagrama_de_flujo_proyecto1.drawio.png)
+[Objetivos, entradas y salidas del sistema](docs/Diseños_Separadosobjetivos_descripciones.md#nivel-1)
+[Diagrama de flujo general del juego](docs/Diseños_SeparadosDiagrama_de_flujo_proyecto1.drawio.png)
 
 ### Nivel 2 - Subdivisión en bloques
-[Subsistema discreto y subsistema FPGA](docs/Diseños_Separados/objetivos_descripciones.md#nivel-2)
+[Subsistema discreto y subsistema FPGA](docs/Diseños_Separadosobjetivos_descripciones.md#nivel-2)
 
 ### Nivel 3 - Diagrama de tercer nivel
-- [Subsistema FPGA: objetivo, entradas, salidas y módulos](<docs/Diseños_Separados/Descripción_3er Nivel.md>)
-  - [Diagrama de módulos FPGA (fuente Mermaid)](docs/Diseños_Separados
-/diagrama_FPGA.mermaid)  [imagen](docs/Diseños_Separados
-/diagrama_FPGA.png)
-  - [Vista alterna del mismo diagrama](docs/Diseños_Separados
-/uart_fpga_system.png)
+- [Subsistema FPGA: objetivo, entradas, salidas y módulos](<docs/Diseños_SeparadosDescripción_3er Nivel.md>)
+  - [Diagrama de módulos FPGA (fuente Mermaid)](docs/Diseños_Separados/diagrama_FPGA.mermaid)  [imagen](docs/Diseños_Separados/diagrama_FPGA.png)
+  - [Vista alterna del mismo diagrama](docs/Diseños_Separados/uart_fpga_system.png)
 - [Subsistema discreto (diagrama preliminar)](docs/Diseños_Separados/diagrama_lvl_3.md)
-  - [Diagrama LFSR + registro UART (fuente Mermaid)](docs/Diseños_Separados
-/diagrama_lfsr_uart.mermaid)
+  - [Diagrama LFSR + registro UART (fuente Mermaid)](docs/Diseños_Separados/diagrama_lfsr_uart.mermaid)
 
 ### Nivel 4 - Desarrollo modular
-- [Subsistema discreto: M1 a M5](docs/Diseños_Separados/diagrama_lvl_4.md)
+- [Subsistema discreto: M1 a M5](docs/Diseños_Separadosdiagrama_lvl_4.md)
 - Subsistema FPGA, por módulo:
-  - [M1. Receptor UART](docs/Diseños_Separados
-/fpga/m01_receptor_uart.md)
-  - [M2. Show_Mole](docs/Diseños_Separados
-/fpga/m02_show_mole.md)
-  - [M3. Press_btn](docs/Diseños_Separados
-/fpga/m03_press_btn.md)
-  - [M4. Time_Logic](docs/Diseños_Separados
-/fpga/m04_time_logic.md)
-  - [M5. Hit_Counter](docs/Diseños_Separados
-/fpga/m05_hit_counter.md)
-  - [M6. Fail_Counter](docs/Diseños_Separados
-/fpga/m06_fail_counter.md)
-  - [M7. Estado de juego](docs/Diseños_Separados
-/fpga/m07_estado_juego.md)
-  - [M8. FSM (máquina de estados central)](docs/Diseños_Separados
-/fpga/m08_FSM.md)
-    * diagrama de estados: [fuente draw.io](docs/Diseños_Separados
-  /fpga/FSM_proyecto1.drawio)  [imagen](docs/Diseños_Separados
-  /fpga/FSM_proyecto1.drawio.png)
-  - [M9. Transmisor_UART](docs/Diseños_Separados
-/fpga/m09_transmisor_uart.md)
+  - [M1. Receptor UART](docs/Diseños_Separados/fpga/m01_receptor_uart.md)
+  - [M2. Show_Mole](docs/Diseños_Separados/fpga/m02_show_mole.md)
+  - [M3. Press_btn](docs/Diseños_Separados/fpga/m03_press_btn.md)
+  - [M4. Time_Logic](docs/Diseños_Separados/fpga/m04_time_logic.md)
+  - [M5. Hit_Counter](docs/Diseños_Separados/fpga/m05_hit_counter.md)
+  - [M6. Fail_Counter](docs/Diseños_Separados/fpga/m06_fail_counter.md)
+  - [M7. Estado de juego](docs/Diseños_Separados/fpga/m07_estado_juego.md)
+  - [M8. FSM (máquina de estados central)](docs/Diseños_Separados/fpga/m08_FSM.md)
+    * diagrama de estados: [imagen](docs/Diseños_Separados/fpga/FSM_proyecto1.drawio.png)
+  - [M9. Transmisor_UART](docs/Diseños_Separados/fpga/m09_transmisor_uart.md)
 
 ### Nivel 5 - Esquemático total
+
 - Esquemático de nivel 5 para la FPGA
-![alt text](docs/Diseños_Separados/img/schematic_lvl5.jpg)
+![alt text](docs/Diseños_Separadosimg/schematic_lvl5.jpg)
 
 - El esquemático Multisim del subsistema discreto ya existe, ver
 [Subsistema discreto](#subsistema-discreto-protoboard) más abajo.
@@ -104,7 +89,7 @@ Ver en [src/sim]
 ├── README.md
 ├── Proyectos_EL3313_proyecto1_2S2026.pdf # enunciado del proyecto
 ├── docs/
-│   ├── docs/Diseños_Separados/
+│   ├── docs/Diseños_Separados
 │   │   ├── objetivos_descripciones.md # Nivel 1 + Nivel 2
 │   │   ├── Diagrama_de_flujo_proyecto1(.drawio.png)
 │   │   ├── Descripción_3er Nivel.md # Nivel 3, lado FPGA
