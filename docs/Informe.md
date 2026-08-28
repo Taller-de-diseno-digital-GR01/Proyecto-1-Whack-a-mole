@@ -501,7 +501,12 @@ causa raíz).
 
 ## 3. Análisis e interpretación de resultados
 
-### 3.1 Testbenches desactualizados, corregidos en esta sesión
+### 3.1 Corrección de la infraestructura de verificación (prerrequisito, no hallazgo de diseño)
+
+Antes de interpretar cualquier resultado hay que poder confiar en la herramienta que lo produce.
+Esta sección documenta trabajo de mantenimiento sobre los testbenches en sí, no una observación
+sobre el comportamiento del diseño, y por eso se separa de los hallazgos reales de las secciones
+3.2 a 3.4.
 
 Antes de poder correr `make test` sin errores de compilación hubo que corregir varios testbenches
 que habían quedado detrás de cambios de interfaz en los módulos que prueban, probablemente de
@@ -592,6 +597,20 @@ mínimo. Se documenta aquí sin corregir porque no se preguntó por este hallazg
 equipo quiere el pulso exacto en el tick 20 en vez de uno más tarde, hay que registrar `fin_espera`
 usando el valor de `wait_cnt` justo antes de que se actualice, en vez de compararlo contra
 `wait_done` ya actualizado en el mismo ciclo que `tick_100ms` cae a 0.
+
+### 3.5 Síntesis y cobertura de la verificación
+
+En total, de los ocho módulos SystemVerilog con testbench propio más la integración completa
+(`tb_top.sv`), se encontraron dos hallazgos reales que sí requerían corregir `src/design/` (3.2 y
+3.3) y uno que se documentó sin corregir por no afectar el cumplimiento del enunciado (3.4); el
+resto de los fallos iniciales (sección 3.1) eran del lado del testbench, no del diseño.
+
+Toda esta verificación cubre exclusivamente el subsistema FPGA: cada módulo de `src/design/` corre
+bajo simulación con `iverilog`/`vvp`, incluyendo `r_uart`/`t_uart` en *loopback* interno (sección
+2.9). El subsistema discreto (oscilador NE555, LFSR, decodificador 74LS138 y su acondicionamiento
+de línea) no pasa por esta misma verificación automática porque vive fuera del dominio de HDL
+simulable; su corrección se sustenta en el análisis analítico del Nivel 4 del diseño
+(cálculo de tolerancia de frecuencia entre relojes, tablas de verdad de las compuertas discretas), simulación con la herramienta de multisim y análisis en laboratorio con el analizador lógico.
 
 ## 4. Conclusiones y aprendizaje obtenido
 
