@@ -1468,3 +1468,9 @@ Esta FSM actúa como el controlador central de un juego interactivo de velocidad
 ### Diagrama de Estados:
 
 ![alt text](Diseños_Separados/fpga/image-1.png)
+
+
+# Nivel 5
+A continuación se muestra el diseño de quinto nivel.
+
+![alt text](Diseños_Separados/img/schematic_lvl5.jpg)
