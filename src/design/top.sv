@@ -177,10 +177,10 @@ module top (
 
     fail_counter u_fail_counter (
         .clk           (clk),
-        .rst           (w_rst_failures),
+        .rst           (w_rst_failures), // antes era `rst` (solo boton manual) -- igual que hit_counter con w_rst_hits, así se limpia solo también al reiniciar tras GAME_OVER
         .miss          (w_add_failure),
         .hit           (w_add_hit),
-        .nueva_partida (1'b0), //no lo estamos usasndo, mismo caso que el anterior
+        .nueva_partida (1'b0), // no lo estamos usando -- antes estaba en w_add_hit y borraba el contador de fallos en cada acierto
         .fallo         (w_fallo),
         .fin_partida   (w_fin_partida)
     );

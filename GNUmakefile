@@ -182,7 +182,7 @@ connect: | $(BUILD_DIR)
 	@case "$$(uname)" in \
 		FreeBSD) \
 			if command -v usbconfig >/dev/null 2>&1; then \
-				if ! usbconfig list 2>/dev/null | grep -qi "FT2232"; then \
+				if ! doas usbconfig list 2>/dev/null | grep -qi "FT2232"; then \
 					echo "ERROR: no se detecta el chip FT2232 (Basys3) en el bus USB (usbconfig list)."; \
 					echo "       revisá el cable (debe ser de datos, no solo carga), el puerto usado,"; \
 					echo "       y que el switch de encendido (SW16) de la tarjeta esté en ON."; \
@@ -202,7 +202,7 @@ connect: | $(BUILD_DIR)
 				exit 1; \
 			fi ;; \
 	esac
-	@if ! $(OPENFPGALOADER) --detect > $(BUILD_DIR)/.connect.log 2>&1; then \
+	@if ! doas $(OPENFPGALOADER) --detect > $(BUILD_DIR)/.connect.log 2>&1; then \
 		echo "ERROR: openFPGALoader no logra hablar JTAG con la tarjeta:"; \
 		cat $(BUILD_DIR)/.connect.log; \
 		echo ""; \
@@ -212,7 +212,7 @@ connect: | $(BUILD_DIR)
 	@echo "OK: openFPGALoader detecta la FPGA por JTAG. Todo listo para 'make program' / 'make all'."
 
 program: connect
-	$(OPENFPGALOADER) -b $(BOARD) $(BIT)
+	doas $(OPENFPGALOADER) -b $(BOARD) $(BIT)
 
 test: check-tb # <-- Esto corre make sim para cada testbench en $(TBS), uno por uno
 	@estado=0; \
