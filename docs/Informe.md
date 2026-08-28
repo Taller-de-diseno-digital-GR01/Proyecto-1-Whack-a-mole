@@ -1,12 +1,19 @@
-# Informe técnico — Proyecto 1: Whack-a-mole
+# Informe técnico  — Proyecto 1: Whack-a-mole
 
 EL3313 Taller de Diseño Digital, II Semestre 2026
 
-## 1. Fundamentación teórica (investigación previa)
+
+Grupo 1 - Integrantes:
+- Jefferson Chinchilla
+- Nicolás Mena
+- Mattio Coghi
+- Carlos Castro
+
+## 1. Fundamentos Teóricos (Investigación previa)
 
 Esta sección desarrolla los doce temas de investigación previa exigidos por el enunciado del
 proyecto, conectando cada concepto con la parte del diseño de este *whack-a-mole* híbrido
-(protoboard 74xx + FPGA) donde se aplica.
+(protoboard 74xx + FPGA) donde se aplica dichos conceptos.
 
 ### 1.1 Modelado de comportamiento y de estructura en diseño digital
 
@@ -386,167 +393,218 @@ margen se cumpla sin necesidad de calibración activa entre los dos dominios de 
 
 ## 2. Presentación de resultados
 
-Cada módulo de `src/design/` tiene su testbench en `src/sim/`. Se corren con `make sim TB=<módulo>`
-o todos de una con `make test`, y las formas de onda de aquí abajo salen de
-`make dump TB=<módulo> SIGS=...`, que exporta el `.vcd` a SVG directo, sin pasar por una captura de
-pantalla de GTKWave.
+Todos los módulos SystemVerilog del subsistema FPGA tienen su propio testbench en `src/sim/`,
+verificado con `make sim TB=<módulo>` o corriendo el paquete completo con `make test`. Las formas
+de onda que acompañan cada módulo se generaron con `make dump TB=<módulo> SIGS=señal1,señal2,...`,
+que corre la simulación y exporta un SVG con `vecdump`, una herramienta hecha aparte para este
+propósito que lee el `.vcd` producido por `iverilog`/`vvp` y dibuja el diagrama de tiempo
+directamente en SVG, sin pasar por una captura de pantalla de GTKWave. El código fuente y los
+testbenches completos de cada módulo pueden revisarse en `src/design/` y `src/sim/` respectivamente.
 
-Antes de poder correr todo limpio tocó arreglar varios testbenches que se habían quedado atrás.
-Ese detalle, y los bugs de diseño reales que sí aparecieron, van en la sección 3.
+Antes de poder generar estas capturas hubo que corregir varios testbenches que habían quedado
+desactualizados respecto a la interfaz actual de los módulos que prueban. El detalle de esos
+arreglos, y de las discrepancias reales que sí quedaron pendientes de resolver en el diseño, se
+discute en la sección 3.
 
-### 2.1 M1 y M1b, receptor y transmisor UART
+### 2.1 M1 y M1b, receptor y transmisor UART (`r_uart.sv`, `t_uart.sv`)
 
-`r_uart.sv` recibe la trama serial 8N1 y saca `pos_topo`/`valid_pos`. `tb_r_uart.sv` le manda cuatro
-tramas, una válida con `8'h05`, otra válida con `8'hFA` para confirmar que solo importan los 3 bits
-bajos, una con stop bit malo que debe descartarse sin activar `valid_pos`, y una válida pero con
-`en_save_pos=0` que no debe capturar nada. Los cuatro casos pasan.
+`r_uart.sv` recibe una trama serial 8N1 y la traduce a `pos_topo`/`valid_pos`. Su testbench
+(`tb_r_uart.sv`) cubre cuatro casos, una trama válida con dato `8'h05`, una trama válida con dato
+`8'hFA` (para confirmar que solo los 3 bits bajos se usan como posición), una trama con *stop bit*
+inválido (debe descartarse sin activar `valid_pos`), y una trama válida pero con `en_save_pos=0`
+(no debe capturar). Los cuatro casos pasan.
 
 ![Recepción UART, trama válida y trama descartada por stop bit inválido](Diseños_Separados/img/resultados/r_uart.svg)
 
-`t_uart.sv` es el transmisor que se agregó para el loopback interno, porque el transmisor discreto
-real no daba confianza para simular todo el sistema. Arma tres tramas, posiciones 5, 2 y 7, y
-muestrea `tx` al centro de cada bit. 32 checks entre las tres tramas y el reposo inicial, todos
-pasan.
+`t_uart.sv` es el transmisor interno agregado para el enlace en *loopback* (reemplaza al
+transmisor discreto, no confiable, para efectos de simular todo el sistema dentro de la FPGA). Su
+testbench arma tres tramas (posiciones 5, 2 y 7) y muestrea `tx` en el centro de cada bit para
+verificar el formato completo (inicio, 8 datos LSB primero, parada). Los 32 checks (reposo inicial
+más 3 tramas de unos 10 bits cada una) pasan.
 
 ![Transmisión UART interna, tramas para las posiciones 5, 2 y 7](Diseños_Separados/img/resultados/t_uart.svg)
 
-### 2.2 M2, despliegue del topo
+### 2.2 M2, despliegue del topo (`show_mole.sv`)
 
-`show_mole.sv` es puramente combinacional. Prende el LED de `pos_topo` mientras `en_topo` esté en
-alto y los apaga todos si no. Su testbench no tiene asserts, solo recorre las 8 posiciones con
-`en_topo` en 0 y en 1, así que acá no hay PASS/FAIL que reportar, la forma de onda se revisa a ojo.
+Módulo puramente combinacional, activa uno de los 8 LEDs según `pos_topo` mientras `en_topo` esté
+en alto, y los apaga todos si `en_topo=0`. Su testbench (`tb_show_mole.sv`) no hace *self-checking*
+(sigue la convención del equipo de revisar la forma de onda a ojo para módulos puramente
+combinacionales), así que no hay PASS/FAIL que reportar, solo la forma de onda para inspección
+visual.
 
 ![Recorrido de las 8 posiciones con en_topo en 0 y en 1](Diseños_Separados/img/resultados/show_mole.svg)
 
-### 2.3 M3, botones
+### 2.3 M3, botones (`press_btn.sv`, formado por `debounce` + `encoder_8_to_1` + `check_btn`)
 
-`press_btn.sv` junta `debounce`, `encoder_8_to_1` y `check_btn`. El testbench presiona y mantiene un
-botón y espera que `valid` se active solo cuando ese botón corresponde a `pos_topo`. Botón correcto,
-botón incorrecto, ningún botón, botón correcto en otra posición, los cuatro casos pasan.
+El testbench (`tb_press_btn.sv`) presiona y mantiene un botón, verificando que `valid` se active
+exactamente cuando el botón sostenido corresponde a `pos_topo`. Cuatro casos, botón correcto, botón
+incorrecto, ningún botón presionado, botón correcto en otra posición. Los cuatro pasan.
 
 ![Pulso de valid sincronizado con el botón correcto tras el debounce](Diseños_Separados/img/resultados/press_btn.svg)
 
-### 2.4 M4, lógica de tiempo
+### 2.4 M4, lógica de tiempo (`time_logic.sv`)
 
-Acá el testbench achica todo para simular rápido, `CLK_FREQ_TB=1000`, ventana inicial de 3 ticks,
-piso de 1. Se revisa `ventana_ticks` y `contador_ventana` con `$display` en vez de asserts. Sin
-ningún acierto la ventana expira y prende `UP`. Cada acierto baja `ventana_ticks` en 1. Y un tercer
-acierto seguido, ya con la ventana en el piso, no la baja más allá del mínimo.
+El testbench reduce los parámetros de reloj y ventana a valores pequeños para simular rápido
+(`CLK_FREQ_TB=1000`, ventana inicial equivalente a 3 ticks, piso de 1 tick) y verifica, inspeccionando
+`ventana_ticks`/`contador_ventana` con `$display`, que sin ningún acierto la ventana expira y activa
+`UP`, que cada acierto baja `ventana_ticks` en 1, y que un tercer acierto seguido, ya en el piso, no
+lo baja más allá del mínimo.
 
 ![Ventana de tiempo bajando con cada acierto hasta tocar el piso](Diseños_Separados/img/resultados/time_logic.svg)
 
-### 2.5 M5, contador de aciertos
+### 2.5 M5, contador de aciertos (`hit_counter.sv`)
 
-Acarreo BCD en el décimo acierto, satura en 99, y si llega `nueva_partida` o `rst` justo con un
-`hit` gana el reset.
+Verifica el acarreo BCD (unidades a decenas en el décimo acierto), la saturación en 99, y que un
+`nueva_partida` o `rst` simultáneo con un `hit` gane sobre el incremento.
 
 ![Conteo BCD de aciertos, acarreo en el hit 10 y saturación en 99](Diseños_Separados/img/resultados/hit_counter.svg)
 
-### 2.6 M6, contador de fallos
+### 2.6 M6, contador de fallos (`fail_counter.sv`)
 
-Misma idea que M5 pero con `miss`, más la racha de consecutivos y `fin_partida` al tercer fallo
-seguido. Un `hit` en medio rompe la racha sin tocar el acumulado de `fallo`, y `nueva_partida`/`rst`
-limpian todo, `fin_partida` incluido.
+Misma lógica de acumulado BCD que M5 pero con `miss`, más la racha de fallos consecutivos
+(`consecutivos`) y la bandera `fin_partida` que se activa al tercer fallo seguido. El testbench
+confirma que un `hit` intercalado rompe la racha sin bajar el acumulado de `fallo`, y que
+`nueva_partida`/`rst` limpian todo incluyendo `fin_partida`.
 
 ![Racha de fallos consecutivos activando fin_partida, y un hit rompiéndola](Diseños_Separados/img/resultados/fail_counter.svg)
 
-### 2.7 M7, estado de juego
+### 2.7 M7, estado de juego (`state.sv`)
 
-Los cuatro estados de `f_state_play`/`f_state_gameover`, reposo, partida activa con el LED fijo, la
-combinación inválida que apaga todo por seguridad, y fin de partida con parpadeo más `fin_espera` a
-los 2s, acelerado con `N_PRESC=10` para simular. De 13 checks falla 1, el pulso de `fin_espera` sale
-un tick tarde. Se explica en 3.4.
+Cubre los cuatro estados de `(f_state_play, f_state_gameover)`, reposo, partida activa (LED fijo),
+combinación inválida (apagado seguro) y fin de partida (parpadeo más `fin_espera` a los 2s reales,
+acelerado en el testbench con `N_PRESC=10`). De 13 verificaciones puntuales, 1 falla, el pulso de
+`fin_espera` llega un tick de 100ms más tarde de lo que el testbench asume. La causa se discute en
+la sección 3, es un hallazgo nuevo porque este testbench no compilaba antes de esta sesión.
 
 ![Entrada a fin de partida, parpadeo del LED y pulso de fin_espera](Diseños_Separados/img/resultados/state.svg)
 
-### 2.8 M8, la FSM
+### 2.8 M8, máquina de estados central (`fsm.sv`)
 
-Recorre los siete estados. Camino feliz hasta un acierto, fallo por botón incorrecto, ventana que
-expira, hit y miss al mismo tiempo con hit ganando la prioridad, la racha hasta GAME_OVER y la
-vuelta a START, y el reset. 9 checks, todos pasan.
+Recorre los siete estados (`START, REQ_POS, WAIT_UART, PLAY, FAILURE, HIT, GAME_OVER`), camino
+feliz hasta un acierto, un fallo por botón incorrecto, expiración de ventana, prioridad de `hit`
+sobre `miss` simultáneos, la racha hasta `GAME_OVER` y el regreso a `START` vía `fin_espera`, y el
+reset. Los 9 checks pasan.
 
 ![Transiciones de la FSM, camino feliz, fallo, y GAME_OVER hasta START](Diseños_Separados/img/resultados/fsm.svg)
 
-### 2.9 Integración completa
+### 2.9 Integración (`top.sv`)
 
-`tb_top.sv` junta todo, incluyendo `r_uart`/`t_uart` en loopback ya que el transmisor discreto no
-sirve para esto. Corre acierto normal, fallo, tres fallos seguidos hasta GAME_OVER y el reinicio
-automático, ventana que expira sin tocar nada, y el multiplexado de los 4 dígitos del marcador. Las
-12 verificaciones pasan, después de arreglar el parámetro de `time_logic.sv` que se cuenta en 3.2.
-Antes fallaban 3 de las 12, todas por lo mismo.
+`tb_top.sv` conecta todos los módulos anteriores (incluyendo `r_uart`/`t_uart` en *loopback*
+interno, ya que el transmisor discreto real no es confiable) y corre 5 escenarios de principio a
+fin, acierto normal, fallo por botón equivocado, tres fallos consecutivos hasta `GAME_OVER` y
+reinicio automático, expiración de ventana sin presionar nada, y el multiplexado de los 4 dígitos
+del marcador. Las 12 verificaciones pasan, después de corregir el parámetro de time_logic.sv que
+se describe en la sección 3 (antes de esa corrección, 3 de las 12 fallaban, las tres por la misma
+causa raíz).
 
 ![Escenario de integración completo, acierto, fallos consecutivos y GAME_OVER](Diseños_Separados/img/resultados/top.svg)
 
 ## 3. Análisis e interpretación de resultados
 
-### 3.1 Testbenches que se habían quedado atrás
+### 3.1 Testbenches desactualizados, corregidos en esta sesión
 
-Para que `make test` compilara sin errores tocó arreglar varios testbenches. Probablemente porque
-en algún punto se le ampliaron los puertos a `fsm.sv` y se separó el reset de `time_logic.sv` en
-`rst_dificulty`/`rst_window`, y ese cambio no llegó a todos los testbenches que ya existían.
+Antes de poder correr `make test` sin errores de compilación hubo que corregir varios testbenches
+que habían quedado detrás de cambios de interfaz en los módulos que prueban, probablemente de
+revisiones que ampliaron los puertos de `fsm.sv` y separaron el reset único de `time_logic.sv` en
+`rst_dificulty`/`rst_window`, sin que ese cambio se propagara a todos los testbenches ya existentes:
 
-- `tb_show_mole.sv` instanciaba `m02_show_mole`, que no existe, el módulo se llama `show_mole`. No
-  compilaba.
-- `tb_state.sv` igual, instanciaba `estado_juego` en vez de `state`. Tampoco compilaba.
-- `tb_time_logic.sv` le conectaba un puerto `rst` que ya no existe, ahora son `rst_dificulty` y
-  `rst_window` por separado.
-- `tb_fsm.sv` usaba conexión implícita, `fsm dut(.*)`, y ni siquiera declaraba `fin_espera`, la
-  entrada nueva de la FSM.
-- `press_btn_tb.sv` no seguía la convención `tb_*.sv`, así que el Makefile ni lo veía en
-  `make list`.
-- Ya arreglados esos, `press_btn_tb.sv` (ya renombrado `tb_press_btn.sv`) compilaba pero fallaba 2
-  de 4 casos. El reset se pone en 1 para el pulso inicial y nunca se vuelve a bajar, queda pegado
-  toda la simulación. De paso, `valid` ya es un pulso de un ciclo desde el fix de miss fantasma, y
-  el testbench lo seguía leyendo como si fuera nivel, justo al final de la ventana de espera cuando
-  el pulso ya había pasado.
-- `tb_fsm.sv` también probaba el reset como si fuera asíncrono. `fsm.sv` lo tiene síncrono desde
-  hace unos commits.
-- `tb_r_uart.sv` y `tb_t_uart.sv` dumpeaban a `dump.vcd` en vez del nombre que espera `make dump`, y
-  `tb_state.sv` a `estado_juego.vcd`.
+- `tb_show_mole.sv` instanciaba un módulo `m02_show_mole` que no existe (el módulo real se llama
+  `show_mole`), no compilaba en absoluto.
+- `tb_state.sv` instanciaba `estado_juego`, que tampoco existe (el módulo real se llama `state`),
+  tampoco compilaba.
+- `tb_time_logic.sv` conectaba un puerto `rst` que ya no existe en `time_logic.sv` (ahora son dos
+  puertos separados, `rst_dificulty` y `rst_window`), no compilaba.
+- `tb_fsm.sv` usaba conexión implícita (`fsm dut(.*)`) y le faltaba declarar la señal
+  `fin_espera`, que la FSM ahora recibe como entrada, tampoco compilaba.
+- `press_btn_tb.sv` no seguía la convención de nombres `tb_*.sv`, así que el Makefile ni siquiera lo
+  detectaba como testbench disponible, no aparecía en `make list`.
+- Una vez corregidos los tres primeros puntos, `press_btn_tb.sv` (ya renombrado a
+  `tb_press_btn.sv`) sí compilaba y corría, pero fallaba 2 de 4 casos porque el reset se activa
+  (`rst=1`) para el pulso inicial y nunca se vuelve a desactivar, así que el módulo bajo prueba
+  queda en reset permanente. Al corregir eso hizo falta además actualizar cómo se verifica `valid`,
+  porque el diseño actual la genera como un pulso de un solo ciclo (commit "evita miss fantasma
+  tras un hit") y el testbench todavía la muestreaba como si fuera una señal de nivel, tomando su
+  valor recién al final de la ventana de espera, momento en el que el pulso ya había pasado.
+- `tb_fsm.sv` probaba el reset de la FSM como si fuera asíncrono (`rst=1; #1;` sin esperar el
+  flanco de reloj), pero `fsm.sv` lo tiene síncrono desde el commit "trae de develop el fix de
+  fsm.sv (en_numRandom sostenido + reset sincrono)".
+- `tb_r_uart.sv` y `tb_t_uart.sv` escribían su volcado a `dump.vcd` en vez de
+  `tb_r_uart.vcd`/`tb_t_uart.vcd`, y `tb_state.sv` a `estado_juego.vcd` en vez de `tb_state.vcd`,
+  así que `make dump` (que asume el nombre `tb_<módulo>.vcd`) no los encontraba.
 
-Nada de esto tocó `src/design/`, son puros arreglos del lado del testbench.
+Ninguno de estos cambios tocó `src/design/`, son correcciones del lado del testbench para que
+reflejaran la interfaz y el comportamiento actuales del diseño.
 
-### 3.2 VENTANA_INICIAL no daba los 1.5s del enunciado
+### 3.2 Hallazgo real, corregido, la ventana inicial de time_logic.sv no correspondía a 1.5 s
 
-Los tres fallos que tenía `tb_top.sv`, la dificultad que no bajaba tras un acierto, que no volvía a
-su valor inicial en la partida nueva, y la ventana que no expiraba a tiempo, resultaron ser el mismo
-bug. `VENTANA_INICIAL` en `time_logic.sv` estaba en 5000, no en 1500.
+Los tres fallos que originalmente tenía `tb_top.sv` (la dificultad que no bajaba de 15 a 14 tras un
+acierto, la dificultad que no volvía a 15 en la partida nueva, y la ventana que no expiraba dentro
+del margen esperado) tenían la misma causa raíz, confirmada instrumentando la simulación con
+`$display` adicionales, el parámetro por defecto `VENTANA_INICIAL` en `time_logic.sv` valía `5000`,
+no `1500`.
 
-Con `TICK=100` eso da 50 ticks de ventana inicial en vez de los 15 que pide el enunciado. El
-decremento en sí funcionaba bien, `ventana_ticks` sí bajaba de a 1 por acierto, solo el punto de
-partida estaba mal. Y de ahí sale el tercer fallo también, con 50 ticks la ventana tardaba unos
-50000 ciclos en expirar y el caso 4 de `tb_top.sv` solo esperaba 25000 antes de darse por vencido.
+Con `TICK=100` (ms), eso daba `VENTANA_TICKS_INICIAL = VENTANA_INICIAL/TICK = 50` ticks, no los 15
+que tanto el testbench de integración como el enunciado (sección 3.3, "la ventana de tiempo de
+vuelta a su valor inicial de 1,5 s") esperan. La lógica de decremento en sí funcionaba bien, se
+confirmó que `ventana_ticks` sí bajaba de 50 a 49 tras un acierto, exactamente 1 tick como debe ser,
+el problema era únicamente que el punto de partida no era el que pide el enunciado. Eso también
+explicaba el tercer fallo, con `VENTANA_TICKS_INICIAL=50` la ventana tardaba unos 50000 ciclos en
+expirar bajo los parámetros acelerados de `tb_top.sv`, pero el caso 4 solo esperaba 25000 ciclos
+antes de darse por vencido, así que el timeout del testbench, escrito asumiendo 15 ticks, se agotaba
+antes de que la ventana real (50 ticks) terminara de expirar.
 
-Se corrigió a `VENTANA_INICIAL = 1500`. Con ese cambio los tres casos pasan solos, porque el
-testbench ya estaba escrito asumiendo el valor correcto.
+Se corrigió cambiando `VENTANA_INICIAL = 5000` por `VENTANA_INICIAL = 1500` en `time_logic.sv`. Con
+ese único cambio los tres casos de `tb_top.sv` pasan sin ningún otro ajuste, porque ya estaban
+escritos asumiendo el valor correcto según el enunciado.
 
-### 3.3 El LED de fin de partida parpadeaba al doble
+### 3.3 Hallazgo real, corregido, la tasa de parpadeo del LED en state.sv no coincidía con su propio comentario
 
-`state.sv` dice en su propio comentario que el parpadeo conmuta cada 2 ticks de 100ms, 2.5Hz, pero
-el `always_ff` de `blink_toggle` lo hacía cada tick, 5Hz. `tb_state.sv` estaba escrito para el
-comportamiento documentado y por eso sus primeros dos checks de parpadeo fallaban.
+`state.sv` documenta en su propio código el parpadeo del LED de fin de partida como "conmuta cada
+2 habilitaciones de 100ms (periodo de 400ms, 2.5 Hz)", pero el `always_ff` de `blink_toggle`
+conmutaba en cada tick de 100ms, no cada dos, lo que daba un período real de 200ms (5 Hz), el doble
+de rápido que lo documentado. `tb_state.sv` fue escrito asumiendo el comportamiento documentado
+(dividir entre 2), y por eso sus dos primeros checks de parpadeo fallaban al medir el LED justo
+donde el diseño real ya había alcanzado a conmutar dos veces en vez de una.
 
-El enunciado no pide una frecuencia específica, solo que el LED de fin de partida se distinga del
-LED fijo de partida activa, así que esto no incumple nada, era solo el módulo contradiciendo su
-propio comentario. Se agregó `blink_div` para contar los ticks de a 2 y que quede como dice el
-comentario original.
+El enunciado no exige una frecuencia de parpadeo específica, solo que el LED de fin de partida sea
+"claramente distinguible" del LED fijo de partida activa, así que esto no era una violación de la
+especificación como el punto anterior, era una inconsistencia entre lo que el módulo decía que hacía
+y lo que realmente hacía. Se corrigió agregando un divisor entre 2 al conteo de ticks
+(`blink_div`), para que `blink_toggle` conmute cada 2 ticks tal como dice el comentario original del
+módulo.
 
-### 3.4 fin_espera llega un tick tarde
+### 3.4 Hallazgo real, documentado sin corregir, fin_espera llega un tick tarde
 
-Con el punto anterior arreglado seguía fallando otro check, el pulso de `fin_espera` en el tick 20.
-Instrumentando la simulación con `$display` se vio que el problema es otro. En el mismo ciclo en
-que `wait_cnt` llega a `WAIT_COUNT`, el prescalador también se resetea a 0, porque ambos comparten
-la misma condición de tick. Entonces `tick_100ms` ya cayó a 0 justo cuando `wait_done` se vuelve 1,
-y `fin_espera = tick_100ms && wait_done` no puede darse en ese ciclo exacto.
+Al arreglar el punto anterior siguió fallando un segundo check independiente de `tb_state.sv`, el
+pulso de `fin_espera` en el tick 20. Instrumentando la simulación se confirmó que la causa es
+distinta a la del parpadeo, en el mismo ciclo en que `wait_cnt` llega a `WAIT_COUNT` (su meta), el
+prescalador `presc_cnt` también se reinicia a 0 porque ambos comparten la misma condición de tick.
+Eso hace que `tick_100ms` ya esté en 0 justo cuando `wait_done` se vuelve 1, así que la expresión
+combinacional `fin_espera = tick_100ms && wait_done` no puede ser verdadera en ese instante exacto.
+El pulso real sí llega, pero un tick de 100ms completo después, en la siguiente vez que
+`presc_cnt` vuelve a tocar su máximo, momento en el que `wait_done` ya se mantiene en 1 y sí
+coincide con `tick_100ms`.
 
-El pulso sí llega, pero un tick completo después, cuando el prescalador vuelve a tocar su máximo y
-`wait_done` ya se mantenía en 1. No rompe nada, `tb_top.sv` pasa completo con este comportamiento
-porque la FSM solo necesita ver el pulso una vez. Tampoco incumple el enunciado, que pide mínimo 2s,
-un tick de más sigue cumpliendo eso. Quedó documentado sin corregir porque no se pidió arreglarlo.
-Si se quiere el pulso exacto en el tick 20, hay que registrar `fin_espera` usando `wait_cnt` antes
-de que se actualice, en vez de comparar contra `wait_done` ya actualizado el mismo ciclo en que
-`tick_100ms` cae.
+En la práctica esto no rompe el juego, la FSM solo necesita ver `fin_espera` una vez para volver a
+`START`, y `tb_top.sv` lo confirma (pasa completo con este comportamiento). Tampoco viola el
+enunciado, que pide un mínimo de 2s en fin de partida, un tick de 100ms de más sigue cumpliendo ese
+mínimo. Se documenta aquí sin corregir porque no se preguntó por este hallazgo específico, si el
+equipo quiere el pulso exacto en el tick 20 en vez de uno más tarde, hay que registrar `fin_espera`
+usando el valor de `wait_cnt` justo antes de que se actualice, en vez de compararlo contra
+`wait_done` ya actualizado en el mismo ciclo que `tick_100ms` cae a 0.
 
 ## 4. Conclusiones y aprendizaje obtenido
 
-_Pendiente._
+De este proyecto se puede concluir lo siguiente:
+
+1. El diseño modular no es algo definitivo, ya que la verificación física (hardware) produjo cambios en el diseño planeado previamente en papel. El caso más claro es el enlace serial: en el diseño se especificó un transmisor UART discreto con 555 y lógica TTL, pero en la implementación se sustituyó por un loopback interno (t_uart.sv) dentro de la FPGA. Esto sugiere que la tolerancia de frecuencia/fase entre dos relojes independientes (protoboard vs. FPGA), aunque calculada en el diseño, resultó poco confiable en la práctica o inviable de validar a tiempo, y se optó por una solución equivalente funcionalmente pero más controlable.
+
+2.  El diseño en papel identificó correctamente los bloques funcionales, pero no todos los casos borde de sincronización. Los bugs corregidos en press_btn (miss "fantasma") y encoder_8_to_1 (validación de botón único) muestran que las tablas de verdad del documento eran correctas en el caso "normal", pero no cubrían condiciones de carrera entre flancos de señales asíncronas (botón sostenido tras un hit, múltiples botones simultáneos). Es una conclusión típica de diseño digital: las tablas de verdad estáticas no siempre capturan el comportamiento temporal real.
+
+3.  La FSM principal (M8) se especificó de forma general en el documento y se completó durante la codificación del diseño. Esto indica que el nivel de detalle "de bloques" del documento fue suficiente para guiar la implementación, pero la FSM final fue modificada directamente en HDL según las necesidades de los otros subsitemas, y no fue una traducción directa de una tabla predefinida. La FSM se debe diseñar de primero, pero quizás dependiendo de las demás implementación debe ser implementada al final.
+
+4.  Fail_counter muestra que no se analizo correctamente la temporización de los datos en algunos módulos, lo cual produjo un impacto funcional real ( en este caso: fallo detectado un ciclo/turno tarde). Es evidencia de que ciertas decisiones de bajo nivel (secuencial vs. combinacional) deberían haberse especificado en el diseño para evitar el bug, o al menos quedar como una decisión de diseño explícita más que implícita en el código.
+
+5. En conjunto, los módulos de datapath puro (UART, contadores BCD, time_logic, show_mole, marcador) se implementaron fielmente al diseño, mientras que los cambios reales se concentraron en las interconexiones de los subsistemas (enlace serial) y en el control (FSM, detección de eventos de botón) — que es justo donde suelen aparecer los problemas de sincronización en diseño digital, no en el datapath aritmético.
+
+
