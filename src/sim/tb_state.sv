@@ -19,7 +19,7 @@ module tb_estado_juego;
     // ------------------------------------------------------------
     // DUT
     // ------------------------------------------------------------
-    estado_juego #(
+    state #(
         .N_PRESC(TB_N_PRESC)
     ) dut (
         .clk              (clk),
@@ -52,7 +52,7 @@ module tb_estado_juego;
     endtask
 
     initial begin
-        $dumpfile("estado_juego.vcd");
+        $dumpfile("tb_state.vcd");
         $dumpvars(0, tb_estado_juego);
 
         clk = 0;

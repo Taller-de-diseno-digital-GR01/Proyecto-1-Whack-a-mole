@@ -24,7 +24,8 @@ module tb_time_logic;
     .VENTANA_MINIMA(VENTANA_MIN_TB)
   ) dut_time_logic (
     .clk(clk_tb),
-    .rst(rst_tb),
+    .rst_dificulty(rst_tb),
+    .rst_window(rst_tb),
     .inicio(inicio_tb),
     .hit(hit_tb),
     .nueva_partida(nueva_partida_tb),

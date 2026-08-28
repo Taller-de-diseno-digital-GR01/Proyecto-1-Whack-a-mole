@@ -5,7 +5,7 @@ module fsm_tb;
     localparam logic [2:0] START=0, REQ_POS=1, WAIT_UART=2, PLAY=3,
                             FAILURE=4, HIT=5, GAME_OVER=6;
 
-    logic clk, rst, req_sent, valid_pos, hit, miss, window_exp, cont_failure;
+    logic clk, rst, req_sent, valid_pos, hit, miss, window_exp, cont_failure, fin_espera;
     logic rst_dificulty, rst_hits, rst_failures, en_numRandom, en_save_pos;
     logic add_hit, add_failure, rst_window, inc_dificulty;
     logic [2:0] current_state_out;
@@ -33,7 +33,7 @@ module fsm_tb;
         $dumpfile("tb_fsm.vcd");
         $dumpvars(0, fsm_tb);
 
-        rst=1; req_sent=0; valid_pos=0; hit=0; miss=0; window_exp=0; cont_failure=0;
+        rst=1; req_sent=0; valid_pos=0; hit=0; miss=0; window_exp=0; cont_failure=0; fin_espera=0;
         tick(); tick();
         rst=0; tick();
         check(REQ_POS, "reset->REQ_POS");
@@ -80,14 +80,16 @@ module fsm_tb;
         tick();
         check(GAME_OVER, "FAILURE(cont_failure)->GAME_OVER");
         cont_failure=0; tick();
-        check(START, "GAME_OVER->START");
+        check(GAME_OVER, "GAME_OVER se mantiene sin fin_espera");
+        fin_espera=1; tick(); fin_espera=0;
+        check(START, "GAME_OVER->START (fin_espera)");
         tick();
         check(REQ_POS, "START->REQ_POS");
 
-        // reset asincrono
+        // reset (fsm.sv lo tiene sincrono, solo aplica en el flanco de clk)
         req_sent=1; tick(); req_sent=0;
-        rst=1; #1;
-        check(START, "reset asincrono->START");
+        rst=1; tick();
+        check(START, "reset sincrono->START");
         rst=0; tick();
         check(REQ_POS, "START->REQ_POS");
 

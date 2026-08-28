@@ -6,13 +6,15 @@ module m02_show_mole_tb;
     logic       en_topo;
     logic [7:0] leds_topo;
 
-    m02_show_mole dut (
+    show_mole dut (
         .pos_topo  (pos_topo),
         .en_topo   (en_topo),
         .leds_topo (leds_topo)
     );
 
     initial begin
+        $dumpfile("tb_show_mole.vcd");
+        $dumpvars(0, m02_show_mole_tb);
 
     
         
