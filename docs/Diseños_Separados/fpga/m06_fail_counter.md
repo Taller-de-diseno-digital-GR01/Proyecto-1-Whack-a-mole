@@ -2,60 +2,82 @@
 
 ## f) Relación con otros módulos
 
-El módulo recibe de la FSM el pulso `miss` cada vez que un turno se resuelve como fallo, ya sea porque el jugador presionó un botón incorrecto o porque `time_logic` reportó `UP` al agotarse la ventana, de modo que M6 no distingue entre ambas causas y solo cuenta el evento. También recibe el mismo pulso `hit` que consumen `time_logic` y `hit_counter`, con el cual pone en cero la cuenta de fallos consecutivos sin tocar el acumulado. Su salida `fallo[7:0]` alimenta los dos displays de fallos del módulo `marcador`, que solo debe decodificar cada dígito a siete segmentos, y su salida `fin_partida` avisa a la FSM que se alcanzó el tercer fallo consecutivo para que esta transite al estado de fin de partida. La FSM devuelve `nueva_partida` al arrancar una partida nueva, lo cual pone en cero ambas cuentas.
+El módulo recibe de la FSM el pulso `miss` cada vez que un turno se resuelve como fallo, ya sea por botón incorrecto o por agotamiento de la ventana de tiempo. También recibe el pulso `hit` de la FSM, con el cual pone en cero la cuenta de fallos consecutivos sin afectar el contador acumulado. El circuito es completamente síncrono y opera bajo el dominio del reloj principal (`clk`). Su salida `fallo[7:0]` alimenta directamente los dos displays de fallos del módulo `marcador`. Su salida `fin_partida` se genera de forma combinacional para avisar a la FSM en el mismo ciclo de reloj que se alcanzó el tercer fallo consecutivo. La FSM devuelve `nueva_partida` al arrancar un juego nuevo, lo cual pone en cero ambas cuentas, al igual que el reinicio manual por `rst`. 
 
 ## g) Explicación de funcionamiento
 
-El módulo mantiene dos cuentas independientes que avanzan con el mismo pulso `miss`. La primera es un contador BCD de dos dígitos que acumula los fallos de la partida y se despliega en el marcador, donde el dígito de unidades ocupa `fallo[3:0]` y el de decenas `fallo[7:4]`, con saturación en 99 para que nunca se muestre un valor fuera del ámbito especificado. La segunda es un contador de fallos consecutivos de dos bits que llega hasta tres, no se despliega y existe únicamente para determinar el final de la partida, por lo que se pone en cero ante cualquier pulso `hit` mientras el acumulado permanece intacto. Cuando esa cuenta consecutiva alcanza el valor tres se activa `fin_partida`, señal que se mantiene hasta que `rst` o `nueva_partida` reinicien el módulo, de manera que la FSM dispone de una condición estable y no de un pulso que pueda perderse.
+El módulo mantiene dos cuentas independientes comandadas por el reloj. La primera es un contador BCD parametrizable que acumula los fallos totales de la partida. El dígito de unidades ocupa `fallo[3:0]` y el de decenas `fallo[7:4]`, con un límite de saturación definido por los parámetros `MAX_UNIDADES` y `MAX_DECENAS` para evitar desplegar valores fuera de rango. La segunda cuenta es un registro interno de fallos consecutivos de dos bits que llega hasta tres. Esta cuenta se reinicia ante cualquier pulso `hit` o señal de nueva partida. 
+
+La salida `fin_partida` se calcula asíncronamente (fuera del bloque secuencial) evaluando si ocurre un `miss` en el mismo momento en que la racha ya es de dos o tres fallos, garantizando que la señal esté lista en el ciclo exacto del fallo fatal y evitando que la FSM requiera un ciclo adicional o un cuarto fallo para transitar a fin de partida.
 
 ## h) Diseño
 
-La cuenta acumulada se lleva directamente en BCD por la misma razón que en `hit_counter`, ya que su destino son dos displays de siete segmentos independientes y una cuenta binaria obligaría a intercalar un convertidor del tipo double dabble antes del marcador. Se decide alojar el contador de fallos consecutivos en este módulo y no dentro de la FSM porque así el control path conserva únicamente la lógica de transición entre estados y todos los elementos de conteo quedan en el datapath, lo cual mantiene la FSM pequeña y verificable. Los pulsos `hit` y `miss` son mutuamente excluyentes dentro de un mismo turno porque la FSM resuelve cada turno de una sola manera, aun así se le asigna prioridad a `hit` en la descripción para que la cuenta consecutiva quede definida ante cualquier condición y no se infieran latches. Ambos contadores usan los pulsos como habilitación y no como reloj, con lo cual el módulo permanece en el dominio del reloj de 100 MHz.
+La cuenta acumulada se lleva directamente en BCD y su acarreo/saturación se evalúa dinámicamente frente a los topes paramétricos establecidos. El pulso `miss` habilita el incremento. Los pulsos `hit` y `miss` son mutuamente excluyentes en un turno, pero `hit`, `rst` y `nueva_partida` tienen prioridad absoluta para reiniciar los registros. Se separó el cálculo de `fin_partida` del bloque `always_ff` para eliminar la latencia de un ciclo de reloj detectada en versiones previas del diseño.
 
-Contador acumulado de fallos, transición ante un pulso `miss`:
+Lógica secuencial del contador de fallos consecutivos:
 
-| `fallo[7:4]` | `fallo[3:0]` | Siguiente `fallo[7:4]` | Siguiente `fallo[3:0]` |
+| rst / nueva_partida / hit | miss | consecutivos actuales | Siguiente consecutivos |
 |---|---|---|---|
-| 0 a 9 | 0 a 8 | sin cambio | `fallo[3:0]` + 1 |
-| 0 a 8 | 9 | `fallo[7:4]` + 1 | 0 |
-| 9 | 9 | 9 | 9 |
+| 1 | X | X | 0 |
+| 0 | 0 | X | Sin cambio |
+| 0 | 1 | 0 o 1 | consecutivos + 1 |
+| 0 | 1 | 2 o 3 | 3 |
 
-Contador de fallos consecutivos y generación de `fin_partida`:
+Lógica combinacional de fin de partida:
 
-| `rst` o `nueva_partida` | `hit` | `miss` | Cuenta actual | Cuenta siguiente | `fin_partida` |
-|---|---|---|---|---|---|
-| 1 | X | X | X | 0 | 0 |
-| 0 | 1 | X | X | 0 | 0 |
-| 0 | 0 | 1 | 0 a 1 | cuenta + 1 | 0 |
-| 0 | 0 | 1 | 2 | 3 | 1 |
-| 0 | 0 | 1 | 3 | 3 | 1 |
-| 0 | 0 | 0 | X | sin cambio | sin cambio |
+| miss | consecutivos | fin_partida |
+|---|---|---|
+| 0 | X | 0 |
+| 1 | 0 o 1 | 0 |
+| 1 | 2 o 3 | 1 |
 
 ## i) Diagrama detallado del diseño
 
 ```mermaid
 flowchart LR
-    miss[miss] --> E
-    S["Comparador de saturación<br/>decenas = 9 y unidades = 9"] --> E
-    E["Habilitación de conteo"] --> U
-    U["Contador BCD<br/>unidades"] -->|unidades = 9| CY["Acarreo"]
-    E --> CY
-    CY --> D["Contador BCD<br/>decenas"]
-    U --> S
-    D --> S
-    U --> ou["fallo[3:0]"]
-    D --> od["fallo[7:4]"]
-    miss --> K["Contador de fallos<br/>consecutivos, 2 bits"]
-    hit[hit] --> K
-    K --> C3["Comparador<br/>cuenta = 3"]
-    C3 --> FP["Biestable de<br/>fin de partida"]
-    FP --> fp[fin_partida]
-    rst[rst] --> U
-    rst --> D
-    rst --> K
-    rst --> FP
-    np[nueva_partida] --> U
-    np --> D
-    np --> K
-    np --> FP
+    %% Entradas
+    clk[clk]
+    rst[rst]
+    np[nueva_partida]
+    hit[hit]
+    miss[miss]
+    cf[cont_failure]
+
+    subgraph Logica_Secuencial ["Lógica Secuencial (Dominio del Reloj)"]
+        direction TB
+        E["Control BCD<br/>(Prioridad: Reset > Acarreo > Incremento)"]
+        U["Contador BCD<br/>Unidades"]
+        D["Contador BCD<br/>Decenas"]
+        K["Contador Consecutivos<br/>(2 bits)"]
+
+        E -->|miss y no saturado| U
+        E -->|acarreo| D
+        
+        K -->|Reset si hit| K
+        K -->|Suma si miss| K
+    end
+
+    subgraph Logica_Combinacional ["Lógica Combinacional"]
+        direction TB
+        C3["Evaluación Inmediata<br/>miss AND (consecutivos >= 2)"]
+    end
+
+    %% Salidas
+    out_fallo["fallo[7:0]"]
+    out_fin["fin_partida"]
+
+    %% Conexiones de Entrada
+    clk --> Logica_Secuencial
+    rst --> E & K
+    np --> E & K
+    hit --> E & K
+    miss --> E & K
+    miss --> C3
+    
+    %% Conexiones Internas a Salidas
+    K -->|consecutivos| C3
+    C3 --> out_fin
+
+    U -->|fallo 3:0| out_fallo
+    D -->|fallo 7:4| out_fallo
 ```

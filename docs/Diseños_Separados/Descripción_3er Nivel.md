@@ -76,24 +76,100 @@ Este LED se activa cuando la FSM solicita al módulo la posición y lo autoriza 
 
 ### M3: Press_btn
 
-
 #### a) Objetivo
 
-Filtrar el rebote (bounce) de los 8 pulsadores físicos y sincronizarlos con el reloj del sistema, entregando a la FSM la posición del botón presionado durante el turno activo.
+Filtrar el rebote (*bounce*) de los 8 pulsadores físicos, sincronizar sus señales con el reloj del sistema, identificar cuál botón fue presionado y comparar dicha posición con la posición activa del topo.
+
+El módulo entrega directamente a la FSM el resultado de la acción del jugador mediante las señales `valid` y `miss`, indicando respectivamente si el botón presionado corresponde o no con la posición actual del topo.
+
+---
 
 #### b) Entradas
 
-- Botones[7:0]: señal cruda proveniente de los 8 pulsadores físicos conectados por GPIO, una línea por cada posición del topo.
-- clk: reloj de sistema a 100MHz utilizado para el muestreo y el filtrado de rebotes.
-- rst: señal de reinicio síncrono que limpia los registros internos del debouncer.
+* `clk`: reloj del sistema utilizado por los módulos de *debounce* para sincronizar y filtrar las señales provenientes de los pulsadores físicos.
+
+* `rst`: señal de reinicio que limpia los registros internos de los módulos de *debounce* y devuelve el procesamiento de los botones a su estado inicial.
+
+* `btn_0` a `btn_7`: señales crudas provenientes de los 8 pulsadores físicos conectados al sistema. Cada botón representa una de las ocho posibles posiciones del topo.
+
+* `pos_topo[2:0]`: posición actualmente asignada al topo, codificada en 3 bits. Esta señal se utiliza para comparar la posición del botón presionado con la posición correcta del topo.
+
+---
 
 #### c) Salidas
 
-- btn[2:0]: posición codificada del botón presionado, ya filtrada de rebotes y sincronizada, que se entrega a la FSM para comparar contra la posición activa del topo.
+* `valid`: señal que indica que se detectó una pulsación válida y que la posición del botón presionado coincide con `pos_topo`. Representa un acierto (*hit*) para la FSM.
+
+* `miss`: señal que indica que se detectó una pulsación válida, pero la posición del botón presionado no coincide con `pos_topo`. Representa un fallo para la FSM.
+
+Cuando no existe ninguna pulsación válida, ambas señales permanecen inactivas.
+
+---
 
 #### d) Explicación General
 
-Cada una de las 8 líneas de Botones[7:0] se sincroniza primero mediante un sincronizador de dos etapas para evitar problemas de metaestabilidad, ya que la pulsación del usuario es asíncrona respecto al reloj de la FPGA. Posteriormente, cada línea sincronizada pasa por un filtro de rebotes basado en un contador temporizador: la salida solo se considera válida si el nivel de la señal se mantiene estable durante una ventana mínima de tiempo (por ejemplo, unos pocos milisegundos), descartando así los rebotes mecánicos del pulsador. Una vez filtradas las 8 líneas, un codificador de prioridad las convierte en la señal btn[2:0], que la FSM solicita en cada turno para verificar si el botón presionado coincide con la posición activa del topo dentro de la ventana de tiempo definida por Time_Logic.
+El módulo `Press_btn` se encarga de procesar completamente las entradas asociadas a los pulsadores del jugador.
+
+Cada una de las ocho señales `btn_0` a `btn_7` pasa primero por una instancia independiente del módulo `debounce`. Este módulo sincroniza la señal física con el reloj del sistema y elimina los cambios rápidos producidos por el rebote mecánico del pulsador.
+
+Las señales resultantes se almacenan internamente como:
+
+```systemverilog
+db_btn_0
+db_btn_1
+db_btn_2
+db_btn_3
+db_btn_4
+db_btn_5
+db_btn_6
+db_btn_7
+```
+
+Posteriormente, las ocho señales filtradas son enviadas al módulo `encoder_8_to_1`. Este módulo convierte la línea correspondiente al botón presionado en una representación binaria de 3 bits denominada `enc_btn_in[2:0]`.
+
+Por ejemplo, si el jugador presiona `btn_5`, el codificador produce:
+
+```systemverilog
+enc_btn_in = 3'b101;
+```
+
+El codificador genera además la señal interna `valid_enc`, que indica si realmente existe una pulsación válida.
+
+Esta señal es necesaria porque el valor `3'b000` puede representar al botón `btn_0`, pero también podría ser el valor presente en `enc_btn_in` cuando ningún botón se encuentra activo. Mediante `valid_enc` se puede distinguir entre ambos casos.
+
+Finalmente, el módulo `check_btn` recibe:
+
+* `enc_btn_in[2:0]`: posición codificada del botón presionado.
+* `pos_topo[2:0]`: posición actual del topo.
+* `valid_enc`: indica si existe una pulsación válida.
+
+El módulo compara `enc_btn_in` con `pos_topo`. Si ambos valores coinciden, activa `valid`. Si existe una pulsación pero los valores son diferentes, activa `miss`.
+
+De esta manera, la comparación entre el botón presionado y la posición del topo se realiza dentro de `Press_btn`, por lo que la FSM no necesita conocer directamente qué botón fue presionado. La FSM únicamente recibe los eventos de acierto (`valid`) o fallo (`miss`) y decide la siguiente transición de estados.
+
+---
+
+##### Codificación de los botones
+
+La salida interna `enc_btn_in[2:0]` permite representar las ocho posiciones posibles utilizando solamente 3 bits.
+
+| Botón presionado | `enc_btn_in[2:0]` | Posición decimal |
+| ---------------- | ----------------- | ---------------: |
+| `btn_0`          | `000`             |                0 |
+| `btn_1`          | `001`             |                1 |
+| `btn_2`          | `010`             |                2 |
+| `btn_3`          | `011`             |                3 |
+| `btn_4`          | `100`             |                4 |
+| `btn_5`          | `101`             |                5 |
+| `btn_6`          | `110`             |                6 |
+| `btn_7`          | `111`             |                7 |
+
+Cuando ninguno de los botones está activo, `valid_enc` permanece en `0`, indicando que el valor presente en `enc_btn_in` no debe interpretarse como una pulsación válida.
+
+En caso de permitir múltiples botones activos simultáneamente, el comportamiento dependerá de la prioridad definida internamente en `encoder_8_to_1`.
+
+---
+
 
 #### M4: Time_Logic
 

@@ -2,53 +2,54 @@
 
 ## f) Relación con otros módulos
 
-El módulo recibe de la FSM el mismo pulso hit que consume Time_Logic para reducir la ventana y que Fail_Counter usa para reiniciar su cuenta de fallos consecutivos, de modo que las tres reacciones a un golpe correcto ocurren en el mismo ciclo de reloj y quedan consistentes entre sí. Su salida `acierto[7:0]` alimenta directamente los dos displays de aciertos del módulo Marcador, que solo debe decodificar cada dígito a siete segmentos y multiplexarlos. La FSM lo pone en cero con nueva_partida al iniciar una partida nueva luego del tercer fallo consecutivo, y el reinicio manual llega por rst.
+El módulo recibe de la FSM el mismo pulso `hit` que consume Time_Logic para reducir la ventana y que Fail_Counter usa para reiniciar su cuenta de fallos consecutivos, de modo que las tres reacciones a un golpe correcto ocurren en el mismo ciclo de reloj y quedan consistentes entre sí. Su salida `acierto[7:0]` alimenta directamente los dos displays de aciertos del módulo Marcador, que decodifica cada dígito a siete segmentos y los multiplexa. El circuito es completamente síncrono y opera bajo el dominio del reloj principal (`clk`). La FSM puede reiniciar la cuenta con `nueva_partida` al iniciar una partida nueva luego del tercer fallo consecutivo, y el reinicio manual llega por `rst`.
 
 ## g) Explicación de funcionamiento
 
-El módulo es un contador BCD de dos dígitos que avanza una única vez por cada pulso hit. El dígito de unidades, ubicado en `acierto[3:0]`, cuenta de cero a nueve y al desbordarse vuelve a cero y habilita el avance del dígito de decenas, ubicado en `acierto[7:4]`, de forma que la salida siempre representa un valor decimal válido. Al llegar a 99 el contador se satura y conserva su valor ante nuevos aciertos, con lo cual el marcador nunca despliega un valor fuera del ámbito especificado ni vuelve a cero a mitad de partida. Las entradas rst y nueva_partida tienen prioridad sobre el incremento y devuelven ambos dígitos a cero.
+El módulo es un contador BCD de dos dígitos parametrizable (por defecto, avanza hasta 99) que se incrementa una única vez por cada pulso `hit`. El dígito de unidades, ubicado en `acierto[3:0]`, cuenta de cero al límite establecido por `MAX_UNIDADES` (típicamente nueve). Al desbordarse, vuelve a cero y habilita el acarreo para el dígito de decenas, ubicado en `acierto[7:4]`, de forma que la salida siempre representa un valor BCD válido. Al llegar al límite máximo definido por `MAX_ACIERTO`, el contador se satura y conserva su valor ante nuevos aciertos, garantizando que el marcador no despliegue valores fuera de rango ni se reinicie a mitad de partida. Las entradas `rst` y `nueva_partida` son síncronas, tienen prioridad sobre el incremento, y devuelven ambos dígitos a cero.
 
 ## h) Diseño
 
-Se lleva la cuenta directamente en BCD y no en binario natural porque el destino del dato son dos displays de siete segmentos independientes, y un contador binario obligaría a intercalar un convertidor binario a decimal del tipo double dabble entre el contador y el marcador. Con la representación BCD cada dígito se resuelve con un contador de cuatro bits y un comparador con el valor nueve, y el acarreo entre dígitos es simplemente la coincidencia del dígito de unidades con ese valor durante un pulso hit. La saturación se implementa inhibiendo el incremento cuando ambos dígitos valen nueve, y el pulso hit actúa como habilitación y no como reloj, con lo cual el módulo permanece en el dominio del reloj principal y la lógica queda descrita sin ramas incompletas que infieran latches.
+Se lleva la cuenta directamente en BCD utilizando parámetros dinámicos (`MAX_ACIERTO % 10` para unidades y `MAX_ACIERTO / 10` para decenas) para evitar el uso de convertidores binario-a-decimal (como el algoritmo double dabble) antes del marcador. Cada dígito se resuelve con un contador de cuatro bits. El acarreo entre dígitos ocurre mediante la coincidencia del dígito de unidades con su límite máximo durante un pulso `hit`, siempre y cuando las decenas aún no hayan alcanzado el tope. La saturación se implementa bloqueando el incremento cuando ambos dígitos alcanzan el valor máximo estipulado. El pulso `hit` actúa estrictamente como señal de habilitación (`enable`) dentro de un bloque secuencial comandado por el reloj, evitando la inferencia de *latches*.
 
-| acierto[7:4] | acierto[3:0] | Siguiente acierto[7:4] | Siguiente acierto[3:0] |
-|---|---|---|---|
-| 0 a 9 | 0 a 8 | sin cambio | acierto[3:0] + 1 |
-| 0 a 8 | 9 | acierto[7:4] + 1 | 0 |
-| 9 | 9 | 9 | 9 |
+| rst / nueva_partida | hit | unidades == MAX_UNIDADES | decenas == MAX_DECENAS | Acción |
+|---|---|---|---|---|
+| 1 | X | X | X | unidades <= 0, decenas <= 0 |
+| 0 | 0 | X | X | Sin cambio |
+| 0 | 1 | Sí | No | unidades <= 0, decenas <= decenas + 1 (Acarreo) |
+| 0 | 1 | No | X | unidades <= unidades + 1 (Incremento normal) |
+| 0 | 1 | Sí | Sí | Sin cambio (Saturación) |
 
 ## i) Diagrama detallado del diseño
 
 ```mermaid
 flowchart LR
-    hit[hit] --> E
-    S["Comparador de saturación<br/>decenas = 9 y unidades = 9"] --> E
-    E["Habilitación de conteo"] --> U
-    U["Contador BCD<br/>unidades"] -->|unidades = 9| CY["Acarreo"]
-    E --> CY
-    CY --> D["Contador BCD<br/>decenas"]
-    rst[rst] --> U
-    rst --> D
-    np[nueva_partida] --> U
-    np --> D
-    U --> ou["acierto[3:0]"]
-    D --> od["acierto[7:4]"]
-    U --> S
-    D --> S
+    %% Entradas
+    clk[clk]
+    rst[rst]
+    np[nueva_partida]
+    hit[hit]
+
+    subgraph Control_y_Conteo ["Lógica Secuencial (Dominio del Reloj)"]
+        direction TB
+        E["Evaluación de condiciones<br/>(Prioridad: Reset > Acarreo > Incremento)"]
+        U["Contador BCD<br/>Unidades"]
+        D["Contador BCD<br/>Decenas"]
+        
+        E -->|Incremento normal<br/>unidades != MAX_UNIDADES| U
+        E -->|Acarreo<br/>unidades = MAX, decenas != MAX| U & D
+    end
+
+    %% Salidas
+    out_acierto["acierto[7:0]"]
+
+    %% Conexiones de Entrada
+    clk --> Control_y_Conteo
+    rst --> E
+    np --> E
+    hit --> E
+    
+    %% Conexiones Internas a Salidas
+    U -->|acierto 3:0| out_acierto
+    D -->|acierto 7:4| out_acierto
 ```
-
-Tabla de verdad de la lógica de control, con prioridad de arriba hacia abajo:
-
-| `rst` o `nueva_partida` | `hit` | `acierto[7:4]` | `acierto[3:0]` | Siguiente `acierto[7:4]` | Siguiente `acierto[3:0]` |
-|---|---|---|---|---|---|
-| 1 | X | X | X | 0 | 0 |
-| 0 | 0 | X | X | sin cambio | sin cambio |
-| 0 | 1 | 0 a 9 | 0 a 8 | sin cambio | `acierto[3:0]` + 1 |
-| 0 | 1 | 0 a 8 | 9 | `acierto[7:4]` + 1 | 0 |
-| 0 | 1 | 9 | 9 | 9 | 9 |
-
-Si hay reset o nueva partida, ambos dígitos vuelven a cero. Si no llega ningún acierto, el contador se queda igual.
-Si llega un acierto y el número todavía no llegó a noventa y nueve, el dígito de las unidades sube uno, y si ese
-dígito ya estaba en nueve, pasa a cero y el dígito de las decenas sube uno. Si el contador ya llegó a noventa y
-nueve, se queda ahí aunque sigan llegando aciertos, para no pasarse del valor que puede mostrar el marcador.
