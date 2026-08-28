@@ -6,23 +6,24 @@
 
 ## Entradas
 
-- clk: frecuencia de reloj a 100MHz que controla los flancos de las señales que utiliza todo el sistema
-- rst: señal que reinicia la partida y la FSM, así como volver cada módulo a sus valores iniciales
-- Botones[7:0]: señal de los 8 botones físicos que actuán como pulsadores para golpear al topo
-- Pos(8): Señal que proviene del subsistema discreto con la posición generada aleatoriamente por la LSFR, esta señal llega emapaquetada por medio del protoco UART que debe decodificarse para obtener la posición del topo
+- `clk`: frecuencia de reloj a 100MHz que controla los flancos de las señales que utiliza todo el sistema.
+- `rst`: señal que reinicia la partida y la FSM, así como volver cada módulo a sus valores iniciales.
+- `Botones[7:0]`: señal de los 8 botones físicos que actúan como pulsadores para golpear al topo.
+- `pos_topo_lfsr[2:0]`: Señal paralela de 3 bits que proviene directamente del LFSR del subsistema discreto, la cual reemplaza a la entrada serial externa original debido a la inestabilidad del reloj 555 del protoboard[cite: 17, 21, 22].
 
 ## Salidas
 
-- LED´s topos [7:0]: Muestra mediante la matriz LED 4x2 al topo en la posición indicada de acuerdo al número generado por la LSFR, muestra un LED encedido a la vez.
-- LED estado: Un LED que muestra el estado de la partida, si se encuentra en medio de un juego o si finalizó la partida.
-- Acierto [6:0]: valor númerico de 0 a 99 que muestra la cantidad de veces que el jugador acertó al presionar el botón correspondiente al topo dentro de la ventana de tiempo.
-- Fallo[1:0]: Valor numérico de 0 a 3 que muestra la cantidad de veces que el jugador falló al presionar le botón del topo, ya sea por errar la posición o no acertar dentro de la ventada de tiempo.
-
+- `LEDs topos [7:0]`: Muestra mediante la matriz LED 4x2 al topo en la posición indicada de acuerdo al número generado por la LSFR, muestra un LED encendido a la vez.
+- `led_state`: Un LED que muestra el estado de la partida, si se encuentra en medio de un juego (encendido) o si finalizó la partida (parpadeando).
+- `acierto[7:0]`: valor numérico de 0 a 99 en BCD que muestra la cantidad de veces que el jugador acertó, el cual va directamente a los displays.
+- `fallo[7:0]`: valor numérico de 0 a 99 en BCD que acumula la cantidad de veces que el jugador falló, el cual va directamente a los displays.
+- 
 ## Explicación General
 
-La señal Pos(8) se decodifica por medio del módulo Deco_UART en una señal Pos_Topo[2:0] que es solicitada por la FSM en cada turno, la FSM verifica la posición y la muestra con LED´s mediante el módulo Show_Mole. La FSM en cada turno toma la señal de los botones mediante el módulo Press_btn y compara si se presionó el botón correcto dentro de la ventada de tiempo estipulada por el módulo Time_Logic.
-En caso de que ambos valores sean iguales, el módulo Time_Logic decrece la ventana de tiempo en 100ms hasta llegar a los 500ms de tiempo para acertar y el módulo Hit_Counter aunmenta el valor del contador que se muestra en el Marcador con la señal acierto[6:0]. En caso de fallar, el módulo Fail_Counter aumenta el valor con un límite de 3 equivocaciones y lo muestra en Marcador con fallo[1:0], si ocurre un acierto este contador se reinicia.
-Durante toda la partida, se muestra el estado de la misma con el módulo Estado de juego (State), que muestra mediante un LED si se está en medio juego o si finalizó, con una ventada de 2 segundos entre una partida y otra que inicia automáticamente.
+La señal paralela `pos_topo_lfsr[2:0]` ingresa al módulo `t_uart` (M9) que la empaqueta y transmite como una trama serial en un *loopback* interno para evadir la inestabilidad del hardware discreto. Esta trama se recibe y decodifica por medio del módulo `Receptor_UART` (M1) en una señal retenida `pos_topo[2:0]`. La FSM verifica la posición y la muestra con LEDs mediante el módulo `Show_Mole`. La FSM en cada turno toma la señal de los botones mediante el módulo `Press_btn` y compara si se presionó el botón correcto dentro de la ventana de tiempo estipulada por el módulo `Time_Logic`. 
+
+En caso de que sea correcto, la FSM emite `hit`, lo que hace que `Time_Logic` decrezca la ventana de tiempo en 100ms (hasta un piso de 500ms) y que `Hit_Counter` aumente el valor del contador mostrado. En caso de fallar o agotarse el tiempo, la FSM emite `miss`, lo que hace que `Fail_Counter` aumente el valor de fallos acumulados y evalúe internamente si se llegó a 3 fallos consecutivos para emitir `fin_partida`. Si ocurre un acierto, el contador interno de consecutivos se reinicia. 
+Durante toda la partida, se muestra el estado de la misma con el módulo de Estado de juego (`State`), que indica si la partida está activa (`f_state_play`) o finalizada (`f_state_gameover`) con una ventana de 2 segundos de espera antes del reinicio automático.
 
 ## Módulos
 
@@ -33,222 +34,61 @@ Durante toda la partida, se muestra el estado de la misma con el módulo Estado 
 - M5. Módulo Hit_Counter
 - M6. Módulo Fail_Counter
 - M7. Módulo State
+### M1: Receptor UART
+**a) Objetivo:** Recibir la trama serial interna enviada por `t_uart` para entregarla decodificada a la FSM y al visualizador cuando se solicita.
+**b) Entradas:** `pos(8)_sync` / `rx` (Línea serial en loopback), `rst`, y `en_save_pos` (habilitador para retener la posición decodificada).
+**c) Salidas:** `pos_topo[2:0]` (posición retenida) y `valid_pos` (pulso de confirmación de trama).
+**d) Funcionamiento y Diseño:** Emplea un sincronizador de dos etapas y cuenta intervalos de baudios a partir del bit de inicio, capturando a la mitad del pulso (`N/2 - 1`) para evitar metaestabilidad. Si la trama 8N1 es válida, emite el pulso y guarda los 3 LSB.
 
-### M1: Receptor_UART
+### M2: Show_Mole
+**a) Objetivo:** Mostrar en la matriz LED 4x2 al topo activo.
+**b) Entradas:** `pos_topo[2:0]` (desde M1) y `en_topo` (habilitación de FSM).
+**c) Salidas:** `leds_topo[7:0]` (señal one-hot física).
+**d) Funcionamiento y Diseño:** Actúa como decodificador combinacional puro de 3 a 8 bits. Si `en_topo` es 0, todo se apaga.
 
-#### a) Objetivo
+### M3: press_btn
+**a) Objetivo:** Filtrar rebotes de los pulsadores físicos y entregar la posición presionada para validarla.
+**b) Entradas:** `Botones[7:0]`, `clk`, `rst`, y `pos_topo[2:0]`.
+**c) Salidas:** `valid` (acierto) y `miss` (fallo).
+**d) Funcionamiento y Diseño:** Pasa cada botón por un sincronizador de 2 etapas y un filtro anti-rebote (contador de ~10ms). Un codificador 8:3 de prioridad extrae la posición y la compara internamente con `pos_topo`.
 
-Recibir la señal recibida por medio de la UART para entregarla en el formato adecuado a la FSM cuando esta la solicita.
-
-#### b) Entradas
-
-- Pos(8): Señal que proviene del subsistema discreto con la posición generada aleatoriamente por la LSFR, esta señal llega emapaquetada por medio del protocolo UART que debe recibirse de manera serial y ser dado en formato paralelo para enviarselo al resto de modulos.
-- rst: Señal de reinicio síncrono del sistema.
-- `en_save_pos`: señal habilitadora proveniente de la FSM (estado `010`, `en_save_pos` en M8) que indica que la posición decodificada debe quedar disponible/retenida para el turno en curso.
-
-#### c) Salidas
-
-- `pos_topo[2:0]`: posición decodificada del topo, 3 bits menos significativos del byte de datos recibido.
-- `valid_pos`: pulso hacia la FSM que indica que se completó la recepción y decodificación de una trama nueva.
-  
-#### d) Explicación General
-
-La señal Pos(8) se recibe por medio de un registro, el cual a su vez es controlado por un contador que se asegura que solo se recibam los 8 bits de la UART. Y este registro es manejado por un reloj de aproximadamente 9600 Hz, que generan un baud rate de 9600 b/s. 
-
-### M2: módulo Show_Mole
-
-#### a) Objetivo
-
-- Mostrar en la matriz LED 4x2 al topo generado en una posición aleatoria generada por la LFSR.
-
-#### b) Entradas
-
-- pos_topo[2:0]: posición del topo de 3 bits que proviene del registro del Receptor UART
-- en_topo: señal enabler para encender el LED correspondiente
-
-#### c) Salidas
-
-- pos_topo[7:0]: es la señal que viaja a los LED´s para enceder el LED correspondiente
-
-#### d) Explicación General
-Este módulo recibe tanto la posición del topo pos_topo[2:0] del registro del Recptor UART, como una señal de control de la FSM. Este módulo se encarga de decodificar con un deco 3:8 para enceder el LED correspondiente al topo generado.
-Este LED se activa cuando la FSM solicita al módulo la posición y lo autoriza a mostrarlo
-
-### M3: Press_btn
-
-#### a) Objetivo
-
-Filtrar el rebote (*bounce*) de los 8 pulsadores físicos, sincronizar sus señales con el reloj del sistema, identificar cuál botón fue presionado y comparar dicha posición con la posición activa del topo.
-
-El módulo entrega directamente a la FSM el resultado de la acción del jugador mediante las señales `valid` y `miss`, indicando respectivamente si el botón presionado corresponde o no con la posición actual del topo.
-
----
-
-#### b) Entradas
-
-* `clk`: reloj del sistema utilizado por los módulos de *debounce* para sincronizar y filtrar las señales provenientes de los pulsadores físicos.
-
-* `rst`: señal de reinicio que limpia los registros internos de los módulos de *debounce* y devuelve el procesamiento de los botones a su estado inicial.
-
-* `btn_0` a `btn_7`: señales crudas provenientes de los 8 pulsadores físicos conectados al sistema. Cada botón representa una de las ocho posibles posiciones del topo.
-
-* `pos_topo[2:0]`: posición actualmente asignada al topo, codificada en 3 bits. Esta señal se utiliza para comparar la posición del botón presionado con la posición correcta del topo.
-
----
-
-#### c) Salidas
-
-* `valid`: señal que indica que se detectó una pulsación válida y que la posición del botón presionado coincide con `pos_topo`. Representa un acierto (*hit*) para la FSM.
-
-* `miss`: señal que indica que se detectó una pulsación válida, pero la posición del botón presionado no coincide con `pos_topo`. Representa un fallo para la FSM.
-
-Cuando no existe ninguna pulsación válida, ambas señales permanecen inactivas.
-
----
-
-#### d) Explicación General
-
-El módulo `Press_btn` se encarga de procesar completamente las entradas asociadas a los pulsadores del jugador.
-
-Cada una de las ocho señales `btn_0` a `btn_7` pasa primero por una instancia independiente del módulo `debounce`. Este módulo sincroniza la señal física con el reloj del sistema y elimina los cambios rápidos producidos por el rebote mecánico del pulsador.
-
-Las señales resultantes se almacenan internamente como:
-
-```systemverilog
-db_btn_0
-db_btn_1
-db_btn_2
-db_btn_3
-db_btn_4
-db_btn_5
-db_btn_6
-db_btn_7
-```
-
-Posteriormente, las ocho señales filtradas son enviadas al módulo `encoder_8_to_1`. Este módulo convierte la línea correspondiente al botón presionado en una representación binaria de 3 bits denominada `enc_btn_in[2:0]`.
-
-Por ejemplo, si el jugador presiona `btn_5`, el codificador produce:
-
-```systemverilog
-enc_btn_in = 3'b101;
-```
-
-El codificador genera además la señal interna `valid_enc`, que indica si realmente existe una pulsación válida.
-
-Esta señal es necesaria porque el valor `3'b000` puede representar al botón `btn_0`, pero también podría ser el valor presente en `enc_btn_in` cuando ningún botón se encuentra activo. Mediante `valid_enc` se puede distinguir entre ambos casos.
-
-Finalmente, el módulo `check_btn` recibe:
-
-* `enc_btn_in[2:0]`: posición codificada del botón presionado.
-* `pos_topo[2:0]`: posición actual del topo.
-* `valid_enc`: indica si existe una pulsación válida.
-
-El módulo compara `enc_btn_in` con `pos_topo`. Si ambos valores coinciden, activa `valid`. Si existe una pulsación pero los valores son diferentes, activa `miss`.
-
-De esta manera, la comparación entre el botón presionado y la posición del topo se realiza dentro de `Press_btn`, por lo que la FSM no necesita conocer directamente qué botón fue presionado. La FSM únicamente recibe los eventos de acierto (`valid`) o fallo (`miss`) y decide la siguiente transición de estados.
-
----
-
-##### Codificación de los botones
-
-La salida interna `enc_btn_in[2:0]` permite representar las ocho posiciones posibles utilizando solamente 3 bits.
-
-| Botón presionado | `enc_btn_in[2:0]` | Posición decimal |
-| ---------------- | ----------------- | ---------------: |
-| `btn_0`          | `000`             |                0 |
-| `btn_1`          | `001`             |                1 |
-| `btn_2`          | `010`             |                2 |
-| `btn_3`          | `011`             |                3 |
-| `btn_4`          | `100`             |                4 |
-| `btn_5`          | `101`             |                5 |
-| `btn_6`          | `110`             |                6 |
-| `btn_7`          | `111`             |                7 |
-
-Cuando ninguno de los botones está activo, `valid_enc` permanece en `0`, indicando que el valor presente en `enc_btn_in` no debe interpretarse como una pulsación válida.
-
-En caso de permitir múltiples botones activos simultáneamente, el comportamiento dependerá de la prioridad definida internamente en `encoder_8_to_1`.
-
----
-
-
-#### M4: Time_Logic
-
-#### a) Objetivo
-
-- Controlar la ventana de tiempo durante la cual el topo activo puede ser golpeado, aplicando la reducción progresiva de dicha ventana conforme se acumulan aciertos consecutivos.
-
-#### b) Entradas
-
-- clk: reloj de sistema a 100MHz, base para la generación de los clock enables internos del temporizador.
-- rst: señal de reinicio síncrono que restablece la ventana de tiempo a su valor inicial de 1,5s.
-- hit: señal proveniente de la FSM que indica que el turno actual terminó en acierto, utilizada para reducir la ventana en 100ms de cara al siguiente turno.
-
-#### c) Salidas
-
-- UP: señal que indica a la FSM que la ventana de tiempo del turno actual expiró sin que el jugador presionara el botón correcto.
-
-#### d) Explicación General
-
-Time_Logic implementa un temporizador descendente mediante clock enables derivados del reloj principal de 100MHz, sin generar relojes derivados adicionales. Al iniciar cada turno, el módulo carga la duración vigente de la ventana (1,5s por defecto) y la decrementa hasta llegar a cero, momento en el cual activa la señal UP para notificar a la FSM que el turno se perdió por tiempo. Cada vez que la FSM señaliza hit (acierto dentro de la ventana), Time_Logic reduce en 100ms el valor que se cargará en el siguiente turno, hasta un mínimo de 500ms; alcanzado ese mínimo, la ventana se mantiene constante mientras el jugador continúe acertando. Un fallo no restablece la ventana a su valor inicial: la dificultad alcanzada se conserva mientras la partida continúe, y solo se reinicia a 1,5s ante un rst o el fin de partida.
+### M4: Time_Logic
+**a) Objetivo:** Controlar la cuenta regresiva del turno y reducir la ventana por cada acierto consecutivo.
+**b) Entradas:** `clk`, `rst`, `inicio` (abre ventana), `hit` (reduce ventana), `rst_window`, `rst_dificulty`, `nueva_partida`.
+**c) Salidas:** `UP` (bandera de expiración).
+**d) Funcionamiento y Diseño:** Usa un prescalador a 100ms. La dificultad empieza en 1.5s y baja monótonamente hasta 500ms al recibir `hit`. Si llega a 0 emite `UP` durante un ciclo.
 
 ### M5: Hit_Counter
+**a) Objetivo:** Contabilizar los aciertos acumulados en formato BCD.
+**b) Entradas:** `clk`, `rst`, `hit`, y `nueva_partida`.
+**c) Salidas:** `acierto[7:0]`.
+**d) Funcionamiento y Diseño:** Contador de dos dígitos BCD que incrementa unidades y acarrea decenas al desbordarse en 9. Se satura en el tope configurado (ej. 99).
 
-#### a) Objetivo
+### M6: fail_counter
+**a) Objetivo:** Contar los fallos para el marcador y evaluar la condición de fin de partida (3 consecutivos).
+**b) Entradas:** `clk`, `rst`, `miss`, `hit`, `nueva_partida`.
+**c) Salidas:** `fallo[7:0]` y `fin_partida`.
+**d) Funcionamiento y Diseño:** Mantienen una cuenta BCD acumulada (que se incrementa con `miss`) y una cuenta binaria interna consecutiva. `fin_partida` es un cálculo combinacional que se activa asíncronamente al 3er fallo.
 
-- Contabilizar la cantidad de aciertos acumulados durante la partida y entregar dicho valor codificado en BCD para su despliegue en el Marcador.
+### M7: estado_juego
+**a) Objetivo:** Indicar el estado visual y temporizar los 2 segundos de fin de partida.
+**b) Entradas:** `clk`, `rst`, `f_state_play`, `f_state_gameover`.
+**c) Salidas:** `led_state` y `fin_espera`.
+**d) Funcionamiento y Diseño:** Si es *play*, LED fijo. Si es *gameover*, activa un prescalador de 100ms que hace parpadear el LED y cuenta hasta 20 (2 segundos) para emitir el pulso `fin_espera`.
 
-#### b) Entradas
+### M8: Máquina de Estados FSM
+**a) Objetivo:** Orquestar todos los módulos mediante una máquina de estados de Moore.
+**b) Estados Principales:** 
+- **INICIO (000):** Emite resets a tiempos y dificultades.
+- **SOL_POS (001):** Dispara `en_numAleatorios` (para M9).
+- **ESP_UART (010):** Espera trama; al recibirla activa `en_save_pos`.
+- **JUGAR (011):** Emite `inicio`. Transita a ACIERTO si `valid`, o a FALLO si `miss`/`UP`.
+- **ACIERTO (100):** Emite `hit`.
+- **FALLO (101):** Emite `miss`. Evalúa si debe ir a FIN o retornar.
+- **FIN (110):** Espera 2s (`fin_espera`) y emite `nueva_partida`.
 
-- clk: reloj de sistema a 100MHz.
-- rst: señal de reinicio síncrono que pone en cero el contador de aciertos.
-- en_hit: señal habilitadora proveniente de la FSM que indica que ocurrió un acierto y que el contador debe incrementarse.
-
-#### c) Salidas
-
-- acierto[6:0]: valor de 0 a 99 codificado en BCD (dos dígitos) que se envía al Marcador para su despliegue en los displays de 7 segmentos.
-- acierto: bandera hacia la FSM que indica que el contador alcanzó su valor máximo (99), utilizada para detener el conteo y evitar el desbordamiento.
-
-#### d) Explicación General
-
-El bloque Contador es un contador binario que se incrementa en cada pulso de en_hit proveniente de la FSM. Un comparador contrasta permanentemente el valor del contador contra 99; al alcanzar dicho límite, genera la señal acierto hacia la FSM para que esta deje de habilitar nuevos incrementos, evitando que el contador se desborde. En paralelo, el bloque Deco_BCD traduce el valor binario del contador a su representación en BCD de dos dígitos, entregando la señal acierto[6:0] al Marcador para su despliegue continuo en los displays de 7 segmentos, independientemente del estado de la partida.
-
-### M6: Fail_Counter
-
-#### a) Objetivo
-
-- Contabilizar los fallos del jugador, entregar dicho valor codificado en BCD al Marcador, y notificar a la FSM cuando se alcanza el límite de 3 fallos para finalizar la partida.
-
-#### b) Entradas
-
-- clk: reloj de sistema a 100MHz.
-- rst: señal de reinicio síncrono que pone en cero el contador de fallos; también se activa ante cada acierto para reiniciar el conteo de fallos consecutivos.
-- en_fail: señal habilitadora proveniente de la FSM que indica que ocurrió un fallo (botón incorrecto o ventana de tiempo expirada) y que el contador debe incrementarse.
-
-#### c) Salidas
-
-- fallo[1:0]: valor de 0 a 3 codificado en BCD que se envía al Marcador para su despliegue.
-- fallo: bandera hacia la FSM que indica que el contador alcanzó el límite de 3 fallos, utilizada para finalizar la partida.
-
-#### d) Explicación General
-
-El bloque CONT es un contador binario que se incrementa en cada pulso de en_fail proveniente de la FSM. Un comparador contrasta el valor del contador contra 3; al alcanzarlo, genera la señal fallo hacia la FSM para que esta transicione al estado de fin de partida. A diferencia de Hit_Counter, este contador se reinicia cada vez que ocurre un acierto, de modo que solo cuenta fallos consecutivos y no un acumulado histórico de la partida. El bloque Decode BCD traduce el valor binario a BCD para su despliegue en el Marcador mediante la señal fallo[1:0].
-
-### M7: Estado de juego
-
-#### a) Objetivo
-
-- Indicar visualmente, mediante un LED de la tarjeta, si la partida se encuentra en curso o si finalizó.
-
-#### b) Entradas
-
-- clk: reloj de sistema a 100MHz.
-- rst: señal de reinicio síncrono que restablece el estado a "partida en curso".
-- estado: señal proveniente de la FSM que indica el estado actual de la partida (en curso o finalizada).
-
-#### c) Salidas
-
-- LED estado: LED de la tarjeta que refleja el estado de la partida: una condición (por ejemplo, encendido fijo) mientras la partida está en curso, y otra claramente distinguible (por ejemplo, parpadeo o apagado) durante los 2s de estado de fin de partida antes del reinicio automático.
-
-#### d) Explicación General
-
-Este módulo traduce la señal de estado[código binario] entregada por la FSM en un patrón visual sobre el LED de estado de la tarjeta. Mientras la FSM permanece en el estado de juego activo, el LED se mantiene en una condición fija; al detectarse el tercer fallo consecutivo, la FSM transiciona al estado de fin de partida y actualiza la señal estado, lo que hace que este módulo cambie el patrón del LED (por ejemplo, a parpadeo) durante la ventana mínima de 2s antes de que la FSM reinicie automáticamente la partida con una nueva secuencia y los contadores en cero.
+### M9: t_uart (Transmisor interno)
+**a) Objetivo:** Recibir los 3 bits paralelos del LFSR discreto y convertirlos en trama UART 8N1 emulando al hardware discreto inestable.
+**b) Entradas:** `pos_topo_lfsr[2:0]`, `start`, `clk`, `rst`.
+**c) Salidas:** `tx` (hacia `Receptor_UART`) y `busy`.
+**d) Funcionamiento y Diseño:** Almacena la petición en un flip-flop de reserva (pending). Desplaza la trama (5 bits en 0 y 3 LSB de posición) a 9600 baudios usando una base de tiempo propia.
