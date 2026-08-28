@@ -167,7 +167,7 @@ module top (
     hit_counter u_hit_counter (
         .clk           (clk),
         .rst           (w_rst_hits),
-        .nueva_partida (1'b0), //no lo estamos usando
+        .nueva_partida (1'b0), //no lo estamos usando. Estab ideado para ser un reset interno del módulo, pero ya la fsm se encarga de eso con rst_hits
         .hit           (w_add_hit),
         .acierto       (w_acierto)
     );
@@ -180,7 +180,7 @@ module top (
         .rst           (w_rst_failures),
         .miss          (w_add_failure),
         .hit           (w_add_hit),
-        .nueva_partida (1'b0), //no lo estamos usasndo
+        .nueva_partida (1'b0), //no lo estamos usasndo, mismo caso que el anterior
         .fallo         (w_fallo),
         .fin_partida   (w_fin_partida)
     );
