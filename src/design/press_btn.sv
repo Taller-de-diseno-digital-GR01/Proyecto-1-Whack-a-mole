@@ -28,8 +28,24 @@ module press_btn ( //módulo principal
     logic [2:0] enc_btn_in;
     logic       valid_enc;
 
-    logic       valid_lvl, miss_lvl; // salidas de check_btn, en nivel (dura mientras el botón está abajo)
-    logic       valid_prev, miss_prev;
+    // Flanco de subida de valid_enc: un pulso de un ciclo justo cuando el
+    // botón queda presionado (post-debounce), sin importar cuánto tiempo
+    // se mantenga abajo después. Antes check_btn se re-evaluaba en cada
+    // ciclo mientras el botón seguía abajo (valid_in=valid_enc, en nivel),
+    // así que si pos_topo cambiaba mientras el dedo todavía estaba sobre
+    // el botón -- cosa que pasa seguido, la FSM pide/recibe la posición
+    // siguiente en ~1ms de UART, mucho antes de que sueltes el botón --
+    // la comparación se repetía contra el topo NUEVO y disparaba un miss
+    // fantasma inmediatamente después de un hit correcto.
+    logic       valid_enc_prev;
+    logic       press_pulse;
+
+    always_ff @(posedge clk) begin
+        if (rst) valid_enc_prev <= 1'b0;
+        else     valid_enc_prev <= valid_enc;
+    end
+
+    assign press_pulse = valid_enc & ~valid_enc_prev;
 
     debounce db0 (
         .clk(clk),
@@ -94,28 +110,17 @@ module press_btn ( //módulo principal
     );
 
 
+    // valid_in ya es un pulso de un ciclo (press_pulse), así que check_btn
+    // compara enc_btn_in contra el pos_topo vigente en ese único ciclo y
+    // valid/miss salen directo como pulsos -- no hace falta otro detector
+    // de flanco después, y pos_topo ya no puede cambiar "debajo" de un
+    // botón que sigue presionado porque solo se mira una vez, al inicio.
     check_btn cb (
         .enc_btn_in(enc_btn_in),
         .pos_topo(pos_topo),
-        .valid_in(valid_enc),
-        .valid(valid_lvl),
-        .miss(miss_lvl)
+        .valid_in(press_pulse),
+        .valid(valid),
+        .miss(miss)
     );
-
-    // Flanco de subida: un pulso de un ciclo por presión, sin importar
-    // cuánto tiempo el botón se mantenga abajo (valid_lvl/miss_lvl duran
-    // todo el tiempo que el botón está físicamente presionado)
-    always_ff @(posedge clk) begin
-        if (rst) begin
-            valid_prev <= 1'b0;
-            miss_prev  <= 1'b0;
-        end else begin
-            valid_prev <= valid_lvl;
-            miss_prev  <= miss_lvl;
-        end
-    end
-
-    assign valid = valid_lvl & ~valid_prev;
-    assign miss  = miss_lvl  & ~miss_prev;
 
 endmodule
