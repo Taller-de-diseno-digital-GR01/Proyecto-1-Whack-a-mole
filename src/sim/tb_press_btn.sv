@@ -8,6 +8,7 @@ module press_btn_tb;
     logic       btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7;
     logic [2:0] pos_topo;
     logic       valid;
+    logic       valid_seen; // valid es un pulso de un ciclo, esto acumula si aparecio durante la ventana
 
     press_btn dut (
         .clk(clk), .rst(rst),
@@ -31,15 +32,26 @@ module press_btn_tb;
         {btn_0, btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7} = 8'b0;
     endtask
 
+    // Espera n ciclos mientras acumula en valid_seen si valid se activo en alguno
+    task wait_and_monitor(input integer n);
+        integer i;
+        for (i = 0; i < n; i = i + 1) begin
+            @(posedge clk);
+            if (valid) valid_seen = 1'b1;
+        end
+    endtask
+
     // Presiona el botón idx y lo MANTIENE presionado (no lo suelta),
     // esperando suficientes ciclos para que el debounce se estabilice.
+    // valid_seen recoge si el pulso de valid aparecio en algun punto de esa ventana.
     task press_and_hold(input integer idx);
         clear_btns();
         case (idx)
             0: btn_0 = 1'b1;  1: btn_1 = 1'b1;  2: btn_2 = 1'b1;  3: btn_3 = 1'b1;
             4: btn_4 = 1'b1;  5: btn_5 = 1'b1;  6: btn_6 = 1'b1;  7: btn_7 = 1'b1;
         endcase
-        repeat (3*(2**N_SIM)) @(posedge clk); // margen amplio para que db_out se actualice
+        valid_seen = 1'b0;
+        wait_and_monitor(3*(2**N_SIM)); // margen amplio para que db_out se actualice
     endtask
 
     // Suelta todos los botones y espera a que el debounce también se
@@ -50,19 +62,24 @@ module press_btn_tb;
     endtask
 
     task check(input [8*20:1] name, input expected);
-        if (valid !== expected)
-            $display("FAIL %0s: valid=%b expected=%b @%0t", name, valid, expected, $time);
+        if (valid_seen !== expected)
+            $display("FAIL %0s: valid_seen=%b expected=%b @%0t", name, valid_seen, expected, $time);
         else
             $display("PASS %0s", name);
     endtask
 
     initial begin
+        $dumpfile("tb_press_btn.vcd");
+        $dumpvars(0, press_btn_tb);
+
         clk = 0; rst = 0;
         clear_btns();
         pos_topo = 3'b000;
 
         repeat (5) @(posedge clk);
         rst = 1;
+        repeat (5) @(posedge clk);
+        rst = 0;
         repeat (5) @(posedge clk);
 
         // Caso 1: botón correcto -> valid debe ser 1 MIENTRAS está presionado
@@ -80,7 +97,8 @@ module press_btn_tb;
         // Caso 3: sin botón presionado -> valid debe ser 0 (sin falso positivo)
         pos_topo = 3'b000;
         clear_btns();
-        repeat (3*(2**N_SIM)) @(posedge clk);
+        valid_seen = 1'b0;
+        wait_and_monitor(3*(2**N_SIM));
         check("sin boton", 1'b0);
 
         // Caso 4: botón correcto en otra posición
