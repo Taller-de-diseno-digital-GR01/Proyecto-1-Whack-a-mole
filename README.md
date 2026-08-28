@@ -56,14 +56,14 @@ displays de 7 segmentos.
 ### Nivel 5 - Esquemático total
 
 - Esquemático de nivel 5 para la FPGA
-![alt text](docs/Diseños_Separadosimg/schematic_lvl5.jpg)
+![alt text](docs/Diseños_Separados/img/schematic_lvl5.jpg)
 
 - El esquemático Multisim del subsistema discreto ya existe, ver
 [Subsistema discreto](#subsistema-discreto-protoboard) más abajo.
 
 ## Investigación previa
 
-Completa - Ver Informe
+Completa - Ver [Informe](docs/Informe.md)
 
 ## Informe técnico
 
